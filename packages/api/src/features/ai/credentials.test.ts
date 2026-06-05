@@ -1,9 +1,13 @@
 import { describe, expect, it, vi } from "vitest";
 
-const envMock = vi.hoisted(() => ({
-	ENCRYPTION_SECRET: "test-secret-with-enough-entropy",
-	REDIS_URL: "redis://localhost:6379",
-}));
+const envMock = vi.hoisted(() => {
+	vi.resetModules();
+
+	return {
+		ENCRYPTION_SECRET: "test-secret-with-enough-entropy",
+		REDIS_URL: "redis://localhost:6379",
+	};
+});
 
 vi.mock("@reactive-resume/env/server", () => ({ env: envMock }));
 
