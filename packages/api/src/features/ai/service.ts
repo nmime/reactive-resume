@@ -30,6 +30,7 @@ import { aiProviderSchema } from "@reactive-resume/ai/types";
 import { applyResumePatches } from "@reactive-resume/resume/patch";
 import { resumeAnalysisOutputSchema, resumeAnalysisSchema } from "@reactive-resume/schema/resume/analysis";
 import { supportsProviderNativeWebSearch } from "./capabilities";
+import { createOmniRouteCompatibleFetch, isOmniRouteBaseUrl } from "./omniroute-compat";
 import { resolveAiBaseUrl } from "./url-policy";
 
 const aiExtractionTemplate = buildAiExtractionTemplate();
@@ -76,9 +77,13 @@ const MAX_AI_FILE_BASE64_CHARS = Math.ceil((MAX_AI_FILE_BYTES * 4) / 3) + 4;
 export function getModel(input: GetModelInput) {
 	const { provider, model, apiKey } = input;
 	const baseURL = resolveAiBaseUrl(input);
+	const omniRouteFetch = createOmniRouteCompatibleFetch(baseURL);
+	const omniRouteOptions = isOmniRouteBaseUrl(baseURL)
+		? { headers: { accept: "application/json" }, ...(omniRouteFetch ? { fetch: omniRouteFetch } : {}) }
+		: {};
 
 	return match(provider)
-		.with("openai", () => createOpenAI({ apiKey, baseURL }).chat(model))
+		.with("openai", () => createOpenAI({ apiKey, baseURL, ...omniRouteOptions }).chat(model))
 		.with("anthropic", () => createAnthropic({ apiKey, baseURL }).languageModel(model))
 		.with("gemini", () => createGoogleGenerativeAI({ apiKey, baseURL }).languageModel(model))
 		.with("vercel-ai-gateway", () => createGateway({ apiKey, baseURL }).languageModel(model))

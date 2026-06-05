@@ -4,6 +4,7 @@ import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { aiProviderSchema } from "@reactive-resume/ai/types";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
+import { env } from "@reactive-resume/env/server";
 import {
 	assertCredentialEncryptionConfigured,
 	decryptCredential,
@@ -14,6 +15,8 @@ import { testConnection } from "../ai/service";
 import { resolveAiBaseUrl } from "../ai/url-policy";
 
 type AiProviderRecord = typeof schema.aiProvider.$inferSelect;
+
+export const SERVER_OMNIROUTE_PROVIDER_ID = "__server_omniroute__";
 
 export type AiProviderResponse = {
 	id: string;
@@ -51,6 +54,48 @@ type UpdateAiProviderInput = {
 	apiKey?: string;
 	enabled?: boolean;
 };
+
+type RunnableAiProvider = AiProviderResponse & { apiKey: string; baseURL: string };
+
+function getServerOmniRouteApiKey() {
+	return env.RXRESUME_AI_API_KEY?.trim() || null;
+}
+
+function getServerOmniRouteProvider(): AiProviderResponse | null {
+	if (!getServerOmniRouteApiKey()) return null;
+
+	const now = new Date(0);
+	return {
+		id: SERVER_OMNIROUTE_PROVIDER_ID,
+		label: env.RXRESUME_AI_LABEL,
+		provider: "openai",
+		model: env.RXRESUME_AI_MODEL,
+		baseURL: env.RXRESUME_AI_BASE_URL,
+		enabled: true,
+		testStatus: "success",
+		testError: null,
+		apiKeyPreview: "server-managed",
+		apiKeyFingerprint: "server-managed",
+		lastTestedAt: null,
+		lastUsedAt: null,
+		createdAt: now,
+		updatedAt: now,
+	};
+}
+
+function getServerOmniRouteRunnable(): RunnableAiProvider | null {
+	const provider = getServerOmniRouteProvider();
+	const apiKey = getServerOmniRouteApiKey();
+	if (!provider || !apiKey) return null;
+
+	return { ...provider, apiKey, baseURL: env.RXRESUME_AI_BASE_URL };
+}
+
+function assertNotServerOmniRouteProvider(id: string) {
+	if (id === SERVER_OMNIROUTE_PROVIDER_ID) {
+		throw new ORPCError("BAD_REQUEST", { message: "The server-managed AI provider cannot be modified." });
+	}
+}
 
 function toResponse(row: AiProviderRecord): AiProviderResponse {
 	const provider = aiProviderSchema.parse(row.provider);
@@ -104,7 +149,11 @@ async function getOwnedProvider(input: { id: string; userId: string }) {
 
 export const aiProvidersService = {
 	list: async (input: { userId: string }) => {
-		assertCredentialEncryptionConfigured();
+		const serverProvider = getServerOmniRouteProvider();
+		if (!env.ENCRYPTION_SECRET?.trim()) {
+			if (serverProvider) return [serverProvider];
+			assertCredentialEncryptionConfigured();
+		}
 
 		const providers = await db
 			.select()
@@ -112,10 +161,16 @@ export const aiProvidersService = {
 			.where(eq(schema.aiProvider.userId, input.userId))
 			.orderBy(orderByLastUsedAtDescNullsLast(), asc(schema.aiProvider.createdAt));
 
-		return providers.map(toResponse);
+		return [...(serverProvider ? [serverProvider] : []), ...providers.map(toResponse)];
 	},
 
 	getRunnableById: async (input: { id: string; userId: string }) => {
+		if (input.id === SERVER_OMNIROUTE_PROVIDER_ID) {
+			const runnable = getServerOmniRouteRunnable();
+			if (!runnable) throw new ORPCError("NOT_FOUND");
+			return runnable;
+		}
+
 		assertCredentialEncryptionConfigured();
 
 		const provider = await getOwnedProvider(input);
@@ -131,6 +186,9 @@ export const aiProvidersService = {
 	},
 
 	getDefaultRunnable: async (input: { userId: string }) => {
+		const serverProvider = getServerOmniRouteRunnable();
+		if (serverProvider) return serverProvider;
+
 		assertCredentialEncryptionConfigured();
 
 		const [provider] = await db
@@ -177,6 +235,7 @@ export const aiProvidersService = {
 	},
 
 	update: async (input: UpdateAiProviderInput) => {
+		assertNotServerOmniRouteProvider(input.id);
 		assertCredentialEncryptionConfigured();
 
 		const existing = await getOwnedProvider(input);
@@ -214,6 +273,8 @@ export const aiProvidersService = {
 	},
 
 	delete: async (input: { id: string; userId: string }) => {
+		if (input.id === SERVER_OMNIROUTE_PROVIDER_ID) return;
+
 		assertCredentialEncryptionConfigured();
 
 		await db
@@ -222,6 +283,7 @@ export const aiProvidersService = {
 	},
 
 	test: async (input: { id: string; userId: string }) => {
+		assertNotServerOmniRouteProvider(input.id);
 		assertCredentialEncryptionConfigured();
 
 		const provider = await getOwnedProvider(input);
@@ -267,6 +329,8 @@ export const aiProvidersService = {
 	},
 
 	markUsed: async (input: { id: string; userId: string }) => {
+		if (input.id === SERVER_OMNIROUTE_PROVIDER_ID) return;
+
 		await db
 			.update(schema.aiProvider)
 			.set({ lastUsedAt: new Date() })

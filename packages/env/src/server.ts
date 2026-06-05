@@ -69,6 +69,10 @@ export const env = createEnv({
 		// AI Agent Workspace (optional until the agent feature is used)
 		REDIS_URL: z.url({ protocol: /redis(s)?/ }).optional(),
 		ENCRYPTION_SECRET: z.string().min(32, "ENCRYPTION_SECRET must be at least 32 characters").optional(),
+		RXRESUME_AI_API_KEY: z.string().min(1).optional(),
+		RXRESUME_AI_MODEL: z.string().min(1).default("cx/gpt-5.5"),
+		RXRESUME_AI_BASE_URL: z.url({ protocol: /https?/ }).default("https://omni-route.funfiesta.games/v1"),
+		RXRESUME_AI_LABEL: z.string().min(1).default("OmniRoute AI"),
 
 		// Feature Flags
 		FLAG_DISABLE_SIGNUPS: z.stringbool().default(false),
