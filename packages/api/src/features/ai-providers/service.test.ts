@@ -216,9 +216,14 @@ function providerRow(overrides: Record<string, unknown> = {}) {
 describe("aiProvidersService", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		envMock.RXRESUME_AI_API_KEY = "";
 		queryState.rows = [];
 		queryState.whereArg = undefined;
 		queryState.orderByArgs = [];
+	});
+
+	afterEach(() => {
+		envMock.RXRESUME_AI_API_KEY = "test-provider-credential";
 	});
 
 	it("gets the first enabled and tested provider by creation order", async () => {
