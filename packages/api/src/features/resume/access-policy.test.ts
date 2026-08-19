@@ -53,13 +53,13 @@ describe("redactResumeForViewer", () => {
 		expect(redactResumeForViewer(resume, true)).toBe(resume);
 	});
 
-	it("strips name to empty for non-owner", () => {
+	it("replaces name with placeholder for non-owner", () => {
 		const resume = {
 			name: "Senior Eng @ Foo — final draft",
 			data: defaultResumeData,
 		};
 		const result = redactResumeForViewer(resume, false);
-		expect(result.name).toBe("");
+		expect(result.name).toBe("Resume");
 	});
 
 	it("strips metadata.notes for non-owner", () => {
@@ -69,6 +69,24 @@ describe("redactResumeForViewer", () => {
 		};
 		const result = redactResumeForViewer(resume, false);
 		expect(result.data.metadata.notes).toBe("");
+	});
+
+	it("preserves stylesheet source for an authorized non-owner", () => {
+		const source = { languageVersion: 1, text: "@version 1;\nresume { color: red; }\n" };
+		const resume = {
+			name: "Title",
+			data: {
+				...defaultResumeData,
+				metadata: {
+					...defaultResumeData.metadata,
+					stylesheet: { mode: "semantic" as const, source },
+				},
+			},
+		};
+
+		const result = redactResumeForViewer(resume, false);
+
+		expect(result.data.metadata.stylesheet).toEqual({ mode: "semantic", source });
 	});
 
 	it("preserves resume.data.basics.name (the person's name) for non-owner", () => {

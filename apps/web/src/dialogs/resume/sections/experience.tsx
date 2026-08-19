@@ -7,25 +7,18 @@ import { useStore } from "@tanstack/react-form";
 import { AnimatePresence, Reorder, useDragControls } from "motion/react";
 import { experienceItemSchema } from "@reactive-resume/schema/resume/data";
 import { Button } from "@reactive-resume/ui/components/button";
-import {
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from "@reactive-resume/ui/components/dialog";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { generateId } from "@reactive-resume/utils/string";
 import { RichInput } from "@/components/input/rich-input";
-import { URLInput } from "@/components/input/url-input";
 import { useDialogStore } from "@/dialogs/store";
 import { useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { makeSectionItem } from "@/libs/resume/make-section-item";
 import { createSectionItem, updateSectionItem } from "@/libs/resume/section-actions";
 import { useAppForm, withForm } from "@/libs/tanstack-form";
+import { SectionItemDialog } from "./section-item-dialog";
 
 const formSchema = experienceItemSchema;
 
@@ -50,7 +43,7 @@ export function CreateExperienceDialog({ data }: DialogProps<"resume.sections.ex
 	const form = useAppForm({
 		defaultValues: makeSectionItem(defaultValues, data?.item),
 		validators: { onSubmit: formSchema },
-		onSubmit: async ({ value }) => {
+		onSubmit: ({ value }) => {
 			updateResumeData((draft) => {
 				createSectionItem(draft, "experience", value, data?.customSectionId);
 			});
@@ -62,36 +55,16 @@ export function CreateExperienceDialog({ data }: DialogProps<"resume.sections.ex
 	const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
 
 	return (
-		<DialogContent>
-			<DialogHeader>
-				<DialogTitle className="flex items-center gap-x-2">
-					<PlusIcon />
-					<Trans>Create a new experience</Trans>
-				</DialogTitle>
-				<DialogDescription />
-			</DialogHeader>
-
-			<form
-				className="grid gap-4 sm:grid-cols-2"
-				onSubmit={(event) => {
-					event.preventDefault();
-					event.stopPropagation();
-					void form.handleSubmit();
-				}}
-			>
-				<ExperienceForm form={form} />
-
-				<DialogFooter className="sm:col-span-full">
-					<Button variant="ghost" onClick={requestClose}>
-						<Trans>Cancel</Trans>
-					</Button>
-
-					<Button type="submit" disabled={isSubmitting}>
-						<Trans>Create</Trans>
-					</Button>
-				</DialogFooter>
-			</form>
-		</DialogContent>
+		<SectionItemDialog
+			title={<Trans>Create a new experience</Trans>}
+			icon={<PlusIcon />}
+			onSubmit={() => void form.handleSubmit()}
+			onCancel={requestClose}
+			isSubmitting={isSubmitting}
+			submitLabel={<Trans>Create</Trans>}
+		>
+			<ExperienceForm form={form} />
+		</SectionItemDialog>
 	);
 }
 
@@ -102,7 +75,7 @@ export function UpdateExperienceDialog({ data }: DialogProps<"resume.sections.ex
 	const form = useAppForm({
 		defaultValues: data.item,
 		validators: { onSubmit: formSchema },
-		onSubmit: async ({ value }) => {
+		onSubmit: ({ value }) => {
 			updateResumeData((draft) => {
 				updateSectionItem(draft, "experience", value, data?.customSectionId);
 			});
@@ -114,36 +87,16 @@ export function UpdateExperienceDialog({ data }: DialogProps<"resume.sections.ex
 	const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
 
 	return (
-		<DialogContent>
-			<DialogHeader>
-				<DialogTitle className="flex items-center gap-x-2">
-					<PencilSimpleLineIcon />
-					<Trans>Update an existing experience</Trans>
-				</DialogTitle>
-				<DialogDescription />
-			</DialogHeader>
-
-			<form
-				className="grid gap-4 sm:grid-cols-2"
-				onSubmit={(event) => {
-					event.preventDefault();
-					event.stopPropagation();
-					void form.handleSubmit();
-				}}
-			>
-				<ExperienceForm form={form} />
-
-				<DialogFooter className="sm:col-span-full">
-					<Button variant="ghost" onClick={requestClose}>
-						<Trans>Cancel</Trans>
-					</Button>
-
-					<Button type="submit" disabled={isSubmitting}>
-						<Trans>Save Changes</Trans>
-					</Button>
-				</DialogFooter>
-			</form>
-		</DialogContent>
+		<SectionItemDialog
+			title={<Trans>Update an existing experience</Trans>}
+			icon={<PencilSimpleLineIcon />}
+			onSubmit={() => void form.handleSubmit()}
+			onCancel={requestClose}
+			isSubmitting={isSubmitting}
+			submitLabel={<Trans>Save Changes</Trans>}
+		>
+			<ExperienceForm form={form} />
+		</SectionItemDialog>
 	);
 }
 
@@ -168,24 +121,15 @@ const ExperienceForm = withForm({
 
 				<form.AppField name="period">{(field) => <field.TextField label={<Trans>Period</Trans>} />}</form.AppField>
 
-				<form.Field name="website">
+				<form.AppField name="website">
 					{(field) => (
-						<FormItem
-							className="sm:col-span-full"
-							hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
-						>
-							<FormLabel>
-								<Trans>Website</Trans>
-							</FormLabel>
-							<URLInput
-								value={field.state.value}
-								onChange={(v) => field.handleChange(v)}
-								hideLabelButton={inlineLink}
-							/>
-							<FormMessage errors={field.state.meta.errors} />
-						</FormItem>
+						<field.WebsiteField
+							label={<Trans>Website</Trans>}
+							formItemClassName="sm:col-span-full"
+							hideLabelButton={inlineLink}
+						/>
 					)}
-				</form.Field>
+				</form.AppField>
 
 				<form.Field name="website.inlineLink">
 					{(field) => (
@@ -265,20 +209,9 @@ const ExperienceForm = withForm({
 
 				{/* Single Role Description — only show when no roles are defined */}
 				{!hasRoles && (
-					<form.Field name="description">
-						{(field) => (
-							<FormItem
-								className="sm:col-span-full"
-								hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
-							>
-								<FormLabel>
-									<Trans>Description</Trans>
-								</FormLabel>
-								<FormControl render={<RichInput value={field.state.value} onChange={(v) => field.handleChange(v)} />} />
-								<FormMessage errors={field.state.meta.errors} />
-							</FormItem>
-						)}
-					</form.Field>
+					<form.AppField name="description">
+						{(field) => <field.RichTextField label={<Trans>Description</Trans>} formItemClassName="sm:col-span-full" />}
+					</form.AppField>
 				)}
 			</>
 		);

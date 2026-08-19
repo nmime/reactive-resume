@@ -26,6 +26,14 @@ describe("rgbaStringToHex", () => {
 		expect(rgbaStringToHex("#F1F5F9")).toBe("#f1f5f9");
 		expect(rgbaStringToHex("#0F172A")).toBe("#0f172a");
 	});
+
+	it("converts percentage-notation rgb via the @uiw fallback (integer parser misses it)", () => {
+		expect(rgbaStringToHex("rgb(100%, 0%, 0%)")).toBe("#ff0000");
+	});
+
+	it("returns black for formats neither parser nor @uiw understands", () => {
+		expect(rgbaStringToHex("not-a-color")).toBe("#000000");
+	});
 });
 
 describe("isDarkColor", () => {

@@ -4,12 +4,12 @@ import { ArrowRightIcon, EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
-import { toast } from "sonner";
 import { useToggle } from "usehooks-ts";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Input } from "@reactive-resume/ui/components/input";
+import { toast } from "@reactive-resume/ui/components/toast";
 import { authClient } from "@/libs/auth/client";
 import { orpc } from "@/libs/orpc/client";
 import { useAppForm } from "@/libs/tanstack-form";
@@ -38,7 +38,7 @@ export function LoginPage({ disableEmailAuth, disableSignups }: Props) {
 		defaultValues: { identifier: "", password: "" },
 		validators: { onSubmit: formSchema },
 		onSubmit: async ({ value }) => {
-			const toastId = toast.loading(t`Signing in...`);
+			const toastId = toast.add({ type: "loading", description: t`Signing in...` });
 
 			try {
 				const isEmail = value.identifier.includes("@");
@@ -48,14 +48,16 @@ export function LoginPage({ disableEmailAuth, disableSignups }: Props) {
 					: await authClient.signIn.username({ username: value.identifier, password: value.password });
 
 				if (result.error) {
-					toast.error(
-						result.error.message ||
+					toast.add({
+						type: "error",
+						description:
+							result.error.message ||
 							t({
 								comment: "Fallback toast when sign-in fails and no server error message is available",
 								message: "Failed to sign in. Please try again.",
 							}),
-						{ id: toastId },
-					);
+						id: toastId,
+					});
 					return;
 				}
 
@@ -66,16 +68,16 @@ export function LoginPage({ disableEmailAuth, disableSignups }: Props) {
 					result.data.twoFactorRedirect;
 
 				if (requiresTwoFactor) {
-					toast.dismiss(toastId);
+					toast.close(toastId);
 					void navigate({ to: "/auth/verify-2fa", replace: true });
 					return;
 				}
 
-				toast.dismiss(toastId);
+				toast.close(toastId);
 				await router.invalidate();
 				void navigate({ to: "/dashboard", replace: true });
 			} catch {
-				toast.error(t`Failed to sign in. Please try again.`, { id: toastId });
+				toast.add({ type: "error", description: t`Failed to sign in. Please try again.`, id: toastId });
 			}
 		},
 	});

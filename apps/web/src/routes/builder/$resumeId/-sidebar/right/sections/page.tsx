@@ -11,7 +11,7 @@ import {
 } from "@reactive-resume/ui/components/input-group";
 import { Switch } from "@reactive-resume/ui/components/switch";
 import { Combobox } from "@/components/ui/combobox";
-import { getLocaleOptions } from "@/features/locale/combobox";
+import { getLocaleOptions } from "@/features/locale/locale-options";
 import { useResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { useAppForm } from "@/libs/tanstack-form";
@@ -28,6 +28,11 @@ export function PageSectionBuilder() {
 const formSchema = pageSchema;
 
 type FormValues = z.infer<typeof formSchema>;
+
+const CLAMP_MIN = 0;
+const CLAMP_MAX = 100;
+
+const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
 function PageSectionForm() {
 	const resume = useResume();
@@ -50,8 +55,26 @@ function PageSectionForm() {
 	useSyncFormValues(form, page);
 
 	const handleAutoSave = <K extends keyof FormValues>(name: K, value: FormValues[K]) => {
-		persist({ ...form.state.values, [name]: value });
+		const next = { ...form.state.values, [name]: value };
+		// Keep last-saved numeric page fields when the form holds a transient empty/NaN value
+		for (const key of ["marginX", "marginY", "gapX", "gapY"] as const) {
+			if (!Number.isFinite(next[key])) next[key] = page?.[key] ?? 0;
+		}
+		persist(next);
 	};
+
+	const pageNumberFields = [
+		{ name: "marginX" as const, label: <Trans>Margin (Horizontal)</Trans>, min: CLAMP_MIN, max: CLAMP_MAX },
+		{ name: "marginY" as const, label: <Trans>Margin (Vertical)</Trans>, min: CLAMP_MIN, max: CLAMP_MAX },
+		{ name: "gapX" as const, label: <Trans>Spacing (Horizontal)</Trans>, min: 0, max: undefined },
+		{ name: "gapY" as const, label: <Trans>Spacing (Vertical)</Trans>, min: 0, max: undefined },
+	];
+
+	const pageSwitchFields = [
+		{ name: "hideLinkUnderline" as const, label: <Trans>Hide Link Underline</Trans> },
+		{ name: "hideIcons" as const, label: <Trans>Hide Icons</Trans> },
+		{ name: "hideSectionIcons" as const, label: <Trans>Hide Section Icons</Trans> },
+	];
 
 	return (
 		<form
@@ -120,215 +143,73 @@ function PageSectionForm() {
 				)}
 			</form.Field>
 
-			<form.Field name="marginX">
-				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-						<FormLabel>
-							<Trans>Margin (Horizontal)</Trans>
-						</FormLabel>
-						<InputGroup>
-							<FormControl
-								render={
-									<InputGroupInput
-										name={field.name}
-										value={field.state.value}
-										min={0}
-										max={100}
-										step={1}
-										type="number"
-										onBlur={field.handleBlur}
-										onChange={(e) => {
-											const value = e.target.value;
-											const marginX = value === "" ? ("" as unknown as number) : Number(value);
-											field.handleChange(marginX);
-											handleAutoSave("marginX", marginX);
-										}}
-									/>
-								}
-							/>
-							<InputGroupAddon align="inline-end">
-								<InputGroupText>pt</InputGroupText>
-							</InputGroupAddon>
-						</InputGroup>
-						<FormMessage errors={field.state.meta.errors} />
-					</FormItem>
-				)}
-			</form.Field>
+			{pageNumberFields.map(({ name, label, min, max }) => (
+				<form.Field key={name} name={name}>
+					{(field) => (
+						<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+							<FormLabel>{label}</FormLabel>
+							<InputGroup>
+								<FormControl
+									render={
+										<InputGroupInput
+											name={field.name}
+											value={Number.isFinite(field.state.value) ? field.state.value : ""}
+											min={min}
+											{...(max !== undefined ? { max } : {})}
+											step={1}
+											type="number"
+											onBlur={field.handleBlur}
+											onChange={(e) => {
+												const v = e.target.value;
+												if (v === "") {
+													// Allow clearing the controlled input without persisting invalid metadata
+													field.handleChange(Number.NaN);
+													return;
+												}
 
-			<form.Field name="marginY">
-				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-						<FormLabel>
-							<Trans>Margin (Vertical)</Trans>
-						</FormLabel>
-						<InputGroup>
-							<FormControl
-								render={
-									<InputGroupInput
-										name={field.name}
-										value={field.state.value}
-										min={0}
-										max={100}
-										step={1}
-										type="number"
-										onBlur={field.handleBlur}
-										onChange={(e) => {
-											const value = e.target.value;
-											const marginY = value === "" ? ("" as unknown as number) : Number(value);
-											field.handleChange(marginY);
-											handleAutoSave("marginY", marginY);
-										}}
-									/>
-								}
-							/>
-							<InputGroupAddon align="inline-end">
-								<InputGroupText>pt</InputGroupText>
-							</InputGroupAddon>
-						</InputGroup>
-						<FormMessage errors={field.state.meta.errors} />
-					</FormItem>
-				)}
-			</form.Field>
+												const raw = Number(v);
+												if (!Number.isFinite(raw)) return;
 
-			<form.Field name="gapX">
-				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-						<FormLabel>
-							<Trans>Spacing (Horizontal)</Trans>
-						</FormLabel>
-						<InputGroup>
-							<FormControl
-								render={
-									<InputGroupInput
-										name={field.name}
-										value={field.state.value}
-										min={0}
-										step={1}
-										type="number"
-										onBlur={field.handleBlur}
-										onChange={(e) => {
-											const value = e.target.value;
-											const gapX = value === "" ? ("" as unknown as number) : Number(value);
-											field.handleChange(gapX);
-											handleAutoSave("gapX", gapX);
-										}}
-									/>
-								}
-							/>
-							<InputGroupAddon align="inline-end">
-								<InputGroupText>pt</InputGroupText>
-							</InputGroupAddon>
-						</InputGroup>
-						<FormMessage errors={field.state.meta.errors} />
-					</FormItem>
-				)}
-			</form.Field>
-
-			<form.Field name="gapY">
-				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-						<FormLabel>
-							<Trans>Spacing (Vertical)</Trans>
-						</FormLabel>
-						<InputGroup>
-							<FormControl
-								render={
-									<InputGroupInput
-										name={field.name}
-										value={field.state.value}
-										min={0}
-										step={1}
-										type="number"
-										onBlur={field.handleBlur}
-										onChange={(e) => {
-											const value = e.target.value;
-											const gapY = value === "" ? ("" as unknown as number) : Number(value);
-											field.handleChange(gapY);
-											handleAutoSave("gapY", gapY);
-										}}
-									/>
-								}
-							/>
-							<InputGroupAddon align="inline-end">
-								<InputGroupText>pt</InputGroupText>
-							</InputGroupAddon>
-						</InputGroup>
-						<FormMessage errors={field.state.meta.errors} />
-					</FormItem>
-				)}
-			</form.Field>
-
-			<form.Field name="hideLinkUnderline">
-				{(field) => (
-					<FormItem
-						className="col-span-full flex items-center gap-x-3 py-1"
-						hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
-					>
-						<FormControl
-							render={
-								<Switch
-									checked={field.state.value}
-									onCheckedChange={(checked) => {
-										field.handleChange(checked);
-										handleAutoSave("hideLinkUnderline", checked);
-									}}
+												const num = max !== undefined ? clamp(raw, min ?? 0, max) : Math.max(raw, min ?? 0);
+												field.handleChange(num);
+												handleAutoSave(name, num);
+											}}
+										/>
+									}
 								/>
-							}
-						/>
-						<FormLabel>
-							<Trans>Hide Link Underline</Trans>
-						</FormLabel>
-					</FormItem>
-				)}
-			</form.Field>
+								<InputGroupAddon align="inline-end">
+									<InputGroupText>pt</InputGroupText>
+								</InputGroupAddon>
+							</InputGroup>
+							<FormMessage errors={field.state.meta.errors} />
+						</FormItem>
+					)}
+				</form.Field>
+			))}
 
-			<form.Field name="hideIcons">
-				{(field) => (
-					<FormItem
-						className="col-span-full flex items-center gap-x-3 py-1"
-						hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
-					>
-						<FormControl
-							render={
-								<Switch
-									checked={field.state.value}
-									onCheckedChange={(checked) => {
-										field.handleChange(checked);
-										handleAutoSave("hideIcons", checked);
-									}}
-								/>
-							}
-						/>
-						<FormLabel>
-							<Trans>Hide Icons</Trans>
-						</FormLabel>
-					</FormItem>
-				)}
-			</form.Field>
-
-			<form.Field name="hideSectionIcons">
-				{(field) => (
-					<FormItem
-						className="col-span-full flex items-center gap-x-3 py-1"
-						hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
-					>
-						<FormControl
-							render={
-								<Switch
-									checked={field.state.value}
-									onCheckedChange={(checked) => {
-										field.handleChange(checked);
-										handleAutoSave("hideSectionIcons", checked);
-									}}
-								/>
-							}
-						/>
-						<FormLabel>
-							<Trans>Hide Section Icons</Trans>
-						</FormLabel>
-					</FormItem>
-				)}
-			</form.Field>
+			{pageSwitchFields.map(({ name, label }) => (
+				<form.Field key={name} name={name}>
+					{(field) => (
+						<FormItem
+							className="col-span-full flex items-center gap-x-3 py-1"
+							hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+						>
+							<FormControl
+								render={
+									<Switch
+										checked={field.state.value}
+										onCheckedChange={(checked) => {
+											field.handleChange(checked);
+											handleAutoSave(name, checked);
+										}}
+									/>
+								}
+							/>
+							<FormLabel>{label}</FormLabel>
+						</FormItem>
+					)}
+				</form.Field>
+			))}
 		</form>
 	);
 }

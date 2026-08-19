@@ -39,6 +39,7 @@ import { cn } from "@reactive-resume/utils/style";
 import { useDialogStore } from "@/dialogs/store";
 import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useConfirm } from "@/hooks/use-confirm";
+import { atsFindingItemElementId } from "@/libs/resume/ats";
 import {
 	addItemToSection,
 	createCustomSectionWithItem,
@@ -244,6 +245,7 @@ export function SectionItem<T extends CustomSectionItem | SectionItemType>({
 	return (
 		<Reorder.Item
 			key={item.id}
+			id={atsFindingItemElementId(item.id)}
 			value={item}
 			dragListener={false}
 			dragControls={controls}
@@ -276,7 +278,10 @@ export function SectionItem<T extends CustomSectionItem | SectionItemType>({
 			</button>
 
 			<DropdownMenu>
-				<DropdownMenuTrigger className="flex cursor-context-menu items-center px-1.5 opacity-40 transition-[background-color,opacity] hover:bg-secondary/40 focus:outline-none focus-visible:ring-1 group-hover:opacity-100">
+				<DropdownMenuTrigger
+					aria-label={t`Options for ${title}`}
+					className="flex cursor-context-menu items-center px-1.5 opacity-40 transition-[background-color,opacity] hover:bg-secondary/40 focus:outline-none focus-visible:ring-1 group-hover:opacity-100"
+				>
 					<DotsThreeVerticalIcon />
 				</DropdownMenuTrigger>
 

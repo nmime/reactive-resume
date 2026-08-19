@@ -37,7 +37,6 @@ export const CustomFieldsSection = withForm({
 						values={customFieldsField.state.value}
 						onReorder={(fields) => {
 							customFieldsField.setValue(fields);
-							void form.handleSubmit();
 						}}
 					>
 						{customFieldsField.state.value.map((field: CustomField, index: number) => (
@@ -53,7 +52,6 @@ export const CustomFieldsSection = withForm({
 														className="rounded-r-none! border-e-0!"
 														onChange={(icon) => {
 															iconField.handleChange(icon);
-															void form.handleSubmit();
 														}}
 													/>
 												}
@@ -73,7 +71,6 @@ export const CustomFieldsSection = withForm({
 														className="rounded-l-none!"
 														onChange={(e) => {
 															textField.handleChange(e.target.value);
-															void form.handleSubmit();
 														}}
 													/>
 												}
@@ -87,7 +84,7 @@ export const CustomFieldsSection = withForm({
 										<Popover>
 											<PopoverTrigger
 												render={
-													<Button size="icon" variant="ghost" className="ms-1">
+													<Button size="icon" variant="ghost" aria-label={t`Add link`} className="ms-1">
 														<LinkIcon />
 													</Button>
 												}
@@ -109,7 +106,6 @@ export const CustomFieldsSection = withForm({
 														})}
 														onChange={(e) => {
 															linkField.handleChange(e.target.value);
-															void form.handleSubmit();
 														}}
 													/>
 												</div>
@@ -121,9 +117,9 @@ export const CustomFieldsSection = withForm({
 								<Button
 									size="icon"
 									variant="ghost"
+									aria-label={t`Remove custom field`}
 									onClick={() => {
 										customFieldsField.removeValue(index);
-										void form.handleSubmit();
 									}}
 								>
 									<XIcon />
@@ -135,7 +131,6 @@ export const CustomFieldsSection = withForm({
 							variant="ghost"
 							onClick={() => {
 								customFieldsField.pushValue({ id: generateId(), icon: "acorn", text: "", link: "" });
-								void form.handleSubmit();
 							}}
 						>
 							<ListPlusIcon />
@@ -169,6 +164,7 @@ function CustomFieldItem({ field, children }: CustomFieldItemProps) {
 			<Button
 				size="icon"
 				variant="ghost"
+				aria-label={t`Reorder custom field`}
 				className="me-2 touch-none"
 				onPointerDown={(e) => {
 					e.preventDefault();

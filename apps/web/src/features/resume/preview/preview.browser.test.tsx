@@ -2,12 +2,14 @@
 
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import { render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { i18n } from "@lingui/core";
 import { sampleResumeData } from "@reactive-resume/schema/resume/sample";
 import { ResumePreviewClient } from "./preview.browser";
 
 const previewMock = vi.hoisted(() => ({
 	builderResumeData: undefined as ResumeData | undefined,
+	toastAdd: vi.fn(),
 	toBlob: vi.fn(async () => new Blob(["%PDF"], { type: "application/pdf" })),
 }));
 
@@ -38,8 +40,13 @@ vi.mock("@/features/resume/export/pdf-document", () => ({
 	createResumePdfBlob: previewMock.toBlob,
 }));
 
+vi.mock("@reactive-resume/ui/components/toast", () => ({
+	toast: { add: previewMock.toastAdd },
+}));
+
 vi.mock("../builder/draft", () => ({
 	useResumeData: () => previewMock.builderResumeData,
+	usePreviewPausedStore: (selector: (state: { paused: boolean }) => unknown) => selector({ paused: false }),
 }));
 
 vi.mock("./pdf-canvas", async () => {
@@ -50,7 +57,7 @@ vi.mock("./pdf-canvas", async () => {
 		PdfCanvasDocument: ({ children, onLoadSuccess }: PdfCanvasDocumentProps) => {
 			React.useEffect(() => {
 				onLoadSuccess(pdfDocument);
-			}, [onLoadSuccess]);
+			}, []);
 
 			return React.createElement(React.Fragment, null, children(pdfDocument));
 		},
@@ -58,7 +65,7 @@ vi.mock("./pdf-canvas", async () => {
 			React.useEffect(() => {
 				onLoadSuccess(pageNumber, { height: 200, width: 100 });
 				onRenderSuccess?.();
-			}, [onLoadSuccess, onRenderSuccess, pageNumber]);
+			}, [pageNumber]);
 
 			return React.createElement(
 				"div",
@@ -70,10 +77,15 @@ vi.mock("./pdf-canvas", async () => {
 });
 
 describe("ResumePreviewClient", () => {
+	beforeAll(() => {
+		i18n.loadAndActivate({ locale: "en", messages: {} });
+	});
+
 	beforeEach(() => {
 		previewMock.builderResumeData = undefined;
 		previewMock.toBlob.mockReset();
 		previewMock.toBlob.mockImplementation(async () => new Blob(["%PDF"], { type: "application/pdf" }));
+		previewMock.toastAdd.mockReset();
 	});
 
 	it("renders a loading placeholder for each builder layout page while the PDF is generated", () => {
@@ -97,5 +109,67 @@ describe("ResumePreviewClient", () => {
 		});
 
 		expect(previewMock.toBlob).toHaveBeenCalledWith(sampleResumeData);
+	});
+
+	it("keeps the rendered template identity on the active layer while its replacement renders", async () => {
+		const view = render(
+			<ResumePreviewClient data={sampleResumeData} pageLayout="vertical" pageScale={1.25} showPageNumbers={false} />,
+		);
+		const page = await screen.findByRole("img", { name: "Resume page 1 of 1" });
+		const activeLayer = page.closest('[aria-hidden="false"]');
+		expect(activeLayer?.getAttribute("data-resume-preview-template")).toBe("azurill");
+
+		previewMock.toBlob.mockImplementationOnce(() => new Promise<Blob>(() => {}));
+		const glalieData: ResumeData = {
+			...sampleResumeData,
+			metadata: { ...sampleResumeData.metadata, template: "glalie" },
+		};
+		view.rerender(
+			<ResumePreviewClient data={glalieData} pageLayout="vertical" pageScale={1.25} showPageNumbers={false} />,
+		);
+
+		await waitFor(() => expect(previewMock.toBlob).toHaveBeenCalledTimes(2));
+		expect(activeLayer?.getAttribute("data-resume-preview-template")).toBe("azurill");
+	});
+
+	it("renders the current stylesheet source from the ordinary builder draft", async () => {
+		const source = { languageVersion: 1, text: "section {" };
+		previewMock.builderResumeData = {
+			...sampleResumeData,
+			metadata: {
+				...sampleResumeData.metadata,
+				stylesheet: { mode: "semantic", source },
+			},
+		};
+
+		render(<ResumePreviewClient pageLayout="vertical" pageScale={1.25} showPageNumbers={false} />);
+
+		await waitFor(() => expect(previewMock.toBlob).toHaveBeenCalledTimes(1));
+		expect(previewMock.toBlob).toHaveBeenCalledWith(previewMock.builderResumeData);
+
+		expect(previewMock.toBlob).toHaveBeenCalledTimes(1);
+	});
+
+	it("keeps the active PDF visible and reports a later renderer failure", async () => {
+		previewMock.builderResumeData = sampleResumeData;
+		const view = render(<ResumePreviewClient pageLayout="vertical" pageScale={1.25} showPageNumbers={false} />);
+		expect(await screen.findByRole("img", { name: "Resume page 1 of 1" })).toBeTruthy();
+
+		previewMock.toBlob.mockRejectedValueOnce(new Error("PDF renderer failed"));
+		previewMock.builderResumeData = {
+			...sampleResumeData,
+			metadata: {
+				...sampleResumeData.metadata,
+				stylesheet: {
+					mode: "semantic",
+					source: { languageVersion: 1, text: "@version 1;\nname { color: #654321; }\n" },
+				},
+			},
+		};
+		view.rerender(<ResumePreviewClient pageLayout="vertical" pageScale={1.25} showPageNumbers={false} />);
+
+		await waitFor(() => expect(previewMock.toBlob).toHaveBeenCalledTimes(2));
+		await waitFor(() => expect(previewMock.toastAdd).toHaveBeenCalledTimes(1));
+		expect(screen.getByRole("img", { name: "Resume page 1 of 1" })).toBeTruthy();
 	});
 });

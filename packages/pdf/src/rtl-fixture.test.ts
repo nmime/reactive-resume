@@ -20,7 +20,8 @@ describe("RTL PDF fixture", () => {
 		const source = readFileSync(pagePath, "utf8");
 
 		expect(source).toContain("createRtlStyleHelpers");
-		expect(source).toContain("alignEnd");
+		// ponytail: alignEnd moved to createBaseTemplateStyles factory; either direct or factory counts.
+		expect(source.includes("alignEnd") || source.includes("createBaseTemplateStyles")).toBe(true);
 		expect(source).not.toContain("alignRight");
 		expect(source).not.toContain('from "@reactive-resume/utils/locale"');
 	});

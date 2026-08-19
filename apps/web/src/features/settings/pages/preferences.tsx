@@ -9,7 +9,7 @@ import { ThemeCombobox } from "@/features/theme/combobox";
 export function PreferencesSettingsPage() {
 	return (
 		<m.div
-			initial={{ opacity: 0, y: -20 }}
+			initial={{ y: -20 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.25, ease: "easeOut" }}
 			className="grid max-w-xl gap-6 will-change-[transform,opacity]"
@@ -30,7 +30,7 @@ export function PreferencesSettingsPage() {
 					size="sm"
 					variant="link"
 					nativeButton={false}
-					className="h-5 justify-start text-muted-foreground text-xs active:scale-100"
+					className="h-5 justify-start text-muted-foreground text-xs"
 					render={
 						<a href="https://crowdin.com/project/reactive-resume" target="_blank" rel="noopener noreferrer">
 							<Trans>Help translate the app to your language</Trans>

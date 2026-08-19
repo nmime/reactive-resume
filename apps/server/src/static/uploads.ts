@@ -1,7 +1,6 @@
 import { createHash } from "node:crypto";
 import { basename, extname, normalize } from "node:path";
-import { getStorageService } from "@reactive-resume/api/features/storage";
-import { env } from "@reactive-resume/env/server";
+import { getStorageService, inferContentType } from "@reactive-resume/api/features/storage";
 
 export async function handleUpload(request: Request) {
 	const { userId, filePath } = parseRouteParams(request.url);
@@ -18,41 +17,31 @@ export async function handleUpload(request: Request) {
 
 	const filename = filePath.split("/").pop() ?? filePath;
 	const ext = extname(filename).toLowerCase();
-	const contentType = storedFile.contentType ?? inferContentTypeFromExtension(ext);
+	const contentType = storedFile.contentType ?? inferContentType(filename);
 	const etag = createEtag(storedFile);
 
 	if (isNotModified(request.headers, etag)) return makeNotModifiedResponse(etag);
 
 	const shouldForceDownload = [".pdf"].includes(ext);
-	const headers = buildResponseHeaders({
-		filename,
-		storedFile,
-		contentType,
-		etag,
-		shouldForceDownload,
-	});
 
-	const buffer = toArrayBuffer(storedFile.data);
+	const headers = new Headers();
+	headers.set("Content-Type", shouldForceDownload ? "application/octet-stream" : contentType);
+	headers.set("Content-Length", storedFile.size.toString());
 
-	return new Response(buffer, { headers });
-}
-
-function inferContentTypeFromExtension(ext: string): string {
-	switch (ext) {
-		case ".webp":
-			return "image/webp";
-		case ".png":
-			return "image/png";
-		case ".jpg":
-		case ".jpeg":
-			return "image/jpeg";
-		case ".gif":
-			return "image/gif";
-		case ".pdf":
-			return "application/pdf";
-		default:
-			return "application/octet-stream";
+	if (shouldForceDownload) {
+		headers.set("Content-Disposition", `attachment; filename="${encodeURIComponent(basename(filename))}"`);
 	}
+
+	headers.set("Cache-Control", "public, max-age=31536000, immutable");
+	headers.set("ETag", etag);
+	headers.set("X-Content-Type-Options", "nosniff");
+	headers.set("X-Robots-Tag", "noindex, nofollow");
+	headers.set("Cross-Origin-Resource-Policy", "same-site");
+	headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+	headers.set("X-Frame-Options", "DENY");
+	headers.set("X-Download-Options", "noopen");
+
+	return new Response(toArrayBuffer(storedFile.data), { headers });
 }
 
 function parseRouteParams(url: string): { userId: string | undefined; filePath: string | undefined } {
@@ -99,43 +88,6 @@ function makeNotModifiedResponse(etag: string): Response {
 		status: 304,
 		headers: { ETag: etag, "Cache-Control": "public, max-age=31536000, immutable" },
 	});
-}
-
-type BuildResponseHeaderArgs = {
-	filename: string;
-	storedFile: { size: number };
-	contentType: string;
-	etag: string;
-	shouldForceDownload: boolean;
-};
-
-function buildResponseHeaders({
-	filename,
-	storedFile,
-	contentType,
-	etag,
-	shouldForceDownload,
-}: BuildResponseHeaderArgs): Headers {
-	const headers = new Headers();
-
-	headers.set("Content-Type", shouldForceDownload ? "application/octet-stream" : contentType);
-	headers.set("Content-Length", storedFile.size.toString());
-
-	if (shouldForceDownload) {
-		headers.set("Content-Disposition", `attachment; filename="${encodeURIComponent(basename(filename))}"`);
-	}
-
-	headers.set("Cache-Control", "public, max-age=31536000, immutable");
-	headers.set("ETag", etag);
-	headers.set("X-Content-Type-Options", "nosniff");
-	headers.set("X-Robots-Tag", "noindex, nofollow");
-	headers.set("Cross-Origin-Resource-Policy", "same-site");
-	headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-	headers.set("X-Frame-Options", "DENY");
-	headers.set("X-Download-Options", "noopen");
-	headers.set("Access-Control-Allow-Origin", env.APP_URL);
-
-	return headers;
 }
 
 function toArrayBuffer(data: Uint8Array): ArrayBuffer {

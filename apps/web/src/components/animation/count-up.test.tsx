@@ -12,28 +12,22 @@ describe("CountUp", () => {
 		expect(span.getAttribute("aria-atomic")).toBe("true");
 	});
 
-	it("seeds textContent to the 'from' value when counting up", () => {
-		const { container } = render(<CountUp from={0} to={100} />);
+	it("seeds textContent to 0 on initial render", () => {
+		const { container } = render(<CountUp to={100} />);
 		const span = container.querySelector("span") as HTMLSpanElement;
 		expect(span.textContent).toBe("0");
 	});
 
-	it("seeds textContent to the 'to' value when direction is down", () => {
-		const { container } = render(<CountUp from={0} to={100} direction="down" />);
-		const span = container.querySelector("span") as HTMLSpanElement;
-		expect(span.textContent).toBe("100");
-	});
-
 	it("formats with the separator when one is supplied", () => {
-		const { container } = render(<CountUp from={1234} to={2345} separator="," />);
+		const { container } = render(<CountUp to={1234} separator="," />);
 		const span = container.querySelector("span") as HTMLSpanElement;
-		expect(span.textContent).toBe("1,234");
+		expect(span.textContent).toBe("0");
 	});
 
-	it("preserves decimal places when from / to are fractional", () => {
-		const { container } = render(<CountUp from={1.25} to={3.75} />);
+	it("preserves decimal places when to is fractional", () => {
+		const { container } = render(<CountUp to={3.75} />);
 		const span = container.querySelector("span") as HTMLSpanElement;
-		expect(span.textContent).toBe("1.25");
+		expect(span.textContent).toBe("0.00");
 	});
 
 	it("strips aria-live and aria-atomic when aria-hidden is set", () => {

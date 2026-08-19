@@ -1,6 +1,7 @@
 import type { Style } from "@react-pdf/types";
 import type { StyleInput } from "./styles";
 import { NodeType } from "node-html-parser";
+import { parseFiniteNumber, parsePxValue, parseStyleFontSize } from "./icon-size";
 import { composeStyles } from "./styles";
 
 type RichTextSpacingElement = {
@@ -17,19 +18,6 @@ type RichTextProseSpacing = {
 	paragraph: Style;
 	listItem: Style;
 };
-
-const parseFiniteNumber = (value: unknown): number | undefined =>
-	typeof value === "number" && Number.isFinite(value) ? value : undefined;
-
-const parsePxValue = (value: unknown): number | undefined => {
-	if (typeof value !== "string" || !value.endsWith("px")) return undefined;
-
-	const parsedValue = Number.parseFloat(value);
-	return Number.isFinite(parsedValue) ? parsedValue : undefined;
-};
-
-const parseFontSize = (fontSize: Style["fontSize"]): number | undefined =>
-	parseFiniteNumber(fontSize) ?? parsePxValue(fontSize);
 
 const parseLineHeight = (
 	lineHeight: Style["lineHeight"],
@@ -129,7 +117,7 @@ export const resolveRichTextBodyLineHeight = (...styles: StyleInput[]): number |
 	let bodyLineHeight: ReturnType<typeof parseLineHeight>;
 
 	for (const style of composeStyles(...styles)) {
-		const fontSize = parseFontSize(style.fontSize);
+		const fontSize = parseStyleFontSize(style.fontSize);
 		if (fontSize !== undefined) bodyFontSize = fontSize;
 
 		const lineHeight = parseLineHeight(style.lineHeight);

@@ -2,17 +2,21 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import {
 	CaretDownIcon,
+	CheckCircleIcon,
+	CircleNotchIcon,
 	CopySimpleIcon,
+	DownloadSimpleIcon,
 	HouseSimpleIcon,
 	LockSimpleIcon,
 	LockSimpleOpenIcon,
 	PencilSimpleLineIcon,
 	SidebarSimpleIcon,
 	TrashSimpleIcon,
+	WarningCircleIcon,
 } from "@phosphor-icons/react";
 import { useMutation } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { toast } from "sonner";
+import { match } from "ts-pattern";
 import { Button } from "@reactive-resume/ui/components/button";
 import {
 	DropdownMenu,
@@ -21,31 +25,47 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@reactive-resume/ui/components/dropdown-menu";
+import { toast } from "@reactive-resume/ui/components/toast";
 import { useDialogStore } from "@/dialogs/store";
-import { useCurrentResume, usePatchResume } from "@/features/resume/builder/draft";
+import {
+	useCurrentBuilderResumeSelector,
+	useCurrentResume,
+	usePatchResume,
+	useResumeStore,
+} from "@/features/resume/builder/draft";
+import { ResumeDownloadDialog } from "@/features/resume/export/download-dialog";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getResumeErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 import { useBuilderSidebar } from "../-store/sidebar";
+import { BuilderAiAssistant } from "./ai-assistant";
+import { BuilderVersionHistory } from "./version-history";
 
 export function BuilderHeader() {
-	const resume = useCurrentResume();
-	const name = resume.name;
-	const isLocked = resume.isLocked;
-	const toggleSidebar = useBuilderSidebar((state) => state.toggleSidebar);
+	// Subscribe to only the metadata fields this header renders. Selecting the whole resume re-renders
+	// the header on every keystroke (immer replaces the resume reference on each content edit).
+	const name = useCurrentBuilderResumeSelector((resume) => resume.name);
+	const isLocked = useCurrentBuilderResumeSelector((resume) => resume.isLocked);
+	const resumeId = useCurrentBuilderResumeSelector((resume) => resume.id);
+	const { toggleSidebar } = useBuilderSidebar();
 
+	// Equal-width flex-1 side groups keep the center title group truly centered regardless of the
+	// wider Download button on the right.
 	return (
-		<div className="absolute inset-x-0 top-0 z-50 flex h-14 items-center justify-between border-b bg-popover px-1.5">
-			<Button size="icon" variant="ghost" onClick={() => toggleSidebar("left")}>
-				<SidebarSimpleIcon />
-				<span className="sr-only">
-					<Trans comment="Screen-reader label for opening or closing the left sidebar in resume builder">
-						Toggle left sidebar
-					</Trans>
-				</span>
-			</Button>
+		<div className="absolute inset-x-0 top-0 z-50 flex h-14 min-w-0 items-center gap-x-2 border-b bg-popover px-1.5">
+			<div className="flex min-w-0 flex-1 items-center justify-start">
+				{/* Hidden below `md`: on mobile the sidebar panels never mount, so `toggleSidebar` no-ops — the bottom tab bar handles this. */}
+				<Button size="icon" variant="ghost" className="hidden md:flex" onClick={() => toggleSidebar("left")}>
+					<SidebarSimpleIcon />
+					<span className="sr-only">
+						<Trans comment="Screen-reader label for opening or closing the left sidebar in resume builder">
+							Toggle left sidebar
+						</Trans>
+					</span>
+				</Button>
+			</div>
 
-			<div className="flex items-center gap-x-1">
+			<div className="flex min-w-0 items-center gap-x-1">
 				<Button
 					size="icon"
 					variant="ghost"
@@ -61,20 +81,85 @@ export function BuilderHeader() {
 					}
 				/>
 				<span className="me-2.5 text-muted-foreground">/</span>
-				<h2 className="flex-1 truncate font-medium">{name}</h2>
+				<h2 className="min-w-0 truncate font-medium">{name}</h2>
 				{isLocked && <LockSimpleIcon className="ms-2 text-muted-foreground" />}
+				<SaveStatusIndicator />
+				<BuilderAiAssistant resumeId={resumeId} />
+				<BuilderVersionHistory resumeId={resumeId} />
 				<BuilderHeaderDropdown />
 			</div>
 
-			<Button size="icon" variant="ghost" onClick={() => toggleSidebar("right")}>
-				<SidebarSimpleIcon className="-scale-x-100" />
-				<span className="sr-only">
-					<Trans comment="Screen-reader label for opening or closing the right sidebar in resume builder">
-						Toggle right sidebar
-					</Trans>
-				</span>
-			</Button>
+			<div className="flex min-w-0 flex-1 items-center justify-end gap-x-1">
+				<ResumeDownloadButton />
+
+				<Button size="icon" variant="ghost" className="hidden md:flex" onClick={() => toggleSidebar("right")}>
+					<SidebarSimpleIcon className="-scale-x-100" />
+					<span className="sr-only">
+						<Trans comment="Screen-reader label for opening or closing the right sidebar in resume builder">
+							Toggle right sidebar
+						</Trans>
+					</span>
+				</Button>
+			</div>
 		</div>
+	);
+}
+
+function ResumeDownloadButton() {
+	const resume = useCurrentResume();
+
+	return (
+		<ResumeDownloadDialog
+			resume={resume}
+			trigger={(disabled) => (
+				<Button
+					size="sm"
+					aria-label={t({
+						comment: "Primary action in the builder header to open resume download options",
+						message: "Download options",
+					})}
+					disabled={disabled}
+					className="px-2 sm:px-2.5"
+				>
+					{disabled ? (
+						<CircleNotchIcon className="animate-spin sm:me-1.5" />
+					) : (
+						<DownloadSimpleIcon className="sm:me-1.5" />
+					)}
+					<span className="hidden sm:inline">
+						<Trans comment="Primary action in the builder header to open resume download options">Download</Trans>
+					</span>
+				</Button>
+			)}
+		/>
+	);
+}
+
+function SaveStatusIndicator() {
+	const status = useResumeStore((state) => state.saveStatus);
+	if (status === "idle") return null;
+
+	const { icon, label } = match(status)
+		.with("saving", () => ({
+			icon: <CircleNotchIcon className="animate-spin" />,
+			label: t`Saving…`,
+		}))
+		.with("saved", () => ({ icon: <CheckCircleIcon />, label: t`Saved` }))
+		.with("error", () => ({
+			icon: <WarningCircleIcon className="text-destructive" />,
+			label: t`Couldn't save`,
+		}))
+		.exhaustive();
+
+	return (
+		<span
+			className="ms-1 flex shrink-0 items-center gap-x-1 text-muted-foreground text-xs"
+			aria-live="polite"
+			role="status"
+		>
+			{icon}
+			<span className="hidden md:inline">{label}</span>
+		</span>
 	);
 }
 
@@ -120,7 +205,7 @@ function BuilderHeaderDropdown() {
 					});
 				},
 				onError: (error) => {
-					toast.error(getResumeErrorMessage(error));
+					toast.add({ type: "error", description: getResumeErrorMessage(error) });
 				},
 			},
 		);
@@ -133,17 +218,17 @@ function BuilderHeaderDropdown() {
 
 		if (!confirmation) return;
 
-		const toastId = toast.loading(t`Deleting your resume...`);
+		const toastId = toast.add({ type: "loading", description: t`Deleting your resume...` });
 
 		deleteResume(
 			{ id },
 			{
 				onSuccess: () => {
-					toast.success(t`Your resume has been deleted successfully.`, { id: toastId });
+					toast.add({ type: "success", description: t`Your resume has been deleted successfully.`, id: toastId });
 					void navigate({ to: "/dashboard/resumes", search: { sort: "lastUpdatedAt", tags: [] } });
 				},
 				onError: (error) => {
-					toast.error(getResumeErrorMessage(error), { id: toastId });
+					toast.add({ type: "error", description: getResumeErrorMessage(error), id: toastId });
 				},
 			},
 		);
@@ -153,7 +238,7 @@ function BuilderHeaderDropdown() {
 		<DropdownMenu>
 			<DropdownMenuTrigger
 				render={
-					<Button size="icon" variant="ghost">
+					<Button size="icon" variant="ghost" aria-label={t`Resume options`}>
 						<CaretDownIcon />
 					</Button>
 				}
@@ -162,7 +247,7 @@ function BuilderHeaderDropdown() {
 			<DropdownMenuContent>
 				<DropdownMenuItem disabled={isLocked} onClick={handleUpdate}>
 					<PencilSimpleLineIcon className="me-2" />
-					<Trans>Update</Trans>
+					<Trans>Edit details</Trans>
 				</DropdownMenuItem>
 
 				<DropdownMenuItem onClick={handleDuplicate}>

@@ -56,12 +56,7 @@ export const storageRouter = {
 				contentType = originalMimeType;
 			}
 
-			const result = await uploadFile({
-				userId: context.user.id,
-				data,
-				contentType,
-				type: "picture",
-			});
+			const result = await uploadFile({ userId: context.user.id, data, contentType });
 
 			return {
 				url: result.url,

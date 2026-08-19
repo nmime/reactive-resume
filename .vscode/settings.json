@@ -27,5 +27,8 @@
 		["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
 	],
 	"tailwindCSS.experimental.configFile": "src/styles/globals.css",
-	"typescript.experimental.useTsgo": true
+	"typescript.experimental.useTsgo": true,
+	"[json]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	}
 }

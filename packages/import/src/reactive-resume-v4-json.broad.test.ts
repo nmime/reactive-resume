@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ReactiveResumeV4JSONImporter } from "./reactive-resume-v4-json";
+import { parseReactiveResumeV4JSON } from "./reactive-resume-v4-json";
 
 const baseV4 = () => ({
 	basics: {
@@ -205,11 +205,9 @@ const baseV4 = () => ({
 	},
 });
 
-const importer = new ReactiveResumeV4JSONImporter();
-
-describe("ReactiveResumeV4JSONImporter — broad section mapping", () => {
+describe("parseReactiveResumeV4JSON — broad section mapping", () => {
 	const v4 = baseV4();
-	const result = importer.parse(JSON.stringify(v4));
+	const result = parseReactiveResumeV4JSON(JSON.stringify(v4));
 
 	it("maps basics fields (name, headline, contact, website, customFields)", () => {
 		expect(result.basics.name).toBe("Jane Doe");
@@ -303,6 +301,6 @@ describe("ReactiveResumeV4JSONImporter — broad section mapping", () => {
 	});
 
 	it("invalid JSON throws", () => {
-		expect(() => importer.parse("not json")).toThrow();
+		expect(() => parseReactiveResumeV4JSON("not json")).toThrow();
 	});
 });

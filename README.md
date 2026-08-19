@@ -31,6 +31,20 @@ Reactive Resume makes building resumes straightforward. Pick a template, fill in
 
 Built with privacy as a core principle, Reactive Resume gives you complete ownership of your data. The codebase is fully open-source under the MIT license, with no tracking, no ads, and no hidden costs.
 
+## Sponsors
+
+Reactive Resume stays free, open-source, and independent because companies choose to support the work behind it. Thank you to every sponsor who helps fund hosting, maintenance, and continued development for the community.
+
+<p>
+  <a href="https://www.atlascloud.ai/?utm_source=github&utm_medium=link&utm_campaign=reactive-resume">
+    <img src="apps/web/public/sponsors/atlas-cloud-logo-white.svg" alt="Atlas Cloud" width="320" />
+  </a>
+</p>
+
+[Atlas Cloud](https://www.atlascloud.ai/?utm_source=github&utm_medium=link&utm_campaign=reactive-resume) supports Reactive Resume as a project sponsor. Atlas Cloud provides a unified AI platform for developers, with access to hundreds of models for chat, image generation, video generation, media processing, and GPU cloud workloads through one API key, one endpoint, and one billing account.
+
+If your company would like to sponsor Reactive Resume, email [hello@amruthpillai.com](mailto:hello@amruthpillai.com).
+
 ## Features
 
 **Resume Building**
@@ -46,7 +60,7 @@ Built with privacy as a core principle, Reactive Resume gives you complete owner
 - Professionally designed templates
 - A4 and Letter size support
 - Customizable colors, fonts, and spacing
-- Custom CSS for advanced styling
+- Structured Style Rules for section and text styling
 
 **Privacy & Control**
 
@@ -220,17 +234,18 @@ Reactive Resume is and always will be free and open-source. If it has helped you
 Other ways to support:
 
 - Star this repository
-- Report bugs and suggest features
+- Report reproducible bugs and suggest actionable features
+- Help other users in [GitHub Discussions](https://github.com/amruthpillai/reactive-resume/discussions/categories/q-a)
 - Improve documentation
 - Help with translations
 
 ## Star History
 
-<a href="https://www.star-history.com/#amruthpillai/reactive-resume&type=date&legend=top-left">
+<a href="https://www.star-history.com/?repos=amruthpillai%2Freactive-resume&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=amruthpillai/reactive-resume&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=amruthpillai/reactive-resume&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=amruthpillai/reactive-resume&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=amruthpillai/reactive-resume&type=date&theme=dark&legend=top-left&sealed_token=QmaOn4Ech499R6kpQe8ONn911UjGUaJfQBT0MXlQLU9hTo-Ie7lTxIILWbBvmtzDGHk7ziWKN_N5iM5mgP8widn_FGHd9-PHNokPtSji8XLgbFpqatgyqIDPnOys-IhO40W3J0HeH07FL-Q8Bq6ArRk3LDtJDwjh4m0ya-2L59ULb7BaqxkSDuCytkCr" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=amruthpillai/reactive-resume&type=date&legend=top-left&sealed_token=QmaOn4Ech499R6kpQe8ONn911UjGUaJfQBT0MXlQLU9hTo-Ie7lTxIILWbBvmtzDGHk7ziWKN_N5iM5mgP8widn_FGHd9-PHNokPtSji8XLgbFpqatgyqIDPnOys-IhO40W3J0HeH07FL-Q8Bq6ArRk3LDtJDwjh4m0ya-2L59ULb7BaqxkSDuCytkCr" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=amruthpillai/reactive-resume&type=date&legend=top-left&sealed_token=QmaOn4Ech499R6kpQe8ONn911UjGUaJfQBT0MXlQLU9hTo-Ie7lTxIILWbBvmtzDGHk7ziWKN_N5iM5mgP8widn_FGHd9-PHNokPtSji8XLgbFpqatgyqIDPnOys-IhO40W3J0HeH07FL-Q8Bq6ArRk3LDtJDwjh4m0ya-2L59ULb7BaqxkSDuCytkCr" />
  </picture>
 </a>
 
@@ -245,6 +260,10 @@ Contributions make open-source thrive. Whether fixing a typo or adding a feature
 5. Open a Pull Request
 
 See the [development setup guide](https://docs.rxresu.me/contributing/development) for detailed instructions on how to set up the project locally.
+
+Maintainers review the [`status: needs triage` queue](https://github.com/amruthpillai/reactive-resume/issues?q=is%3Aissue+is%3Aopen+label%3A%22status%3A+needs+triage%22)
+weekly. Triaged bugs become `status: confirmed`; feature proposals become `status: accepted`; reports that need details become
+`status: needs info`.
 
 ## License
 

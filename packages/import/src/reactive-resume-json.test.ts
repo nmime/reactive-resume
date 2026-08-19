@@ -1,29 +1,44 @@
 import { describe, expect, it } from "vitest";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { ReactiveResumeJSONImporter } from "./reactive-resume-json";
+import { parseReactiveResumeJSON } from "./reactive-resume-json";
 
-const importer = new ReactiveResumeJSONImporter();
-
-describe("ReactiveResumeJSONImporter", () => {
+describe("parseReactiveResumeJSON", () => {
 	it("round-trips the default resume data", () => {
-		const result = importer.parse(JSON.stringify(defaultResumeData));
+		const result = parseReactiveResumeJSON(JSON.stringify(defaultResumeData));
 		expect(result.basics.name).toBe(defaultResumeData.basics.name);
+	});
+
+	it("imports a historical applied stylesheet as canonical source-only data", () => {
+		const source = { languageVersion: 1, text: "@version 1;\nname { color: red; }\n" };
+		const data = {
+			...structuredClone(defaultResumeData),
+			metadata: {
+				...structuredClone(defaultResumeData.metadata),
+				stylesheet: {
+					mode: "semantic",
+					source,
+					applied: { languageVersion: 1, text: "@version 1;\nname { color: blue; }\n" },
+				},
+			},
+		};
+
+		expect(parseReactiveResumeJSON(JSON.stringify(data)).metadata.stylesheet).toEqual({ mode: "semantic", source });
 	});
 
 	it("throws a JSON-serialised validation error for an invalid object", () => {
 		// Missing required top-level fields.
-		expect(() => importer.parse(JSON.stringify({ foo: "bar" }))).toThrow();
+		expect(() => parseReactiveResumeJSON(JSON.stringify({ foo: "bar" }))).toThrow();
 	});
 
 	it("throws when the input is not valid JSON", () => {
-		expect(() => importer.parse("not-json")).toThrow();
+		expect(() => parseReactiveResumeJSON("not-json")).toThrow();
 	});
 
 	it("creates a default layout page when the imported data has no pages", () => {
 		const data = structuredClone(defaultResumeData);
 		data.metadata.layout.pages = [];
 
-		const result = importer.parse(JSON.stringify(data));
+		const result = parseReactiveResumeJSON(JSON.stringify(data));
 		expect(result.metadata.layout.pages.length).toBe(1);
 		expect(result.metadata.layout.pages[0]?.main.length).toBeGreaterThan(0);
 	});
@@ -38,7 +53,7 @@ describe("ReactiveResumeJSONImporter", () => {
 			},
 		];
 
-		const result = importer.parse(JSON.stringify(data));
+		const result = parseReactiveResumeJSON(JSON.stringify(data));
 		const firstPage = result.metadata.layout.pages[0];
 		expect(firstPage).toBeDefined();
 		const allIds = new Set([...(firstPage?.main ?? []), ...(firstPage?.sidebar ?? [])]);
@@ -53,7 +68,7 @@ describe("ReactiveResumeJSONImporter", () => {
 	});
 
 	it("does not modify the layout when every built-in section is already placed", () => {
-		const result = importer.parse(JSON.stringify(defaultResumeData));
+		const result = parseReactiveResumeJSON(JSON.stringify(defaultResumeData));
 		expect(result.metadata.layout.pages.length).toBe(defaultResumeData.metadata.layout.pages.length);
 	});
 });

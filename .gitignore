@@ -36,6 +36,8 @@ logs
 # Testing
 coverage
 reports
+playwright-report
+test-results
 
 # Cache
 tmp
@@ -49,6 +51,8 @@ temp
 .cursor
 .codegraph
 .superpowers
+.worktrees
+.migration
 
 # Local Storage Data
 /data
@@ -56,3 +60,12 @@ temp
 
 # Git Hooks
 .vite-hooks/
+.ds-sync/
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules
+packages/ui/.ds-compiled.css
+packages/ui/.ds-tw-raw.css
+packages/ui/dist/
+i18n.cache

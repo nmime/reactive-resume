@@ -4,9 +4,12 @@ import { jsonrepair } from "jsonrepair";
 import { flattenError, ZodError } from "zod";
 import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
 import { defaultResumeData } from "@reactive-resume/schema/resume/default";
-import { isObject } from "@reactive-resume/utils/sanitize";
 import { generateId } from "@reactive-resume/utils/string";
 import { buildAiExtractionTemplate } from "./extraction-template";
+
+function isObject(value: unknown): value is Record<string, unknown> {
+	return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 
 const aiExtractionTemplate = buildAiExtractionTemplate();
 
@@ -24,13 +27,13 @@ type DroppedSectionItemEntry = {
 	reason: string;
 };
 
-export type ResumeSanitizationDiagnostics = {
+type ResumeSanitizationDiagnostics = {
 	coercions: CoercionEntry[];
 	droppedSectionItems: DroppedSectionItemEntry[];
 	salvageApplied: boolean;
 };
 
-export type ResumeSanitizationResult = {
+type ResumeSanitizationResult = {
 	data: ResumeData;
 	diagnostics: ResumeSanitizationDiagnostics;
 };

@@ -44,6 +44,30 @@ export const resume = pg.pgTable(
 	],
 );
 
+export const resumeVersion = pg.pgTable(
+	"resume_version",
+	{
+		id: pg
+			.text("id")
+			.notNull()
+			.primaryKey()
+			.$defaultFn(() => generateId()),
+		resumeId: pg
+			.text("resume_id")
+			.notNull()
+			.references(() => resume.id, { onDelete: "cascade" }),
+		userId: pg
+			.text("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+		// Immutable snapshot of the resume data at a milestone (template change, import, AI edit, manual save).
+		data: pg.jsonb("data").notNull().$type<ResumeData>(),
+		label: pg.text("label").notNull(),
+		createdAt: pg.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+	},
+	(t) => [pg.index().on(t.resumeId, t.createdAt.desc())],
+);
+
 export const resumeStatistics = pg.pgTable("resume_statistics", {
 	id: pg
 		.text("id")
@@ -66,6 +90,31 @@ export const resumeStatistics = pg.pgTable("resume_statistics", {
 		.defaultNow()
 		.$onUpdate(() => /* @__PURE__ */ new Date()),
 });
+
+export const resumeStatisticsDaily = pg.pgTable(
+	"resume_statistics_daily",
+	{
+		id: pg
+			.text("id")
+			.notNull()
+			.primaryKey()
+			.$defaultFn(() => generateId()),
+		date: pg.date("date", { mode: "string" }).notNull(),
+		views: pg.integer("views").notNull().default(0),
+		downloads: pg.integer("downloads").notNull().default(0),
+		resumeId: pg
+			.text("resume_id")
+			.notNull()
+			.references(() => resume.id, { onDelete: "cascade" }),
+		createdAt: pg.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+		updatedAt: pg
+			.timestamp("updated_at", { withTimezone: true })
+			.notNull()
+			.defaultNow()
+			.$onUpdate(() => /* @__PURE__ */ new Date()),
+	},
+	(t) => [pg.unique().on(t.resumeId, t.date), pg.index().on(t.resumeId, t.date.desc())],
+);
 
 export const resumeAnalysis = pg.pgTable(
 	"resume_analysis",

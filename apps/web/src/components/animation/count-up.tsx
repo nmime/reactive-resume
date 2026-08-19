@@ -3,116 +3,72 @@ import { useCallback, useEffect, useEffectEvent, useRef } from "react";
 
 type CountUpProps = {
 	to: number;
-	from?: number;
-	direction?: "up" | "down";
-	delay?: number;
 	duration?: number;
 	className?: string;
-	startWhen?: boolean;
 	separator?: string;
-	onStart?: () => void;
-	onEnd?: () => void;
 	"aria-hidden"?: boolean | "true" | "false";
 	"aria-live"?: "off" | "polite" | "assertive";
 	"aria-atomic"?: boolean | "true" | "false";
 };
 
+const getDecimalPlaces = (num: number): number => {
+	const str = num.toString();
+	if (str.includes(".")) {
+		const decimals = str.split(".")[1];
+		if (Number.parseInt(decimals, 10) !== 0) return decimals.length;
+	}
+	return 0;
+};
+
+// ponytail: from/direction/delay/startWhen/onStart/onEnd removed — no production caller passes them
 export function CountUp({
 	to,
-	from = 0,
-	direction = "up",
-	delay = 0,
 	duration = 2,
 	className = "",
-	startWhen = true,
 	separator = "",
-	onStart,
-	onEnd,
 	"aria-hidden": ariaHidden,
 	"aria-live": ariaLive = "polite",
 	"aria-atomic": ariaAtomic = "true",
 }: CountUpProps) {
 	const ref = useRef<HTMLSpanElement>(null);
-	const motionValue = useMotionValue(direction === "down" ? to : from);
+	const motionValue = useMotionValue(0);
 
 	const damping = 20 + 40 * (1 / duration);
 	const stiffness = 100 * (1 / duration);
 
-	const springValue = useSpring(motionValue, {
-		damping,
-		stiffness,
-	});
+	const springValue = useSpring(motionValue, { damping, stiffness });
 
 	const isInView = useInView(ref, { once: true, margin: "0px" });
 
-	const getDecimalPlaces = (num: number): number => {
-		const str = num.toString();
-
-		if (str.includes(".")) {
-			const decimals = str.split(".")[1];
-			if (Number.parseInt(decimals, 10) !== 0) return decimals.length;
-		}
-
-		return 0;
-	};
-
-	const maxDecimals = Math.max(getDecimalPlaces(from), getDecimalPlaces(to));
+	const maxDecimals = getDecimalPlaces(to);
 
 	const formatValue = useCallback(
 		(latest: number) => {
-			const hasDecimals = maxDecimals > 0;
-
 			const options: Intl.NumberFormatOptions = {
 				useGrouping: !!separator,
-				minimumFractionDigits: hasDecimals ? maxDecimals : 0,
-				maximumFractionDigits: hasDecimals ? maxDecimals : 0,
+				minimumFractionDigits: maxDecimals,
+				maximumFractionDigits: maxDecimals,
 			};
-
 			const formattedNumber = Intl.NumberFormat("en-US", options).format(latest);
-
 			return separator ? formattedNumber.replace(/,/g, separator) : formattedNumber;
 		},
 		[maxDecimals, separator],
 	);
 
 	const formatCurrentValue = useEffectEvent((latest: number) => formatValue(latest));
-	const notifyStart = useEffectEvent(() => onStart?.());
-	const notifyEnd = useEffectEvent(() => onEnd?.());
 
 	useEffect(() => {
-		if (ref.current) {
-			ref.current.textContent = formatCurrentValue(direction === "down" ? to : from);
-		}
-	}, [from, to, direction]);
+		if (ref.current) ref.current.textContent = formatCurrentValue(0);
+	}, []);
 
 	useEffect(() => {
-		if (isInView && startWhen) {
-			notifyStart();
-			const timeoutId = setTimeout(() => {
-				motionValue.set(direction === "down" ? from : to);
-			}, delay * 1000);
-
-			const durationTimeoutId = setTimeout(
-				() => {
-					notifyEnd();
-				},
-				delay * 1000 + duration * 1000,
-			);
-
-			return () => {
-				clearTimeout(timeoutId);
-				clearTimeout(durationTimeoutId);
-			};
-		}
-	}, [isInView, startWhen, motionValue, direction, from, to, delay, duration]);
+		if (isInView) motionValue.set(to);
+	}, [isInView, motionValue, to]);
 
 	useEffect(() => {
 		const unsubscribe = springValue.on("change", (latest: number) => {
-			if (ref.current) {
-				ref.current.textContent = formatCurrentValue(latest);
-			}
+			if (ref.current) ref.current.textContent = formatCurrentValue(latest);
 		});
-
 		return () => unsubscribe();
 	}, [springValue]);
 

@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { describe, expect, it } from "vitest";
 import { renderHtml } from "react-pdf-html";
-import { Text as PdfText } from "../../renderer";
+import { Text as PdfText } from "#react-pdf-renderer";
 import { convertPseudoBulletParagraphs, normalizeRichTextHtml, richTextMarkClassName } from "./rich-text-html";
 
 type PdfElement = ReactElement<{ children?: unknown; element?: { tag: string } }>;
@@ -15,6 +15,51 @@ describe("normalizeRichTextHtml", () => {
 
 	it("wraps inline tags in a <p>", () => {
 		expect(normalizeRichTextHtml("<strong>bold</strong> text")).toBe("<p><strong>bold</strong> text</p>");
+	});
+
+	it("moves trailing whitespace outside bold tags", () => {
+		expect(normalizeRichTextHtml("<p><strong>Built </strong>and deployed</p>")).toBe(
+			"<p><strong>Built</strong> and deployed</p>",
+		);
+	});
+
+	it("moves leading whitespace outside bold tags", () => {
+		expect(normalizeRichTextHtml("<p>Built<strong> and deployed</strong></p>")).toBe(
+			"<p>Built <strong>and deployed</strong></p>",
+		);
+	});
+
+	it("preserves whitespace moved outside top-level bold tags", () => {
+		expect(normalizeRichTextHtml("<strong>Built </strong>")).toBe("<p><strong>Built</strong> </p>");
+		expect(normalizeRichTextHtml("<strong> Built</strong>")).toBe("<p> <strong>Built</strong></p>");
+	});
+
+	it.each(["&nbsp;", "&#160;", "&#xA0;"])(
+		"moves encoded non-breaking spaces outside bold boundaries: %s",
+		(whitespace) => {
+			expect(normalizeRichTextHtml(`<p>Built<strong>${whitespace}and deployed</strong></p>`)).toBe(
+				`<p>Built${whitespace}<strong>and deployed</strong></p>`,
+			);
+			expect(normalizeRichTextHtml(`<p><strong>Built${whitespace}</strong>and deployed</p>`)).toBe(
+				`<p><strong>Built</strong>${whitespace}and deployed</p>`,
+			);
+		},
+	);
+
+	it("preserves > characters inside quoted bold-tag attributes", () => {
+		expect(normalizeRichTextHtml('<p>Built<strong title="1 > 0"> and deployed</strong></p>')).toBe(
+			'<p>Built <strong title="1 > 0">and deployed</strong></p>',
+		);
+	});
+
+	it("preserves closing bold tags inside quoted attributes", () => {
+		expect(normalizeRichTextHtml('<p><strong title="Use </strong> here">Built </strong>next</p>')).toBe(
+			'<p><strong title="Use </strong> here">Built</strong> next</p>',
+		);
+	});
+
+	it("preserves whitespace inside bold text", () => {
+		expect(normalizeRichTextHtml("<p><strong>two words</strong></p>")).toBe("<p><strong>two words</strong></p>");
 	});
 
 	it("preserves block-level <p> as-is", () => {
@@ -108,6 +153,10 @@ describe("normalizeRichTextHtml", () => {
 
 	it("does not double-wrap inline tags inside block elements", () => {
 		expect(normalizeRichTextHtml("<p><strong>x</strong></p>")).toBe("<p><strong>x</strong></p>");
+	});
+
+	it("normalizes RTL pseudo-bullets into anchored list items in the shared HTML path", () => {
+		expect(normalizeRichTextHtml("<p>‏- א<br>‏- ב</p>", { direction: "rtl" })).toBe("<ul><li>‏א</li><li>‏ב</li></ul>");
 	});
 });
 

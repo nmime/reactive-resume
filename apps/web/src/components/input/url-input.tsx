@@ -2,7 +2,7 @@ import type { Website } from "@reactive-resume/schema/resume/data";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { TagIcon } from "@phosphor-icons/react";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { Input } from "@reactive-resume/ui/components/input";
 import {
 	InputGroup,
@@ -50,7 +50,7 @@ export function URLInput<TValue extends Website>({ value, onChange, hideLabelBut
 		[onChange, value],
 	);
 
-	const urlValue = useMemo(() => stripPrefix(value.url), [value.url]);
+	const urlValue = stripPrefix(value.url);
 
 	return (
 		<InputGroup>

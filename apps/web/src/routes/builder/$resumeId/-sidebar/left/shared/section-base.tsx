@@ -1,12 +1,13 @@
 import type { SectionType } from "@reactive-resume/schema/resume/data";
 import type { LeftSidebarSection } from "@/libs/resume/section";
+import { t } from "@lingui/core/macro";
 import { CaretDownIcon } from "@phosphor-icons/react";
 import { getDefaultSectionIconName } from "@reactive-resume/schema/resume/section-icons";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@reactive-resume/ui/components/accordion";
 import { Button } from "@reactive-resume/ui/components/button";
 import { cn } from "@reactive-resume/utils/style";
 import { IconPicker } from "@/components/input/icon-picker";
-import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { getSectionIcon, getSectionTitle } from "@/libs/resume/section";
 import { useSectionStore } from "../../../-store/section";
 import { SectionDropdownMenu } from "./section-menu";
@@ -16,11 +17,13 @@ type Props = React.ComponentProps<typeof AccordionContent> & {
 };
 
 export function SectionBase({ type, className, ...props }: Props) {
-	const resume = useCurrentResume();
 	const updateResumeData = useUpdateResumeData();
-	const data = resume.data;
-	const section =
-		type === "basics"
+	// Subscribe to only this section's slice, not the whole resume. Otherwise editing any field
+	// (which replaces the resume reference) re-renders all ~15 section wrappers on every keystroke.
+	// Immer keeps untouched slices reference-stable, so Zustand bails out of the unrelated sections.
+	const section = useCurrentBuilderResumeSelector((resume) => {
+		const data = resume.data;
+		return type === "basics"
 			? data.basics
 			: type === "summary"
 				? data.summary
@@ -29,12 +32,15 @@ export function SectionBase({ type, className, ...props }: Props) {
 					: type === "custom"
 						? data.customSections
 						: data.sections[type];
+	});
 
 	const isHidden = "hidden" in section && section.hidden;
 	const hasSectionIcon = !["picture", "basics", "custom"].includes(type);
 	const rawIcon = "icon" in section && typeof section.icon === "string" ? section.icon : "";
 	const fallbackIcon = hasSectionIcon ? getDefaultSectionIconName(type as "summary" | SectionType) : "";
 	const sectionIcon = rawIcon === "none" ? "" : rawIcon || fallbackIcon;
+
+	const sectionTitle = ("title" in section && section.title) || getSectionTitle(type);
 
 	const collapsed = useSectionStore((state) => state.sections[type]?.collapsed ?? false);
 	const toggleCollapsed = useSectionStore((state) => state.toggleCollapsed);
@@ -64,7 +70,7 @@ export function SectionBase({ type, className, ...props }: Props) {
 					<AccordionTrigger
 						className="me-2 items-center justify-center"
 						render={
-							<Button size="icon" variant="ghost">
+							<Button size="icon" variant="ghost" aria-label={t`Toggle ${sectionTitle} section`}>
 								<CaretDownIcon className="transition-transform duration-200 group-data-closed/accordion-item:-rotate-90" />
 							</Button>
 						}
@@ -76,9 +82,7 @@ export function SectionBase({ type, className, ...props }: Props) {
 						) : (
 							getSectionIcon(type)
 						)}
-						<h2 className="line-clamp-1 font-semibold text-2xl tracking-tight">
-							{("title" in section && section.title) || getSectionTitle(type)}
-						</h2>
+						<h2 className="line-clamp-1 font-semibold text-2xl tracking-tight">{sectionTitle}</h2>
 					</div>
 
 					{!["picture", "basics", "custom"].includes(type) && (
@@ -86,13 +90,7 @@ export function SectionBase({ type, className, ...props }: Props) {
 					)}
 				</div>
 
-				<AccordionContent
-					className={cn(
-						"p-0 data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down",
-						className,
-					)}
-					{...props}
-				/>
+				<AccordionContent className={cn("p-0", className)} {...props} />
 			</AccordionItem>
 		</Accordion>
 	);

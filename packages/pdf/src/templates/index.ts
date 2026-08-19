@@ -34,24 +34,13 @@ export const templatePages: Partial<Record<Template, TemplatePage>> = {
 	scizor: ScizorPage,
 };
 
-export const defaultTemplatePage = AzurillPage;
+const defaultTemplatePage = AzurillPage;
 
 export const getTemplatePage = (template: Template): TemplatePage => templatePages[template] ?? defaultTemplatePage;
 
+export type { TemplateSemanticManifest } from "../semantic/template-manifest";
 export {
-	AzurillPage,
-	BronzorPage,
-	ChikoritaPage,
-	DitgarPage,
-	DittoPage,
-	GengarPage,
-	GlaliePage,
-	KakunaPage,
-	LaprasPage,
-	LeafishPage,
-	MeowthPage,
-	OnyxPage,
-	PikachuPage,
-	RhyhornPage,
-	ScizorPage,
-};
+	getTemplateSemanticBindingRegistry,
+	getTemplateSemanticManifest,
+	validateTemplateSemanticManifest,
+} from "../semantic/template-manifest";

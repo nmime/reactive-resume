@@ -25,6 +25,9 @@ import { useControlledState } from "@/hooks/use-controlled-state";
 type ComboboxOption<TValue extends string | number = string> = {
 	value: TValue;
 	label: React.ReactNode;
+	// Plain-text label used for the collapsed trigger and filtering when `label` is a ReactNode.
+	// Without it, a JSX label falls back to String(value) (e.g. a raw enum or locale code) in the trigger.
+	textValue?: string;
 	group?: string | ComboboxOptionGroup;
 	keywords?: string[];
 	disabled?: boolean;
@@ -75,6 +78,19 @@ type MultiComboboxProps<TValue extends string | number = string> = {
 };
 
 type ComboboxProps<TValue extends string | number = string> = SingleComboboxProps<TValue> | MultiComboboxProps<TValue>;
+
+const listContent = <TValue extends string | number>(item: ComboboxOption<TValue>) => (
+	<ComboboxItem key={String(item.value)} value={item} disabled={item.disabled}>
+		{item.label}
+	</ComboboxItem>
+);
+
+const groupedListContent = <TValue extends string | number>(group: GroupedComboboxOption<TValue>) => (
+	<ComboboxGroup key={group.key} items={group.items}>
+		{group.label !== null && group.label !== undefined ? <ComboboxLabel>{group.label}</ComboboxLabel> : null}
+		<ComboboxCollection>{listContent}</ComboboxCollection>
+	</ComboboxGroup>
+);
 
 function Combobox<TValue extends string | number = string>(props: ComboboxProps<TValue>) {
 	const {
@@ -177,7 +193,8 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 	});
 
 	const itemToStringLabel = React.useCallback(
-		(item: ComboboxOption<TValue>) => (typeof item.label === "string" ? item.label : String(item.value)),
+		(item: ComboboxOption<TValue>) =>
+			item.textValue ?? (typeof item.label === "string" ? item.label : String(item.value)),
 		[],
 	);
 
@@ -188,7 +205,7 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 
 	const filter = React.useCallback(
 		(item: ComboboxOption<TValue>, query: string) => {
-			const labelStr = typeof item.label === "string" ? item.label : String(item.value);
+			const labelStr = typeof item.label === "string" ? item.label : (item.textValue ?? String(item.value));
 			if (contains(labelStr, query)) return true;
 			return item.keywords?.some((kw) => contains(kw, query)) ?? false;
 		},
@@ -198,19 +215,6 @@ function Combobox<TValue extends string | number = string>(props: ComboboxProps<
 	const hasSelectedValue = multiple
 		? Array.isArray(selectedValue) && selectedValue.length > 0
 		: selectedValue !== null && selectedValue !== undefined;
-
-	const listContent = (item: ComboboxOption<TValue>) => (
-		<ComboboxItem key={String(item.value)} value={item} disabled={item.disabled}>
-			{item.label}
-		</ComboboxItem>
-	);
-
-	const groupedListContent = (group: GroupedComboboxOption<TValue>) => (
-		<ComboboxGroup key={group.key} items={group.items}>
-			{group.label !== null && group.label !== undefined ? <ComboboxLabel>{group.label}</ComboboxLabel> : null}
-			<ComboboxCollection>{listContent}</ComboboxCollection>
-		</ComboboxGroup>
-	);
 
 	const triggerNode = (
 		<ComboboxTrigger

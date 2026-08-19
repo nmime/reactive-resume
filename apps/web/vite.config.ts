@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { lingui, linguiTransformerBabelPreset } from "@lingui/vite-plugin";
 import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
+import { devtools } from "@tanstack/devtools-vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
@@ -52,6 +53,18 @@ export default defineConfig({
 	},
 
 	plugins: [
+		{
+			name: "cloudflare-rocket-loader-bootstrap",
+			transformIndexHtml: {
+				order: "post",
+				handler: (html) =>
+					html.replace(
+						/<script\b(?=[^>]*\btype="module")(?=[^>]*\bsrc="\/assets\/[^"]+")(?![^>]*\bdata-cfasync=)[^>]*>/,
+						(script) => script.replace('src="', 'data-cfasync="false" src="'),
+					),
+			},
+		},
+		devtools(),
 		tailwindcss(),
 		tanstackRouter({
 			target: "react",

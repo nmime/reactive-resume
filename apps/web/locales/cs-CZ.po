@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: reactive-resume\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-06-01 13:31\n"
+"PO-Revision-Date: 2026-08-17 22:30\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -18,20 +18,14 @@ msgstr ""
 "X-Crowdin-File: /apps/web/locales/en-US.po\n"
 "X-Crowdin-File-ID: 545\n"
 
-#. js-lingui-explicit-id
-#: src/routes/dashboard/resumes/index.tsx
-msgid "Last Updated"
-msgstr "Naposledy aktualizováno"
-
-#. js-lingui-explicit-id
-#: src/routes/dashboard/resumes/index.tsx
-msgid "Created"
-msgstr "Vytvořeno"
-
-#. js-lingui-explicit-id
-#: src/routes/dashboard/resumes/index.tsx
-msgid "Name"
-msgstr "Název"
+#. placeholder {0}: application.role
+#. placeholder {0}: current.role
+#. placeholder {1}: application.company
+#. placeholder {1}: current.company
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "\"{0} · {1}\" and its full timeline will be permanently deleted. This can't be undone."
+msgstr "\"{0} · {1}\" a celá jeho časová osa budou trvale smazány. Tuto akci nelze vrátit zpět."
 
 #: src/routes/_home/-sections/footer.tsx
 #: src/routes/_home/-sections/hero.tsx
@@ -48,10 +42,60 @@ msgstr "{0, plural, one {# položka} few {# položky} many {# položek} other {#
 msgid "{0, plural, one {# role} other {# roles}}"
 msgstr "{0, plural, one {# role} few {# role} many {# rolí} other {# rolí}}"
 
+#. placeholder {0}: insights.total
+#: src/features/applications/components/insights-view.tsx
+msgid "{0} applications tracked"
+msgstr "Sledováno {0} žádostí"
+
+#. Character count readout for the rich-text editor
+#. placeholder {0}: state.characterCount
+#: src/components/input/rich-input.tsx
+msgid "{0} characters"
+msgstr "{0} znaků"
+
+#. placeholder {0}: importable.length
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "{0} ready to import"
+msgstr "{0} připraveno k importu"
+
+#. placeholder {0}: insights.rejected
+#: src/features/applications/components/insights-view.tsx
+msgid "{0} rejected"
+msgstr "{0} zamítnuto"
+
+#. placeholder {0}: parsed.skipped
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "{0} skipped (missing company/role)"
+msgstr "{0} přeskočeno (chybí společnost/role)"
+
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 msgid "{column, plural, one {# Column} other {# Columns}}"
 msgstr "{column, plural, one {# sloupec} few {# sloupce} many {# sloupců} other {# sloupce}}"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
+msgid "{count, plural, one {# error} other {# errors}}"
+msgstr "{count, plural, one {# chyba} other {# chyby}}"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
+msgid "{count, plural, one {# note} other {# notes}}"
+msgstr "{count, plural, one {# poznámka} other {# poznámky}}"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
+msgid "{count, plural, one {# warning} other {# warnings}}"
+msgstr "{count, plural, one {# varování} other {# varování}}"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
+msgid "{label} over the last 30 days"
+msgstr "{label} za posledních 30 dní"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
+msgid "{passedRules} of {totalRules} checks passed"
+msgstr "{passedRules} z {totalRules} kontrol provedeno"
+
+#: src/libs/resume/ats.ts
+msgid "{sectionTitle} · Item {itemNumber}"
+msgstr "{sectionTitle} · Položka {itemNumber}"
 
 #: src/routes/_home/-sections/hero.tsx
 msgid "<0>Finally,</0><1>A free and open-source resume builder</1>"
@@ -94,6 +138,10 @@ msgstr "Potvrzovací odkaz byl odeslán na vaši současnou e-mailovou adresu. Z
 msgid "A free and open-source resume builder that simplifies the process of creating, updating, and sharing your resume."
 msgstr "Bezplatný nástroj pro tvorbu životopisů s otevřeným zdrojovým kódem, který zjednodušuje proces vytváření, aktualizace a sdílení životopisů."
 
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "A friendly nudge for the recruiter"
+msgstr "Přátelské pošťouchnutí pro náboráře"
+
 #: src/routes/builder/$resumeId/-components/dock.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "A link to your resume has been copied to clipboard."
@@ -111,6 +159,10 @@ msgstr "Nový ověřovací odkaz byl odeslán na vaši e-mailovou adresu. Zkontr
 msgid "A passion project by <0>Amruth Pillai</0>."
 msgstr "Osobní projekt <0>Amruth Pillai</0>."
 
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "A stretch"
+msgstr "Protažení"
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "A4"
 msgstr "A4"
@@ -123,9 +175,40 @@ msgstr "Ano! Svůj životopis můžete exportovat do PDF jedním kliknutím. Exp
 msgid "Access your resumes and data programmatically using the API."
 msgstr "Přistupujte ke svým životopisům a datům programově pomocí API."
 
+#: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/-components/sidebar.tsx
+#: src/routes/dashboard/settings/account.tsx
+msgid "Account"
+msgstr "Účet"
+
+#: src/routes/builder/$resumeId/-sidebar/left/index.tsx
+msgid "Account menu"
+msgstr "Nabídka účtu"
+
+#: src/features/applications/components/table-view.tsx
+msgid "Actions"
+msgstr "Akce"
+
+#: src/features/resume/stylesheet/legacy-banner.tsx
+msgid "Activate Semantic CSS"
+msgstr "Aktivace sémantického CSS"
+
+#: src/routes/builder/$resumeId/-components/dock.tsx
+msgid "Actual size (100%)"
+msgstr "Skutečná velikost (100 %)"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/table-view.tsx
+msgid "Add"
+msgstr "Přidat"
+
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
 msgid "Add a custom field"
 msgstr "Přidat vlastní pole"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Add a job you're applying to, link the resume you sent, and move it through your pipeline as things progress."
+msgstr "Přidejte pracovní pozici, o kterou se ucházíte, propojte odeslaný životopis a postupně jej procházejte ve svém procesu."
 
 #: src/components/input/chip-input.tsx
 msgid "Add a keyword..."
@@ -193,25 +276,52 @@ msgstr "Přidat novou dovednost"
 msgid "Add a new volunteer experience"
 msgstr "Přidat novou dobrovolnickou zkušenost"
 
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Add and test a provider before starting a thread."
-msgstr "Před zahájením vlákna přidejte a otestujte poskytovatele."
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Add a note…"
+msgstr "Přidat poznámku…"
+
+#: src/libs/resume/ats.ts
+msgid "Add a period such as \"Jan 2020 - Present\" so it lands on your timeline."
+msgstr "Add a period such as \\\"Jan 2020 - Present\\\" so it lands on your timeline."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Add a tag and press Enter…"
+msgstr "Přidejte štítek a stiskněte Enter…"
+
+#: src/libs/resume/ats.ts
+msgid "Add an entry, or use projects and volunteer work to show equivalent history."
+msgstr "Přidejte záznam nebo použijte projekty a dobrovolnou práci k zobrazení ekvivalentní historie."
+
+#: src/libs/resume/ats.ts
+msgid "Add an item to it, or hide it."
+msgstr "Přidejte do něj položku nebo ji skryjte."
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Add and test a provider before starting an agent thread."
 msgstr "Před spuštěním vlákna agenta přidejte a otestujte poskytovatele."
 
-#: src/components/input/rich-input.tsx
-msgid "Add Column After"
-msgstr "Přidat sloupec za"
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/applications/index.tsx
+msgid "Add application"
+msgstr "Přidat aplikaci"
 
-#: src/components/input/rich-input.tsx
-msgid "Add Column Before"
-msgstr "Přidat sloupec před"
+#: src/libs/resume/ats.ts
+msgid "Add at least a city and country so roles can be matched to your region."
+msgstr "Přidejte alespoň město a zemi, aby bylo možné role přizpůsobit vašemu regionu."
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Add contact"
+msgstr "Přidat kontakt"
 
 #: src/components/input/chip-input.tsx
 msgid "Add keyword"
 msgstr "Přidat klíčové slovo"
+
+#: src/components/input/rich-input.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
+msgid "Add link"
+msgstr "Přidat odkaz"
 
 #: src/dialogs/resume/sections/experience.tsx
 msgid "Add multiple roles to show career progression at the same company."
@@ -229,23 +339,32 @@ msgstr "Přidat poskytovatele"
 msgid "Add Role"
 msgstr "Přidat roli"
 
-#: src/components/input/rich-input.tsx
-msgid "Add Row After"
-msgstr "Přidat řádek za"
+#: src/features/applications/components/table-view.tsx
+msgid "Add tag"
+msgstr "Přidat štítek"
 
-#: src/components/input/rich-input.tsx
-msgid "Add Row Before"
-msgstr "Přidat řádek před"
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Add to pipeline"
+msgstr "Přidat do kanálu"
 
-#: src/routes/agent/$threadId.tsx
+#: src/libs/resume/ats.ts
+msgid "Add your full name under Basics."
+msgstr "Přidejte své celé jméno pod Základy."
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Adjust the resume for a remote-first role that values async communication and ownership."
 msgstr "Upravte životopis pro roli zaměřenou na práci na dálku, která si cení asynchronní komunikace a odpovědnosti."
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Advanced"
+msgstr "Moderní"
 
 #: src/libs/locale.ts
 msgid "Afrikaans"
 msgstr "Afrikánština"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 msgid "Agent"
 msgstr "Činidlo"
 
@@ -269,6 +388,10 @@ msgstr "Nastavení agenta umělé inteligence momentálně není k dispozici. Zk
 msgid "AI agent setup is unavailable until REDIS_URL and ENCRYPTION_SECRET are configured."
 msgstr "Nastavení agenta AI není k dispozici, dokud nejsou nakonfigurovány parametry REDIS_URL a ENCRYPTION_SECRET."
 
+#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
+msgid "AI assistant"
+msgstr "Asistent s umělou inteligencí"
+
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "AI provider management is unavailable until REDIS_URL and ENCRYPTION_SECRET are configured."
 msgstr "Správa poskytovatelů AI není k dispozici, dokud nejsou nakonfigurovány parametry REDIS_URL a ENCRYPTION_SECRET."
@@ -276,10 +399,6 @@ msgstr "Správa poskytovatelů AI není k dispozici, dokud nejsou nakonfigurová
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "AI provider management is unavailable. Please try again."
 msgstr "Správa poskytovatelů umělé inteligence není k dispozici. Zkuste to prosím znovu."
-
-#: src/features/settings/integrations/components/ai-section.tsx
-msgid "AI provider saved. Test it before use."
-msgstr "Poskytovatel umělé inteligence uložen. Před použitím jej otestujte."
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "AI Providers"
@@ -306,9 +425,8 @@ msgid "Amharic"
 msgstr "Amharština"
 
 #: src/components/layout/error-screen.tsx
-#: src/components/layout/not-found-screen.tsx
-msgid "An error occurred while loading the page."
-msgstr "Při načítání stránky došlo k chybě."
+msgid "An unexpected error stopped this page from loading. You can try again or head back."
+msgstr "Neočekávaná chyba zastavila načítání této stránky. Můžete to zkusit znovu nebo se vrátit zpět."
 
 #. Fallback toast when importing a resume fails for an unknown reason
 #: src/dialogs/resume/import.tsx
@@ -327,9 +445,17 @@ msgstr "Analýza…"
 msgid "And many more..."
 msgstr "A mnoho dalších…"
 
+#: src/routes/agent/-components/agent-chat.tsx
+msgid "Answer in your own words"
+msgstr "Odpovězte vlastními slovy"
+
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Anthropic Claude"
 msgstr "Antropický Claude"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Any tag"
+msgstr "Libovolný štítek"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Anyone visiting the resume's public URL must enter this password to access it."
@@ -369,22 +495,69 @@ msgstr "API dokumentace"
 msgid "App"
 msgstr "Aplikace"
 
+#: src/features/applications/components/application-actions-menu.tsx
+msgid "Application actions"
+msgstr "Akce aplikace"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Application added to your pipeline."
+msgstr "Aplikace přidána do vašeho kanálu."
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Application Copilot"
+msgstr "Aplikační kopilot"
+
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Application deleted."
+msgstr "Aplikace smazána."
+
 #: src/routes/_home/-sections/statistics.tsx
 msgid "Application Statistics"
 msgstr "Statistiky aplikace"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/custom-styles.tsx
-msgid "Applied Rules"
-msgstr "Použitá pravidla"
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Application updated."
+msgstr "Aplikace aktualizována."
+
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
+#: src/routes/dashboard/-components/sidebar.tsx
+#: src/routes/dashboard/applications/index.tsx
+msgid "Applications"
+msgstr "Aplikace"
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Applications over time"
+msgstr "Žádosti v čase"
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Applications sent per week (last 8 weeks)"
+msgstr "Žádosti odeslané týdně (posledních 8 týdnů)"
+
+#: src/features/applications/components/table-view.tsx
+msgid "Applied"
+msgstr "Podáno"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Applied on"
+msgstr "Aplikováno na"
 
 #: src/libs/locale.ts
 msgid "Arabic"
 msgstr "Arabština"
 
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/table-view.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
-#: src/routes/agent/$threadId.tsx
 msgid "Archive"
 msgstr "Archiv"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Archived"
+msgstr "Archivováno"
 
 #: src/hooks/use-form-blocker.tsx
 msgid "Are you sure you want to close this dialog?"
@@ -403,18 +576,16 @@ msgid "Are you sure you want to delete this item?"
 msgstr "Opravdu chcete tuto položku odstranit?"
 
 #: src/routes/builder/$resumeId/-components/header.tsx
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
+#: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "Are you sure you want to delete this resume?"
 msgstr "Opravdu chcete smazat tento životopis?"
 
-#: src/features/settings/pages/danger-zone.tsx
+#: src/features/settings/pages/account.tsx
 msgid "Are you sure you want to delete your account?"
 msgstr "Opravdu chcete smazat svůj účet?"
 
 #: src/routes/builder/$resumeId/-components/header.tsx
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
+#: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "Are you sure you want to lock this resume?"
 msgstr "Opravdu chcete zamknout tento životopis?"
 
@@ -434,7 +605,7 @@ msgstr "Studijní obor"
 msgid "Artificial Intelligence"
 msgstr "Umělá inteligence"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Ask anything about this resume"
 msgstr "Zeptejte se na cokoli ohledně tohoto životopisu"
 
@@ -442,11 +613,32 @@ msgstr "Zeptejte se na cokoli ohledně tohoto životopisu"
 msgid "Aspect Ratio"
 msgstr "Poměr stran"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/_home/-sections/sponsors.tsx
+msgid "Atlas Cloud supports Reactive Resume as a project sponsor. If your company would like to sponsor the project, email <0>{sponsorshipEmail}</0>."
+msgstr "Atlas Cloud podporuje Reactive Resume jako sponzora projektu. Pokud by vaše společnost chtěla projekt sponzorovat, napište e-mail na <0>{sponsorshipEmail}</0> ."
+
+#: src/libs/resume/section.tsx
+msgid "ATS Check"
+msgstr "Kontrola ATS"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Attach a cover letter (PDF)"
+msgstr "Přiložte motivační dopis (PDF)"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Attach a resume file (PDF)"
+msgstr "Přiložit soubor životopisu (PDF)"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Attach files"
 msgstr "Přiložit soubory"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
+msgid "Attachment"
+msgstr "Příloha"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Attachment uploaded."
 msgstr "Příloha nahrána."
 
@@ -455,6 +647,10 @@ msgstr "Příloha nahrána."
 #: src/routes/dashboard/settings/authentication/index.tsx
 msgid "Authentication"
 msgstr "Ověřování"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Auto-fill failed."
+msgstr "Automatické vyplnění se nezdařilo."
 
 #: src/routes/_home/-sections/features.tsx
 msgid "Available in multiple languages. If you would like to contribute, check out Crowdin."
@@ -508,9 +704,17 @@ msgstr "Krásné šablony, ze kterých můžete vybírat, a další jsou na cest
 msgid "Bengali"
 msgstr "Bengálština"
 
+#: src/features/resume/export/download-dialog.tsx
+msgid "Best for applications, sharing, and printing."
+msgstr "Nejlepší pro aplikace, sdílení a tisk."
+
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Blank draft"
 msgstr "Prázdný koncept"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Board"
+msgstr "Rada"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
 msgctxt "Body Text (paragraphs, lists, etc.)"
@@ -529,6 +733,10 @@ msgstr "Zaoblení rohů"
 msgid "Border Width"
 msgstr "Šířka ohraničení"
 
+#: src/features/resume/public/public-resume.tsx
+msgid "Build your own resume"
+msgstr "Vytvořte si vlastní životopis"
+
 #. Screen-reader dialog title for the command palette in the resume builder
 #: src/features/command-palette/index.tsx
 msgid "Builder Command Palette"
@@ -537,6 +745,14 @@ msgstr "Příkazová paleta editoru"
 #: src/libs/locale.ts
 msgid "Bulgarian"
 msgstr "Bulharština"
+
+#: src/features/applications/components/table-view.tsx
+msgid "Bulk delete failed. Please try again."
+msgstr "Hromadné smazání se nezdařilo. Zkuste to prosím znovu."
+
+#: src/features/applications/components/table-view.tsx
+msgid "Bulk update failed. Please try again."
+msgstr "Hromadná aktualizace se nezdařila. Zkuste to prosím znovu."
 
 #: src/components/input/rich-input.tsx
 msgid "Bullet List"
@@ -554,40 +770,32 @@ msgid "Can I export my resume to PDF?"
 msgstr "Mohu svůj životopis exportovat do PDF?"
 
 #. API key deletion confirmation dialog cancel action in settings
-#. Account deletion confirmation dialog cancel action in danger zone
+#. Account deletion confirmation dialog cancel action in account settings
 #. Confirmation dialog button label to abort deleting a custom section in resume builder
 #. Confirmation dialog button label to abort deleting a section item in resume builder
 #. Confirmation dialog button label to abort resetting a resume section
 #. Profile settings form action to discard unsaved edits
 #. Secondary action button to close two-factor setup dialog
 #: src/dialogs/auth/enable-two-factor.tsx
-#: src/dialogs/resume/sections/award.tsx
-#: src/dialogs/resume/sections/certification.tsx
-#: src/dialogs/resume/sections/cover-letter.tsx
 #: src/dialogs/resume/sections/custom.tsx
-#: src/dialogs/resume/sections/education.tsx
-#: src/dialogs/resume/sections/experience.tsx
-#: src/dialogs/resume/sections/interest.tsx
-#: src/dialogs/resume/sections/language.tsx
-#: src/dialogs/resume/sections/profile.tsx
-#: src/dialogs/resume/sections/project.tsx
-#: src/dialogs/resume/sections/publication.tsx
-#: src/dialogs/resume/sections/reference.tsx
-#: src/dialogs/resume/sections/skill.tsx
-#: src/dialogs/resume/sections/summary-item.tsx
-#: src/dialogs/resume/sections/volunteer.tsx
+#: src/dialogs/resume/sections/section-item-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/settings/integrations/components/ai-section.tsx
+#: src/features/settings/pages/account.tsx
 #: src/features/settings/pages/api-keys.tsx
-#: src/features/settings/pages/danger-zone.tsx
 #: src/features/settings/pages/profile.tsx
 #: src/hooks/use-prompt.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Cannot restore; the resume has changed since this edit was applied."
 msgstr "Nelze obnovit; životopis se od provedení této úpravy změnil."
 
@@ -599,9 +807,9 @@ msgstr "Katalánština"
 msgid "Center Align"
 msgstr "Zarovnat na střed"
 
-#: src/routes/builder/$resumeId/-components/dock.tsx
-msgid "Center view"
-msgstr "Vycentrovat zobrazení"
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Cerebras"
+msgstr "Mozky"
 
 #: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
@@ -629,6 +837,7 @@ msgstr "Rozmysleli jste si to? Přejmenujte svůj životopis na něco výstižn�
 msgid "Changelog"
 msgstr "Protokol změn"
 
+#: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/$threadId.tsx
 msgid "Chat"
 msgstr "Povídání"
@@ -640,6 +849,14 @@ msgstr "Zkontrolujte svůj e-mail, kde najdete odkaz pro obnovení hesla."
 #: src/features/auth/pages/register.tsx
 msgid "Check your email for a link to verify your account."
 msgstr "Zkontrolujte svůj e-mail, kde najdete odkaz pro ověření účtu."
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Checking"
+msgstr "Kontrola"
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Checking draft"
+msgstr "Kontrola návrhu"
 
 #: src/libs/locale.ts
 msgid "Chinese (Simplified)"
@@ -667,6 +884,10 @@ msgstr "Vyberte si životopis"
 msgid "Choose an existing conversation from the sidebar, or start a new draft-focused thread."
 msgstr "Vyberte existující konverzaci z postranního panelu nebo začněte nové vlákno zaměřené na koncept."
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
+msgid "Choose PDF, DOCX, Markdown, or JSON. Export your resume and cover letter separately when available."
+msgstr "Vyberte formát PDF, DOCX, Markdown nebo JSON. Pokud je to možné, exportujte životopis a motivační dopis samostatně."
+
 #: src/components/level/combobox.tsx
 msgid "Circle"
 msgstr "Kruh"
@@ -674,8 +895,13 @@ msgstr "Kruh"
 #. Clear the highlight color
 #. Clear the text color
 #: src/components/input/rich-input.tsx
+#: src/features/applications/components/table-view.tsx
 msgid "Clear"
 msgstr "Přehledně"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Clear filters"
+msgstr "Vymazat filtry"
 
 #: src/components/ui/combobox.tsx
 msgid "Clear selection"
@@ -685,14 +911,22 @@ msgstr "Vymazat výběr"
 msgid "Click here to select a file to import"
 msgstr "Kliknutím zde vyberte soubor k importu"
 
-#: src/components/input/rich-input.tsx
-msgid "Code Block"
-msgstr "Blok kódu"
+#: src/routes/agent/-components/agent-chat.tsx
+msgid "Close AI assistant"
+msgstr "Zavřít asistenta s umělou inteligencí"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Cohere"
+msgstr "Soudržný"
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 msgid "Columns"
 msgstr "Sloupce"
+
+#: src/libs/resume/ats.ts
+msgid "Columns commonly scramble the order text is read in. Set it to a single column."
+msgstr "Sloupce běžně zakódují, aby byl text načten. Nastavte jej na jeden sloupec."
 
 #. Accessible label for command list region inside command palette
 #. Accessible label for the command palette dialog
@@ -710,10 +944,19 @@ msgid "Community"
 msgstr "Komunita"
 
 #: src/dialogs/resume/sections/experience.tsx
+#: src/features/applications/components/application-form-sheet.tsx
 msgid "Company"
 msgstr "Společnost"
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/applications/components/table-view.tsx
+msgid "Company / Role"
+msgstr "Společnost / Pozice"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Company A–Z"
+msgstr "Společnost A–Z"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Compare this resume against this role URL and update keywords while keeping the voice concise and credible."
 msgstr "Porovnejte tento životopis s URL adresou této pozice a aktualizujte klíčová slova, přičemž zachovejte stručnost a důvěryhodnost textu."
 
@@ -721,10 +964,10 @@ msgstr "Porovnejte tento životopis s URL adresou této pozice a aktualizujte kl
 msgid "Completely free, forever, no hidden costs."
 msgstr "Zcela zdarma, navždy, bez skrytých poplatků."
 
-#. Account deletion confirmation dialog confirm action in danger zone
+#. Account deletion confirmation dialog confirm action in account settings
 #. Create API key dialog acknowledgment action after copying
 #: src/dialogs/api-key/create.tsx
-#: src/features/settings/pages/danger-zone.tsx
+#: src/features/settings/pages/account.tsx
 #: src/hooks/use-prompt.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Confirm"
@@ -734,6 +977,26 @@ msgstr "Potvrdit"
 #: src/features/settings/authentication/components/social-provider.tsx
 msgid "Connect"
 msgstr "Připojit"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Connected"
+msgstr "Připojeno"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Connection failed"
+msgstr "Připojení se nezdařilo"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Connection failed."
+msgstr "Připojení se nezdařilo."
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Connection verified — provider is ready to use."
+msgstr "Připojení ověřeno – poskytovatel je připraven k použití."
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Contacts"
+msgstr "Kontakty"
 
 #: src/dialogs/resume/sections/cover-letter.tsx
 #: src/dialogs/resume/sections/summary-item.tsx
@@ -761,17 +1024,26 @@ msgstr "Pokračujte tam, kde jste skončili, importováním existujícího živo
 msgid "Contributions fund bug fixes, security updates, and continuous improvements to keep the app running smoothly."
 msgstr "Příspěvky financují opravy chyb, bezpečnostní aktualizace a průběžná vylepšení, aby aplikace běžela hladce."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Conversation copied."
 msgstr "Konverzace zkopírována."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Conversation JSON copied."
 msgstr "JSON konverzace zkopírován."
 
+#: src/features/resume/stylesheet/legacy-banner.tsx
+msgid "Converted stylesheet draft"
+msgstr "Konverze konceptu stylů"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Copied to clipboard."
+msgstr "Zkopírováno do schránky."
+
 #. Action button to copy two-factor backup codes to clipboard
 #: src/dialogs/auth/enable-two-factor.tsx
-#: src/routes/agent/$threadId.tsx
+#: src/features/applications/components/application-ai-copilot.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Copy"
 msgstr "Kopírovat"
 
@@ -783,32 +1055,99 @@ msgstr "Zkopírujte a uložte si tyto záložní kódy pro případ, že ztratí
 msgid "Copy Backup Codes"
 msgstr "Zkopírovat záložní kódy"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Copy JSON"
 msgstr "Kopírovat JSON"
+
+#. Accessible label for the button that copies the two-factor secret key
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Copy secret"
+msgstr "Kopírovat tajný kód"
+
+#: src/features/resume/stylesheet/toolbar.tsx
+msgid "Copy stylesheet"
+msgstr "Kopírovat stylový list"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for match scoring and tailoring."
+msgstr "Zkopírujte celý popis práce z inzerátu a vložte jej níže. Pole za vás vyplníme a text uložíme k této aplikaci pro hodnocení shody a přizpůsobení."
 
 #: src/dialogs/api-key/create.tsx
 msgid "Copy this secret key and use it in your applications to access your data."
 msgstr "Zkopírujte tento tajný klíč a použijte ho ve svých aplikacích pro přístup k vašim datům."
 
 #: src/routes/builder/$resumeId/-components/dock.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Copy URL"
 msgstr "Kopírovat URL"
 
-#. Error description when AI provider cannot be reached during resume analysis
+#: src/libs/resume/ats.ts
+msgid "Correct the year, or use \"Present\" for ongoing work."
+msgstr "Correct the year, or use \\\"Present\\\" for ongoing work."
+
 #. Error shown when AI provider is unreachable during PDF/DOCX resume import
 #: src/dialogs/resume/import.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/resume-analysis.tsx
 msgid "Could not reach the AI provider. Please try again."
 msgstr "Nepodařilo se spojit s poskytovatelem UI. Zkuste to prosím znovu."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Could not restore this patch."
 msgstr "Tuto záplatu se nepodařilo obnovit."
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Could not verify provider connection."
 msgstr "Nepodařilo se ověřit připojení poskytovatele."
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Could not verify the connection. Check the API key, model, and base URL."
+msgstr "Nepodařilo se ověřit připojení. Zkontrolujte klíč API, model a základní URL."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Couldn't add the application. Please try again."
+msgstr "Aplikaci se nepodařilo přidat. Zkuste to prosím znovu."
+
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Couldn't delete the application."
+msgstr "Aplikaci se nepodařilo smazat."
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Couldn't delete the timeline entry."
+msgstr "Záznam časové osy se nepodařilo odstranit."
+
+#: src/features/applications/components/board.tsx
+msgid "Couldn't move the application. Please try again."
+msgstr "Aplikaci se nepodařilo přesunout. Zkuste to prosím znovu."
+
+#: src/routes/builder/$resumeId/-components/header.tsx
+msgid "Couldn't save"
+msgstr "Nepodařilo se uložit"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Couldn't save the note."
+msgstr "Poznámku se nepodařilo uložit."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Couldn't save your changes. Please try again."
+msgstr "Změny se nepodařilo uložit. Zkuste to prosím znovu."
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Couldn't update the timeline entry."
+msgstr "Záznam časové osy se nepodařilo aktualizovat."
+
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "Couldn't upload the file. Please try again."
+msgstr "Soubor se nepodařilo nahrát. Zkuste to prosím znovu."
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Count by source"
+msgstr "Počet podle zdroje"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/resume/export/download-dialog.tsx
+msgid "Cover letter"
+msgstr "Motivační dopis"
 
 #. Fallback title for a custom cover letter item in resume builder when recipient is empty
 #. Fallback title for a custom cover letter item in resume builder when recipient is unavailable
@@ -818,6 +1157,10 @@ msgstr "Nepodařilo se ověřit připojení poskytovatele."
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 msgid "Cover Letter"
 msgstr "Průvodní dopis"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Cover letter draft"
+msgstr "Návrh motivačního dopisu"
 
 #. Create API key dialog submit action
 #: src/dialogs/api-key/create.tsx
@@ -837,8 +1180,13 @@ msgstr "Průvodní dopis"
 #: src/dialogs/resume/sections/skill.tsx
 #: src/dialogs/resume/sections/summary-item.tsx
 #: src/dialogs/resume/sections/volunteer.tsx
+#: src/routes/dashboard/resumes/index.tsx
 msgid "Create"
 msgstr "Vytvořit"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Create a copy tuned to this job"
+msgstr "Vytvořte kopii přizpůsobenou této úloze"
 
 #: src/features/auth/pages/register.tsx
 msgid "Create a new account"
@@ -938,6 +1286,15 @@ msgstr "Vytvořte si ji nyní"
 msgid "Create resume with options"
 msgstr "Vytvoření životopisu s možnostmi"
 
+#: src/routes/dashboard/resumes/index.tsx
+msgid "Created"
+msgstr "Vytvořeno"
+
+#. placeholder {0}: result.name
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Created \"{0}\" and linked it to this application."
+msgstr "Vytvořil(a) jsem „{0}“ a propojil(a) ho s touto aplikací."
+
 #: src/dialogs/api-key/create.tsx
 msgid "Creating your API key..."
 msgstr "Vytváření API klíče…"
@@ -946,9 +1303,21 @@ msgstr "Vytváření API klíče…"
 msgid "Creating your resume..."
 msgstr "Vytváření životopisu…"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Crop picture"
+msgstr "Oříznout obrázek"
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "CSV data"
+msgstr "Data CSV"
+
 #: src/dialogs/auth/change-password.tsx
 msgid "Current Password"
 msgstr "Aktuální heslo"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Current stage"
+msgstr "Aktuální fáze"
 
 #: src/components/input/color-picker.tsx
 msgid "Custom"
@@ -971,12 +1340,6 @@ msgstr "Vlastní styly"
 msgid "Czech"
 msgstr "Čeština"
 
-#: src/features/command-palette/pages/navigation.tsx
-#: src/routes/dashboard/-components/sidebar.tsx
-#: src/routes/dashboard/settings/danger-zone.tsx
-msgid "Danger Zone"
-msgstr "Nebezpečná zóna"
-
 #: src/libs/locale.ts
 msgid "Danish"
 msgstr "Dánština"
@@ -991,6 +1354,10 @@ msgstr "Tmavý"
 msgid "Dark theme"
 msgstr "Tmavý motiv"
 
+#: src/routes/dashboard/-components/sidebar.tsx
+msgid "Dashboard"
+msgstr "Dashboard"
+
 #: src/routes/_home/-sections/features.tsx
 msgid "Data Security"
 msgstr "Zabezpečení dat"
@@ -1001,9 +1368,21 @@ msgstr "Zabezpečení dat"
 msgid "Date"
 msgstr "Datum"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/dashboard/applications/index.tsx
+msgid "Date applied"
+msgstr "Datum podání"
+
+#: src/components/input/rich-input.tsx
+msgid "Decrease indent"
+msgstr "Zmenšit odsazení"
+
+#: src/routes/agent/-components/resume-pane.tsx
 msgid "Decrease zoom"
 msgstr "Zmenšit přiblížení"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "DeepSeek"
+msgstr "Hluboké vyhledávání"
 
 #: src/dialogs/resume/sections/education.tsx
 msgid "Degree"
@@ -1015,10 +1394,13 @@ msgstr "Titul"
 #. Passkey row action to remove the selected passkey
 #. Resume card context menu destructive action to remove a resume
 #. Resume card dropdown destructive action to remove a resume
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/table-view.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 #: src/features/settings/pages/api-keys.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
-#: src/routes/agent/$threadId.tsx
 #: src/routes/builder/$resumeId/-components/header.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
@@ -1027,13 +1409,10 @@ msgstr "Titul"
 msgid "Delete"
 msgstr "Odstranit"
 
-#: src/features/settings/pages/danger-zone.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/pages/account.tsx
 msgid "Delete Account"
 msgstr "Smazat účet"
-
-#: src/components/input/rich-input.tsx
-msgid "Delete Column"
-msgstr "Smazat sloupec"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Delete Page"
@@ -1047,20 +1426,30 @@ msgstr "Smazat obrázek"
 msgid "Delete provider"
 msgstr "Smazat poskytovatele"
 
-#: src/components/input/rich-input.tsx
-msgid "Delete Row"
-msgstr "Smazat řádek"
-
-#: src/components/input/rich-input.tsx
-msgid "Delete Table"
-msgstr "Smazat tabulku"
-
+#: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
-#: src/routes/agent/$threadId.tsx
 msgid "Delete this agent thread?"
 msgstr "Smazat toto vlákno agenta?"
 
-#: src/features/settings/pages/danger-zone.tsx
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Delete this application?"
+msgstr "Smazat tuto žádost?"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Delete this timeline entry?"
+msgstr "Odstranit tento záznam časové osy?"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Delete timeline entry"
+msgstr "Odstranit záznam časové osy"
+
+#. placeholder {0}: result.deleted
+#: src/features/applications/components/table-view.tsx
+msgid "Deleted {0} application(s)."
+msgstr "Smazáno {0} aplikací."
+
+#: src/features/settings/pages/account.tsx
 msgid "Deleting your account..."
 msgstr "Mazání účtu…"
 
@@ -1069,10 +1458,13 @@ msgid "Deleting your API key..."
 msgstr "Mazání API klíče…"
 
 #: src/routes/builder/$resumeId/-components/header.tsx
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
+#: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "Deleting your resume..."
 msgstr "Mazání životopisu…"
+
+#: src/libs/resume/ats.ts
+msgid "Describe what you did so the entry contributes keywords for matching."
+msgstr "Popište, co jste udělali, aby záznam přispěl ke shodě klíčových slov."
 
 #: src/dialogs/resume/sections/award.tsx
 #: src/dialogs/resume/sections/certification.tsx
@@ -1086,6 +1478,7 @@ msgid "Description"
 msgstr "Popis"
 
 #: src/libs/resume/section.tsx
+#: src/routes/builder/$resumeId/-components/mobile-builder-shell.tsx
 msgid "Design"
 msgstr "Design"
 
@@ -1112,7 +1505,7 @@ msgstr "Odpojit"
 msgid "Discord"
 msgstr "Discord"
 
-#: src/components/ui/donation-toast.tsx
+#: src/features/applications/components/application-ai-copilot.tsx
 msgid "Dismiss"
 msgstr "Propustit"
 
@@ -1120,6 +1513,10 @@ msgstr "Propustit"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "Documentation"
 msgstr "Dokumentace"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Documents sent"
+msgstr "Odeslané dokumenty"
 
 #: src/features/auth/pages/login.tsx
 msgid "Don't have an account? <0/>"
@@ -1134,33 +1531,25 @@ msgid "Donate to Reactive Resume"
 msgstr "Přispět na Reactive Resume"
 
 #. Action button to download two-factor backup codes as a text file
+#. Primary action in the builder header to open resume download options
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/resume/export/download-dialog.tsx
+#: src/routes/builder/$resumeId/-components/header.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
 msgid "Download"
 msgstr "Stáhnout"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
-msgid "Download a copy of your resume as a Word document. Use this file to further customize your resume in Microsoft Word or Google Docs."
-msgstr "Stáhněte si kopii svého životopisu jako dokument aplikace Word. Tento soubor použijte k dalším úpravám životopisu v aplikaci Microsoft Word nebo Google Docs."
+#: src/features/settings/pages/account.tsx
+msgid "Download a copy of all your data, including your profile and every resume, as a JSON file."
+msgstr "Stáhněte si kopii všech svých dat, včetně profilu a všech životopisů, jako soubor JSON."
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
-msgid "Download a copy of your resume in JSON format. Use this file for backup or to import your resume into other applications, including AI assistants."
-msgstr "Stáhněte si kopii svého životopisu ve formátu JSON. Tento soubor použijte jako zálohu nebo pro import životopisu do jiných aplikací, včetně asistentů s umělou inteligencí."
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
-msgid "Download a copy of your resume in PDF format. Use this file for printing or to easily share your resume with recruiters."
-msgstr "Stáhněte si kopii svého životopisu ve formátu PDF. Tento soubor použijte k tisku nebo snadnému sdílení životopisu s náboráři."
-
-#: src/routes/builder/$resumeId/-components/dock.tsx
-msgid "Download DOCX"
-msgstr "Stáhnout DOCX"
-
-#: src/routes/builder/$resumeId/-components/dock.tsx
-msgid "Download JSON"
-msgstr "Stáhnout JSON"
+#. Primary action in the builder header to open resume download options
+#: src/routes/builder/$resumeId/-components/header.tsx
+msgid "Download options"
+msgstr "Možnosti stahování"
 
 #: src/features/resume/public/public-resume.tsx
-#: src/routes/agent/$threadId.tsx
-#: src/routes/builder/$resumeId/-components/dock.tsx
+#: src/routes/agent/-components/resume-pane.tsx
 msgid "Download PDF"
 msgstr "Stáhnout PDF"
 
@@ -1168,9 +1557,25 @@ msgstr "Stáhnout PDF"
 msgid "Downloads"
 msgstr "Stažení"
 
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Draft a cover letter"
+msgstr "Napište motivační dopis"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Draft a follow-up"
+msgstr "Navrhněte následnou akci"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Drafting failed."
+msgstr "Návrh selhal."
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "Přetažením sekce sem je přesunete mezi sloupci"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Drag to reposition and use the slider to zoom before uploading."
+msgstr "Přetažením změňte pozici a před nahráním použijte posuvník pro přiblížení/zvětšení."
 
 #. Resume card context menu action to create a copy
 #. Resume card dropdown action to create a copy
@@ -1203,7 +1608,14 @@ msgstr "Duplikování životopisu…"
 msgid "Dutch"
 msgstr "Nizozemština"
 
+#: src/routes/builder/$resumeId/-components/version-history.tsx
+msgid "Earlier versions are kept; the builder's undo history is reset."
+msgstr "Starší verze zůstanou zachovány; historie vrácení akcí v editoru se vynuluje."
+
 #: src/components/input/chip-input.tsx
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/routes/builder/$resumeId/-components/mobile-builder-shell.tsx
 msgid "Edit"
 msgstr "Upravit"
 
@@ -1212,14 +1624,51 @@ msgstr "Upravit"
 msgid "Edit {chip}"
 msgstr "Upravit {chip}"
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Edit application"
+msgstr "Upravit aplikaci"
+
+#. placeholder {0}: selectedColor.token.value
+#: src/features/resume/stylesheet/editor.tsx
+msgid "Edit color {0}"
+msgstr "Upravit barvu {0}"
+
 #. Screen reader description for the fullscreen rich-text editor dialog
 #: src/components/input/rich-input.tsx
 msgid "Edit content in fullscreen mode"
 msgstr "Úprava obsahu v celoobrazovkovém režimu"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Edit date"
+msgstr "Upravit datum"
+
+#. Resume card context menu action to edit resume metadata
+#. Resume card dropdown action to edit resume metadata
+#: src/routes/builder/$resumeId/-components/header.tsx
+#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
+#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
+msgid "Edit details"
+msgstr "Upravit podrobnosti"
+
 #: src/components/input/chip-input.tsx
 msgid "Edit keyword"
 msgstr "Upravit klíčové slovo"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Edit model"
+msgstr "Upravit model"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Edit note"
+msgstr "Upravit poznámku"
+
+#: src/features/resume/export/download-dialog.tsx
+msgid "Editable in Word, Google Docs, and Pages."
+msgstr "Upravitelné ve Wordu, Dokumentech Google a Pages."
+
+#: src/routes/builder/$resumeId/-sidebar/left/index.tsx
+msgid "Editing is disabled until you unlock it."
+msgstr "Úpravy jsou zakázány, dokud je neodemknete."
 
 #: src/components/input/chip-input.tsx
 msgid "Editing keyword..."
@@ -1245,9 +1694,17 @@ msgstr "E-mail"
 msgid "Email Address"
 msgstr "E-mailová adresa"
 
+#: src/features/settings/pages/profile.tsx
+msgid "Email delivery isn't configured on this instance, so verification is disabled."
+msgstr "Doručování e-mailů není v této instanci nakonfigurováno, takže ověřování je zakázáno."
+
 #: src/features/settings/authentication/components/two-factor.tsx
 msgid "Enable 2FA"
 msgstr "Aktivovat 2FA"
+
+#: src/routes/builder/$resumeId/-sidebar/left/index.tsx
+msgid "Enable editing"
+msgstr "Povolit úpravy"
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Enable Two-Factor Authentication"
@@ -1281,7 +1738,7 @@ msgstr "Zvyšte zabezpečení svého účtu pomocí dalších vrstev ochrany."
 msgid "Enter a name for your passkey."
 msgstr "Zadejte název přístupového klíče."
 
-#: src/features/auth/pages/verify-2fa-backup.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account"
 msgstr "Zadejte jeden z uložených záložních kódů pro přístup ke svému účtu"
 
@@ -1305,6 +1762,14 @@ msgstr "Zadejte své heslo pro potvrzení nastavení dvoufázového ověření. 
 msgid "Enter your password to disable two-factor authentication. Your account will be less secure without 2FA enabled."
 msgstr "Zadejte své heslo pro deaktivaci dvoufázového ověření. Bez aktivního 2FA bude váš účet méně zabezpečený."
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
+msgid "Error"
+msgstr "Chyba"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
+msgid "Every check passed. Nothing here should stop a parser from reading your resume."
+msgstr "Každá kontrola prošla. Nic zde by nemělo bránit analyzátoru ve čtení vašeho životopisu."
+
 #: src/routes/_home/-sections/donate.tsx
 msgid "Every contribution, big or small, makes a huge difference to the project.<0/>Thank you for your support!"
 msgstr "Každý příspěvek, velký i malý, má pro projekt obrovský význam.<0/>Děkujeme za vaši podporu!"
@@ -1312,6 +1777,10 @@ msgstr "Každý příspěvek, velký i malý, má pro projekt obrovský význam.
 #: src/routes/_home/-sections/features.tsx
 msgid "Everything you need to create, customize, and share professional resumes. Built with privacy in mind, powered by open source, and completely free forever."
 msgstr "Vše, co potřebujete k vytvoření, přizpůsobení a sdílení profesionálních životopisů. Vytvořeno s ohledem na soukromí, poháněno open source a zcela zdarma, navždy."
+
+#: src/features/resume/stylesheet/toolbar.tsx
+msgid "Exit focus mode"
+msgstr "Ukončit režim ostření"
 
 #: src/components/input/rich-input.tsx
 msgid "Exit Fullscreen"
@@ -1327,7 +1796,7 @@ msgstr "Zkušenosti"
 msgid "Expires in"
 msgstr "Vyprší za"
 
-#. placeholder {0}: key.expiresAt?.toLocaleDateString()
+#. placeholder {0}: key.expiresAt.toLocaleDateString()
 #: src/features/settings/pages/api-keys.tsx
 msgid "Expires on {0}"
 msgstr "Platnost vyprší {0}"
@@ -1344,20 +1813,36 @@ msgstr "Prozkoumejte API dokumentaci a zjistěte, jak integrovat Reactive Resume
 msgid "Export"
 msgstr "Export"
 
+#: src/features/command-palette/pages/navigation.tsx
+msgid "Export Data"
+msgstr "Exportovat data"
+
+#: src/features/settings/pages/account.tsx
+msgid "Export my data"
+msgstr "Exportovat má data"
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Export PNG"
+msgstr "Exportovat PNG"
+
+#: src/features/resume/export/download-dialog.tsx
+msgid "Export your resume or cover letter in the format you need."
+msgstr "Exportujte svůj životopis nebo motivační dopis ve formátu, který potřebujete."
+
 #: src/routes/_home/-sections/features.tsx
 msgid "Export your resume to PDF instantly, without any waiting or delays."
 msgstr "Exportujte svůj životopis do PDF okamžitě, bez čekání nebo zpoždění."
 
-#: src/features/settings/integrations/components/ai-section.tsx
-msgid "Failed"
-msgstr "Selhalo"
+#: src/features/applications/components/insights-view.tsx
+msgid "Exported pipeline-flow.png"
+msgstr "Exportovaný soubor pipeline-flow.png"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/resume-analysis.tsx
 msgid "Failed to analyze resume."
 msgstr "Nepodařilo se analyzovat životopis."
 
+#: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
-#: src/routes/agent/$threadId.tsx
 msgid "Failed to archive thread."
 msgstr "Archivace vlákna se nezdařilo."
 
@@ -1385,13 +1870,13 @@ msgstr "Smazání poskytovatele se nezdařilo."
 msgid "Failed to delete the API key. Please try again."
 msgstr "Nepodařilo se odstranit klíč API. Zkuste to prosím znovu."
 
+#: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
-#: src/routes/agent/$threadId.tsx
 msgid "Failed to delete thread."
 msgstr "Vlákno se nepodařilo smazat."
 
 #. Fallback toast when account deletion fails
-#: src/features/settings/pages/danger-zone.tsx
+#: src/features/settings/pages/account.tsx
 msgid "Failed to delete your account. Please try again."
 msgstr "Účet se nepodařilo odstranit. Zkuste to prosím znovu."
 
@@ -1404,6 +1889,11 @@ msgstr "Nepodařilo se zakázat dvoufaktorové ověřování. Zkuste to prosím 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Failed to enable two-factor authentication. Please try again."
 msgstr "Nepodařilo se povolit dvoufaktorové ověřování. Zkuste to prosím znovu."
+
+#. Fallback toast when data export fails
+#: src/features/settings/pages/account.tsx
+msgid "Failed to export your data. Please try again."
+msgstr "Export dat se nezdařilo. Zkuste to prosím znovu."
 
 #. Fallback toast when linking a social authentication provider fails
 #: src/features/settings/authentication/components/hooks.tsx
@@ -1448,10 +1938,8 @@ msgstr "Nepodařilo se odeslat e-mail s obnovením hesla. Zkuste to prosím znov
 msgid "Failed to setup two-factor authentication."
 msgstr "Dvoufázové ověření se nepodařilo nastavit."
 
-#. Fallback toast when custom OAuth sign-in fails without a provider error message
-#. Fallback toast when passkey sign-in fails without an error message
 #. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when social sign-in fails without a provider error message
+#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Failed to sign in. Please try again."
@@ -1465,6 +1953,10 @@ msgstr "Nepodařilo se odhlásit. Zkuste to prosím znovu."
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Failed to start agent thread."
 msgstr "Nepodařilo se spustit vlákno agenta."
+
+#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
+msgid "Failed to start the AI assistant."
+msgstr "Nepodařilo se spustit asistenta umělé inteligence."
 
 #. Fallback toast when unlinking a social authentication provider fails
 #: src/features/settings/authentication/components/hooks.tsx
@@ -1485,7 +1977,7 @@ msgstr "Nepodařilo se aktualizovat heslo. Zkuste to prosím znovu."
 msgid "Failed to update your profile. Please try again."
 msgstr "Nepodařilo se aktualizovat váš profil. Zkuste to prosím znovu."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Failed to upload attachment."
 msgstr "Nahrání přílohy se nezdařilo."
 
@@ -1500,7 +1992,7 @@ msgid "Failed to verify the password. Please try again."
 msgstr "Heslo se nepodařilo ověřit. Zkuste to prosím znovu."
 
 #. Fallback toast when verifying a backup two-factor authentication code fails
-#: src/features/auth/pages/verify-2fa-backup.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Failed to verify your backup code. Please try again."
 msgstr "Nepodařilo se ověřit váš záložní kód. Zkuste to prosím znovu."
 
@@ -1511,21 +2003,49 @@ msgstr "Nepodařilo se ověřit váš záložní kód. Zkuste to prosím znovu."
 msgid "Failed to verify your code. Please try again."
 msgstr "Nepodařilo se ověřit váš kód. Zkuste to prosím znovu."
 
+#: src/features/resume/stylesheet/status.tsx
+msgid "Fatal error"
+msgstr "Fatální chyba"
+
 #: src/routes/_home/-sections/features.tsx
 msgid "Features"
 msgstr "Funkce"
+
+#: src/dialogs/resume/import.tsx
+msgid "File"
+msgstr "Soubor"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Fill fields"
+msgstr "Vyplnit pole"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Filled in what we could from the posting."
+msgstr "Doplnili jsme, co se z příspěvku dalo."
 
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Filter by"
 msgstr "Filtrovat podle"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/dashboard/applications/index.tsx
+msgid "Filter by tags"
+msgstr "Filtrovat podle štítků"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Find weak bullets and rewrite them with stronger outcomes, numbers, scope, and sharper verbs."
 msgstr "Najděte slabé odrážky a přepište je se silnějšími výsledky, čísly, rozsahem a ostřejšími slovesy."
 
 #: src/libs/locale.ts
 msgid "Finnish"
 msgstr "Finština"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Fireworks"
+msgstr "Ohňostroj"
+
+#: src/routes/builder/$resumeId/-components/dock.tsx
+msgid "Fit to view"
+msgstr "Přizpůsobit zobrazení"
 
 #: src/routes/_home/-sections/features.tsx
 msgid "Flexibility"
@@ -1534,6 +2054,22 @@ msgstr "Flexibilita"
 #: src/dialogs/resume/sections/language.tsx
 msgid "Fluency"
 msgstr "Úroveň znalosti"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Follow-up"
+msgstr "Následná opatření"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Follow-up date"
+msgstr "Datum následné kontroly"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Follow-up draft"
+msgstr "Následný návrh"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Follow-up note"
+msgstr "Následná poznámka"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
 msgid "Font Family"
@@ -1577,6 +2113,10 @@ msgctxt "Page Format (A4, Letter, Free-form)"
 msgid "Format"
 msgstr "Formát"
 
+#: src/features/resume/stylesheet/toolbar.tsx
+msgid "Format stylesheet"
+msgstr "Formátovat stylový list"
+
 #: src/routes/_home/-sections/features.tsx
 msgid "Free"
 msgstr "Zdarma"
@@ -1588,6 +2128,14 @@ msgstr "Volný formát"
 #: src/libs/locale.ts
 msgid "French"
 msgstr "Francouzština"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "From your resume and the posting"
+msgstr "Z vašeho životopisu a inzerátu"
+
+#: src/features/resume/export/download-dialog.tsx
+msgid "Full resume data for backup or import."
+msgstr "Úplná data životopisu pro zálohování nebo import."
 
 #. Layout editor toggle label that makes a page single-column
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -1602,6 +2150,10 @@ msgstr "Celá obrazovka"
 #: src/components/input/rich-input.tsx
 msgid "Fullscreen Editor"
 msgstr "Editor na celou obrazovku"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Gaps:"
+msgstr "Mezery:"
 
 #: src/dialogs/resume/index.tsx
 msgid "Generate a random name"
@@ -1632,11 +2184,16 @@ msgid "GitHub"
 msgstr "GitHub"
 
 #. Secondary navigation button on backup-code verification screen
-#: src/components/layout/not-found-screen.tsx
-#: src/features/auth/pages/verify-2fa-backup.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Go Back"
 msgstr "Zpět"
 
+#: src/components/layout/not-found-screen.tsx
+msgid "Go home"
+msgstr "Jít domů"
+
+#: src/components/layout/error-screen.tsx
+#: src/components/layout/not-found-screen.tsx
 #: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Přejít na nástěnku"
@@ -1676,6 +2233,10 @@ msgstr "Řečtina"
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Grid"
 msgstr "Mřížka"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Groq"
+msgstr "Groq"
 
 #: src/routes/_home/-sections/donate.tsx
 msgid "Grow the Team"
@@ -1772,6 +2333,10 @@ msgstr "Skrýt podtržení odkazu"
 msgid "Hide password"
 msgstr "Skrýt heslo"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Hide picture"
+msgstr "Skrýt obrázek"
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Hide Section Icons"
 msgstr "Skrýt ikony sekcí"
@@ -1822,19 +2387,47 @@ msgstr "Maďarština"
 msgid "Icon"
 msgstr "Ikona"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Identify gaps for an applicant tracking system and apply only high-confidence keyword improvements."
 msgstr "Identifikujte mezery v systému sledování uchazečů a používejte pouze vylepšení klíčových slov s vysokou mírou spolehlivosti."
 
 #: src/dialogs/resume/import.tsx
+#: src/routes/dashboard/resumes/index.tsx
 msgid "Import"
 msgstr "Importovat"
+
+#. placeholder {0}: importable.length
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Import {0}"
+msgstr "Importovat {0}"
 
 #: src/dialogs/resume/import.tsx
 #: src/routes/dashboard/resumes/-components/cards/import-card.tsx
 #: src/routes/dashboard/resumes/-components/list-view.tsx
 msgid "Import an existing resume"
 msgstr "Importovat existující životopis"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Import CSV"
+msgstr "Importovat CSV"
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Import failed. Check the CSV and try again."
+msgstr "Import se nezdařil. Zkontrolujte soubor CSV a zkuste to znovu."
+
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/routes/dashboard/applications/index.tsx
+msgid "Import from CSV"
+msgstr "Importovat z CSV"
+
+#. placeholder {0}: result.imported
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Imported {0} application(s)."
+msgstr "Importováno {0} aplikací."
+
+#: src/dialogs/resume/import.tsx
+msgid "Importing from PDF or Word requires a connected AI provider."
+msgstr "Import z PDF nebo Wordu vyžaduje připojeného poskytovatele umělé inteligence."
 
 #: src/dialogs/resume/import.tsx
 msgid "Importing your resume..."
@@ -1844,7 +2437,19 @@ msgstr "Importování životopisu…"
 msgid "Importing…"
 msgstr "Import…"
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/resume/export/download-dialog.tsx
+msgid "Include resume header"
+msgstr "Zahrnout záhlaví životopisu"
+
+#: src/components/input/rich-input.tsx
+msgid "Increase indent"
+msgstr "Zvětšit odsazení"
+
+#: src/libs/resume/ats.ts
+msgid "Increase them so content stays inside the reliably read area."
+msgstr "Zvyšte je tak, aby obsah zůstal uvnitř spolehlivě čtené oblasti."
+
+#: src/routes/agent/-components/resume-pane.tsx
 msgid "Increase zoom"
 msgstr "Zvětšit přiblížení"
 
@@ -1860,9 +2465,9 @@ msgstr "Informace"
 msgid "Inline Code"
 msgstr "Řádkový kód"
 
-#: src/components/input/rich-input.tsx
-msgid "Insert Table"
-msgstr "Vložit tabulku"
+#: src/routes/dashboard/applications/index.tsx
+msgid "Insights"
+msgstr "Přehledy"
 
 #: src/routes/_home/-sections/features.tsx
 msgid "Instant Generation"
@@ -1908,6 +2513,30 @@ msgstr "Kurzíva"
 msgid "Japanese"
 msgstr "Japonština"
 
+#: src/features/command-palette/pages/navigation.tsx
+msgid "Job"
+msgstr "Práce"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Job description"
+msgstr "Popis práce"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Job posting"
+msgstr "Nabídka práce"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Job posting link"
+msgstr "Odkaz na nabídku práce"
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Job search pipeline"
+msgstr "Proces hledání práce"
+
+#: src/features/command-palette/pages/navigation.tsx
+msgid "Jobs"
+msgstr "Pracovní místa"
+
 #. Example full name placeholder on profile settings form
 #. Example full name placeholder on registration form
 #: src/features/auth/pages/register.tsx
@@ -1946,6 +2575,11 @@ msgstr "Zarovnání do bloku"
 msgid "Kannada"
 msgstr "Kannadština"
 
+#. Layout editor toggle that prevents a section from splitting across pages
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Keep together"
+msgstr "Držte pohromadě"
+
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Key"
 msgstr "Klíč"
@@ -1965,6 +2599,7 @@ msgstr "Korejština"
 
 #. Short field label for custom display text associated with a URL
 #: src/components/input/url-input.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Label"
 msgstr "Popisek"
@@ -1998,6 +2633,14 @@ msgstr "Naposledy analyzováno {updatedAtLabel}"
 msgid "Last downloaded on {0}"
 msgstr "Naposledy staženo {0}"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "Last updated"
+msgstr "Naposledy aktualizováno"
+
+#: src/routes/dashboard/resumes/index.tsx
+msgid "Last Updated"
+msgstr "Naposledy aktualizováno"
+
 #: src/routes/dashboard/resumes/-components/cards/resume-card.tsx
 #: src/routes/dashboard/resumes/-components/list-view.tsx
 msgid "Last updated on {updatedAt}"
@@ -2020,6 +2663,7 @@ msgstr "Rozvržení"
 msgid "Learn More"
 msgstr "Zjistit více"
 
+#: src/dialogs/resume/import.tsx
 #: src/hooks/use-form-blocker.tsx
 msgid "Leave"
 msgstr "Odejít"
@@ -2027,6 +2671,10 @@ msgstr "Odejít"
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 msgid "Leave empty to reset the title to the original."
 msgstr "Ponechte prázdné pro resetování názvu na původní."
+
+#: src/dialogs/resume/import.tsx
+msgid "Leave to set up an AI provider?"
+msgstr "Nechat nastavit poskytovatele AI?"
 
 #: src/components/input/rich-input.tsx
 msgid "Left Align"
@@ -2061,9 +2709,27 @@ msgstr "Světlý"
 msgid "Light theme"
 msgstr "Světlý motiv"
 
+#. placeholder {0}: diagnostic.range.start.line
+#. placeholder {1}: diagnostic.range.start.column
+#: src/features/resume/stylesheet/status.tsx
+msgid "Line {0}, column {1}"
+msgstr "Řádek {0}, sloupec {1}"
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
 msgid "Line Height"
 msgstr "Výška řádku"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Link a Reactive Resume (recommended)"
+msgstr "Propojit Reactive Resume (doporučeno)"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Link a resume and paste the job description (Edit) to score your fit and tailor a copy."
+msgstr "Propojte životopis a vložte popis práce (Upravit), abyste ohodnotili svou vhodnost a přizpůsobili si kopii."
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Linked Reactive Resume"
+msgstr "Propojený reaktivní životopis"
 
 #. Authentication provider display name in account settings
 #. Brand name label for LinkedIn social sign-in button
@@ -2072,6 +2738,14 @@ msgstr "Výška řádku"
 #: src/routes/_home/-sections/footer.tsx
 msgid "LinkedIn"
 msgstr "LinkedIn"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "LinkedIn, Referral…"
+msgstr "LinkedIn, Doporučení…"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Linking a Reactive Resume enables AI match scoring and tailoring."
+msgstr "Propojení Reactive Resume umožní AI hodnocení shody a přizpůsobení."
 
 #: src/features/settings/authentication/components/hooks.tsx
 msgid "Linking your {providerName} account..."
@@ -2085,13 +2759,13 @@ msgstr "Seznam"
 msgid "Lithuanian"
 msgstr "Litevština"
 
-#: src/routes/agent/$threadId.tsx
-msgid "Loading agent workspace…"
-msgstr "Načítání pracovního prostoru agenta…"
-
 #: src/dialogs/resume/import.tsx
 msgid "Loading AI providers. Please try again in a moment."
 msgstr "Načítání poskytovatelů umělé inteligence. Zkuste to prosím znovu za chvíli."
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Loading applications…"
+msgstr "Načítání aplikací…"
 
 #: src/features/settings/integrations/components/ai-section.tsx
 #: src/routes/agent/-components/new-thread-setup.tsx
@@ -2103,17 +2777,20 @@ msgstr "Načítání poskytovatelů…"
 msgid "Loading resumes…"
 msgstr "Načítání životopisů…"
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
 msgid "Loading threads…"
 msgstr "Načítání vláken…"
 
-#: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/version-history.tsx
 msgid "Loading…"
 msgstr "Načítání…"
 
 #: src/dialogs/resume/sections/education.tsx
 #: src/dialogs/resume/sections/experience.tsx
 #: src/dialogs/resume/sections/volunteer.tsx
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/table-view.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
 msgid "Location"
 msgstr "Lokalita"
@@ -2154,7 +2831,7 @@ msgstr "Hlavní"
 msgid "Main navigation"
 msgstr "Hlavní navigace"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Make the experience section more results-oriented and remove vague responsibilities."
 msgstr "Zaměřte sekci věnovanou zkušenostem více na výsledky a odstraňte vágní odpovědnosti."
 
@@ -2178,27 +2855,63 @@ msgstr "Okraje (vodorovné)"
 msgid "Margin (Vertical)"
 msgstr "Okraje (svislé)"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Mark rejected"
+msgstr "Mark odmítl"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Match scoring failed."
+msgstr "Bodování zápasu se nezdařilo."
+
 #. Impact severity label in resume analysis suggestion card
 #: src/routes/builder/$resumeId/-sidebar/right/sections/resume-analysis.tsx
 msgid "Medium"
 msgstr "Střední"
 
 #. File format label in import source selector
+#. File format label in import source selector
 #: src/dialogs/resume/import.tsx
 msgid "Microsoft Word"
 msgstr "Microsoft Word"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/resume-pane.tsx
 msgid "Missing working resume"
 msgstr "Chybí pracovní životopis"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Mistral AI"
+msgstr "Mistral AI"
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Model"
 msgstr "Model"
 
+#: src/libs/resume/ats.ts
+msgid "Most systems file candidates by email. Add one under Basics."
+msgstr "Většina systémů podává kandidáty e-mailem. Přidejte jeden pod Základy."
+
+#: src/libs/resume/ats.ts
+msgid "Move it into the main column and keep the sidebar for short lists."
+msgstr "Přesuňte jej do hlavního sloupce a postranní panel ponechte pro krátké seznamy."
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Move section to another column or page"
+msgstr "Přesunout sekci do jiného sloupce nebo na jinou stránku"
+
+#: src/features/applications/components/table-view.tsx
+msgid "Move stage"
+msgstr "Přesunout scénu"
+
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Move to"
 msgstr "Přesunout do"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to"
+msgstr "Přesunuto do"
 
 #: src/routes/_home/-sections/features.tsx
 msgid "Multilingual"
@@ -2216,9 +2929,11 @@ msgstr "Musí začít na https://"
 #: src/dialogs/resume/sections/project.tsx
 #: src/dialogs/resume/sections/reference.tsx
 #: src/dialogs/resume/sections/skill.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/settings/pages/profile.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+#: src/routes/dashboard/resumes/index.tsx
 msgid "Name"
 msgstr "Název"
 
@@ -2230,6 +2945,15 @@ msgstr "Nepálština"
 msgid "Network"
 msgstr "Síť"
 
+#: src/features/settings/pages/api-keys.tsx
+msgid "Never expires"
+msgstr "Nikdy nevyprší"
+
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
+msgid "New Application"
+msgstr "Nová aplikace"
+
 #: src/routes/_home/-sections/features.tsx
 msgid "New features are constantly being added and improved, so be sure to check back often."
 msgstr "Pravidelně přidáváme a vylepšujeme nové funkce, proto se sem pravidelně vracejte."
@@ -2239,6 +2963,7 @@ msgid "New Line"
 msgstr "Nový řádek"
 
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "New Page"
 msgstr "Nová stránka"
 
@@ -2252,13 +2977,35 @@ msgstr "Nové heslo"
 msgid "New Section"
 msgstr "Nová sekce"
 
+#: src/features/applications/components/table-view.tsx
+msgid "New tag…"
+msgstr "Nový štítek…"
+
+#: src/features/command-palette/pages/resumes.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
 msgid "New thread"
+msgstr "Nové vlákno"
+
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
+msgid "New Thread"
 msgstr "Nové vlákno"
 
 #: src/routes/_home/-sections/features.tsx
 msgid "No Advertising, No Tracking"
 msgstr "Bez reklam, bez sledování"
+
+#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
+msgid "No AI provider connected"
+msgstr "Není připojen žádný poskytovatel umělé inteligence"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "No applications match your filters."
+msgstr "Žádné aplikace neodpovídají vašim filtrům."
+
+#: src/features/applications/components/insights-view.tsx
+msgid "No applications yet — add a few to see your funnel and reply rates."
+msgstr "Zatím žádné žádosti – přidejte několik a podívejte se na svůj prodejní trychtýř a míru odpovědí."
 
 #. Error shown when AI import endpoint returns no parsed resume data
 #: src/dialogs/resume/import.tsx
@@ -2269,13 +3016,34 @@ msgstr "Od poskytovatele UI nebyly vráceny žádné údaje."
 msgid "No passkeys registered yet."
 msgstr "Zatím nebyly zaregistrovány žádné pasové klíče."
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
+msgid "No prior data"
+msgstr "Žádné předchozí údaje"
+
 #: src/components/ui/combobox.tsx
 msgid "No results found."
 msgstr "Nebyly nalezeny žádné výsledky."
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/custom-styles.tsx
-msgid "No style rules yet."
-msgstr "Zatím žádná stylistická pravidla."
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No resume linked."
+msgstr "Žádný odkaz na životopis."
+
+#: src/routes/dashboard/resumes/-components/grid-view.tsx
+#: src/routes/dashboard/resumes/-components/list-view.tsx
+msgid "No resumes match your search."
+msgstr "Žádné životopisy neodpovídají vašemu vyhledávání."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "No resumes yet."
+msgstr "Zatím žádné životopisy."
+
+#: src/routes/builder/$resumeId/-components/version-history.tsx
+msgid "No saved versions yet."
+msgstr "Zatím žádné uložené verze."
+
+#: src/features/applications/components/insights-view.tsx
+msgid "No source data yet."
+msgstr "Zatím žádné zdrojové údaje."
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "No tested provider"
@@ -2289,6 +3057,19 @@ msgstr "Zatím žádná vlákna."
 msgid "Norwegian"
 msgstr "Norština"
 
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Not connected"
+msgstr "Nepřipojeno"
+
+#: src/features/resume/stylesheet/editor.tsx
+msgid "Not sure what to write?"
+msgstr "Nejste si jisti, co napsat?"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
+msgid "Note"
+msgstr "Poznámka"
+
+#: src/features/applications/components/application-form-sheet.tsx
 #: src/libs/resume/section.tsx
 msgid "Notes"
 msgstr "Poznámky"
@@ -2298,8 +3079,8 @@ msgid "Odia"
 msgstr "Udijština"
 
 #: src/features/settings/integrations/components/ai-section.tsx
-msgid "Ollama"
-msgstr "Ollama"
+msgid "Ollama Cloud"
+msgstr "Ollama Cloud"
 
 #: src/routes/_home/-sections/features.tsx
 msgid "One-Click Sign-In"
@@ -2308,6 +3089,15 @@ msgstr "Přihlášení jedním kliknutím"
 #: src/routes/_home/-sections/donate.tsx
 msgid "Ongoing Maintenance"
 msgstr "Průběžná údržba"
+
+#. Helper note explaining the keep-together limitation
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Only applies when the section fits on a single page."
+msgstr "Platí pouze tehdy, když se sekce vejde na jednu stránku."
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Only the first {MAX_IMPORT} rows import at once — {overflow} left out. Split the file to import the rest."
+msgstr "Najednou se importuje pouze prvních {MAX_IMPORT} řádků — {overflow} bude vynecháno. Pro import zbytku soubor rozdělte."
 
 #. Resume card context menu action to open the resume editor
 #. Resume card dropdown action to open the resume editor
@@ -2320,12 +3110,20 @@ msgstr "Otevřít"
 msgid "Open AI agent"
 msgstr "Otevřený agent AI"
 
+#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
+msgid "Open AI assistant"
+msgstr "Otevřený asistent s umělou inteligencí"
+
 #. Button label to open the user's default email app
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Open Email Client"
 msgstr "Otevřít e-mailového klienta"
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/resume/stylesheet/toolbar.tsx
+msgid "Open focus mode"
+msgstr "Otevřít režim ostření"
+
+#: src/routes/agent/-components/resume-pane.tsx
 msgid "Open in builder"
 msgstr "Otevřít v editoru"
 
@@ -2349,6 +3147,7 @@ msgstr "Kompatibilní s OpenAI"
 msgid "OpenRouter"
 msgstr "OpenRouter"
 
+#: src/features/resume/stylesheet/editor.tsx
 #: src/routes/_home/-sections/donate.tsx
 #: src/routes/_home/-sections/footer.tsx
 msgid "opens in new tab"
@@ -2358,10 +3157,18 @@ msgstr "otevře se na nové kartě"
 msgid "Optionally, set a password so that only people with the password can view your resume through the link."
 msgstr "Volitelně můžete nastavit heslo, aby si váš životopis mohli přes odkaz prohlédnout jen lidé, kteří heslo znají."
 
+#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
+msgid "Options for {title}"
+msgstr "Možnosti pro {title}"
+
 #: src/features/auth/components/social-auth.tsx
 msgctxt "Choose to authenticate with a social provider (Google, GitHub, etc.) instead of email and password"
 msgid "or continue with"
 msgstr "nebo pokračujte s"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Or upload a resume PDF"
+msgstr "Nebo nahrajte PDF životopisu"
 
 #: src/components/input/rich-input.tsx
 msgid "Ordered List"
@@ -2381,6 +3188,7 @@ msgstr "Stránka"
 
 #. Layout editor page label with 1-based page number
 #. placeholder {0}: pageIndex + 1
+#. placeholder {0}: targetPageIndex + 1
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
@@ -2389,6 +3197,10 @@ msgstr "Stránka {0}"
 #: src/components/input/rich-input.tsx
 msgid "Paragraph"
 msgstr "Odstavec"
+
+#: src/components/input/rich-input.tsx
+msgid "Paragraph and heading style"
+msgstr "Styl odstavce a nadpisu"
 
 #. Authentication provider display name in account settings
 #. Label for passkey sign-in button
@@ -2443,30 +3255,43 @@ msgstr "Ochrana heslem byla deaktivována."
 msgid "Password protection has been enabled."
 msgstr "Ochrana heslem byla aktivována."
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Paste rows or upload a .csv. We map columns like Company, Role, Stage, Stage Date, Salary, Source and Tags."
+msgstr "Vložte řádky nebo nahrajte soubor .csv. Namapujeme sloupce jako Společnost, Role, Fáze, Datum fáze, Plat, Zdroj a Štítky."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Paste the full job description here…"
+msgstr "Sem vložte celý popis práce…"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Pasting fills the fields automatically."
+msgstr "Vložením se pole vyplní automaticky."
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Patch applied"
 msgstr "Aplikovaná záplata"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Patch conflicted"
 msgstr "Konflikt opravy"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Patch failed"
 msgstr "Oprava selhala"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Patch pending"
 msgstr "Oprava čeká na vyřízení"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Patch rolled back"
 msgstr "Patch vrácen zpět"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Patch rolled back."
 msgstr "Patch vrácen zpět."
 
+#. File format label in import source selector
 #. File format label in import source selector
 #: src/dialogs/resume/import.tsx
 msgid "PDF"
@@ -2478,6 +3303,10 @@ msgstr "PDF"
 #: src/dialogs/resume/sections/volunteer.tsx
 msgid "Period"
 msgstr "Období"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Perplexity"
+msgstr "Zmatek"
 
 #: src/libs/locale.ts
 msgid "Persian"
@@ -2492,9 +3321,29 @@ msgstr "Personalizujte svůj životopis libovolnými barvami, písmy nebo design
 msgid "Phone"
 msgstr "Telefon"
 
+#: src/components/input/icon-picker.tsx
+msgid "Pick an icon"
+msgstr "Vyberte ikonu"
+
 #: src/libs/resume/section.tsx
 msgid "Picture"
 msgstr "Fotografie"
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Pipeline flow"
+msgstr "Průtok potrubím"
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Pipeline health across all applications"
+msgstr "Stav potrubí napříč všemi aplikacemi"
+
+#: src/libs/resume/ats.ts
+msgid "Place it on a page from the Layout panel, or hide it if you meant to park it."
+msgstr "Umístěte ji na stránku z panelu Rozvržení nebo ji skryjte, pokud jste ji chtěli zaparkovat."
+
+#: src/features/resume/export/download-dialog.tsx
+msgid "Plain text, ideal for AI tools and quick edits."
+msgstr "Prostý text, ideální pro nástroje umělé inteligence a rychlé úpravy."
 
 #: src/features/auth/pages/reset-password.tsx
 msgid "Please enter a new password for your account"
@@ -2512,13 +3361,15 @@ msgstr "Zadejte prosím URL, na kterou chcete odkazovat:"
 msgid "Please support the project"
 msgstr "Prosím, podpořte projekt"
 
-#: src/features/resume/public/public-resume.tsx
-#: src/routes/builder/$resumeId/-components/dock.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "Please upload a PDF file."
+msgstr "Prosím nahrajte soubor PDF."
+
+#: src/features/resume/export/use-resume-export.ts
 msgid "Please wait while your PDF is being generated..."
 msgstr "Počkejte prosím, než se vaše PDF vygeneruje…"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/resume-pane.tsx
 msgid "Please wait while your PDF is being generated…"
 msgstr "Počkejte prosím, než se váš PDF vygeneruje…"
 
@@ -2544,6 +3395,10 @@ msgstr "Portugalština (Portugalsko)"
 msgid "Position"
 msgstr "Pozice"
 
+#: src/libs/resume/ats.ts
+msgid "Prefer a conventional heading such as \"Work Experience\" or \"Education\"."
+msgstr "Prefer a conventional heading such as \\\"Work Experience\\\" or \\\"Education\\\"."
+
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/preferences/index.tsx
 #: src/routes/dashboard/-components/sidebar.tsx
@@ -2551,9 +3406,13 @@ msgstr "Pozice"
 msgid "Preferences"
 msgstr "Předvolby"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Prepare a conservative patch that improves clarity without changing my career narrative."
 msgstr "Připravit konzervativní záplatu, která zlepší srozumitelnost, aniž by změnila můj kariérní příběh."
+
+#: src/features/resume/export/use-resume-export.ts
+msgid "Preparing your resume for printing..."
+msgstr "Příprava životopisu k tisku..."
 
 #: src/components/input/color-picker.tsx
 msgid "Presets"
@@ -2567,6 +3426,18 @@ msgstr "Stiskněte <0>{RETURN_KEY}</0> nebo <1>{COMMA_KEY}</1> pro přidání ne
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Press <0>Enter</0> to open"
 msgstr "Stisknutím klávesy <0>Enter</0> otevřete"
+
+#: src/routes/builder/$resumeId/-components/mobile-builder-shell.tsx
+msgid "Preview"
+msgstr "Náhled"
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Preview and export fall back to base styles."
+msgstr "Náhled a export se vrátí k základním stylům."
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Preview and export keep valid styles and ignore invalid styles."
+msgstr "Náhled a export zachovají platné styly a neplatné ignorují."
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Primary Color"
@@ -2614,6 +3485,10 @@ msgstr "Poskytovatel"
 msgid "Provider connection verified."
 msgstr "Připojení poskytovatele ověřeno."
 
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Provider model"
+msgstr "Model poskytovatele"
+
 #: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
@@ -2623,6 +3498,10 @@ msgstr "Publikace"
 #: src/dialogs/resume/sections/publication.tsx
 msgid "Publisher"
 msgstr "Vydavatel"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Re-score"
+msgstr "Přehodnotit"
 
 #: src/routes/_home/-sections/header.tsx
 msgid "Reactive Resume - Go to homepage"
@@ -2653,15 +3532,39 @@ msgstr "Reactive Resume je zdarma a má otevřený zdrojový kód. Pokud vám po
 msgid "Reactive Resume is open-source, privacy-focused, and completely free. Unlike other resume builders, it doesn't show ads, track your data, or limit your features behind a paywall."
 msgstr "Reactive Resume je open source, zaměřené na soukromí a zcela zdarma. Na rozdíl od jiných nástrojů pro tvorbu životopisů nezobrazuje reklamy, nesleduje vaše data a neomezuje funkce za paywallem."
 
+#: src/routes/_home/-sections/sponsors.tsx
+msgid "Reactive Resume stays free, open-source, and independent because companies choose to support the work behind it. Their sponsorship helps fund hosting, maintenance, and continued development for the community."
+msgstr "Reactive Resume zůstává bezplatný, open-source a nezávislý, protože se firmy rozhodly podporovat práci, která za ním stojí. Jejich sponzorství pomáhá financovat hosting, údržbu a další rozvoj pro komunitu."
+
 #. App version label in footer; includes semantic version variable
 #: src/components/ui/copyright.tsx
-msgid "Reactive Resume v{__APP_VERSION__}"
-msgstr "Reaktivní životopis v{__APP_VERSION__}"
+msgid "Reactive Resume v<0>{__APP_VERSION__}</0>"
+msgstr "Reaktivní životopis v<0>{__APP_VERSION__}</0>"
 
 #. Import source option for legacy Reactive Resume v4 JSON format
 #: src/dialogs/resume/import.tsx
 msgid "Reactive Resume v4 (JSON)"
 msgstr "Reaktivní životopis v4 (JSON)"
+
+#: src/features/resume/stylesheet/editor.tsx
+msgid "Read the Applying Custom Styles guide."
+msgstr "Přečtěte si průvodce Použití vlastních stylů."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Reading the posting…"
+msgstr "Čtení inzerátu…"
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Ready to activate"
+msgstr "Připraveno k aktivaci"
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Ready to activate with errors"
+msgstr "Připraveno k aktivaci s chybami"
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Ready to activate with warnings"
+msgstr "Připraveno k aktivaci s varováními"
 
 #: src/dialogs/resume/sections/cover-letter.tsx
 msgid "Recipient"
@@ -2675,15 +3578,23 @@ msgstr "Obdélník"
 msgid "Rectangle (Full Width)"
 msgstr "Obdélník (plná šířka)"
 
+#: src/routes/builder/$resumeId/-components/dock.tsx
+msgid "Redo"
+msgstr "Předělat"
+
+#: src/features/resume/stylesheet/toolbar.tsx
+msgid "Redo stylesheet edit"
+msgstr "Znovu upravit stylový list"
+
 #: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "References"
 msgstr "Reference"
 
-#: src/components/layout/error-screen.tsx
-msgid "Refresh"
-msgstr "Obnovit"
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Referred by…, things to emphasize, etc."
+msgstr "Odkaz od…, co zdůraznit atd."
 
 #: src/features/settings/authentication/components/passkeys.tsx
 msgid "Register New Device"
@@ -2692,6 +3603,10 @@ msgstr "Registrace nového zařízení"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Remember your password? <0/>"
 msgstr "Vzpomínáte si na heslo? <0/>"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Remote, Hybrid, a city…"
+msgstr "Vzdáleně, hybridně, město…"
 
 #: src/dialogs/resume/sections/experience.tsx
 msgid "Remove"
@@ -2702,9 +3617,29 @@ msgstr "Odstranit"
 msgid "Remove {chip}"
 msgstr "Odstranění adresy {chip}"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Remove contact"
+msgstr "Odebrat kontakt"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
+msgid "Remove custom field"
+msgstr "Odebrat vlastní pole"
+
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "Remove file"
+msgstr "Odebrat soubor"
+
+#: src/components/input/rich-input.tsx
+msgid "Remove link"
+msgstr "Odebrat odkaz"
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Remove Password"
 msgstr "Odebrat heslo"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Remove tag"
+msgstr "Odebrat štítek"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Removing password protection..."
@@ -2717,6 +3652,10 @@ msgstr "Přejmenovat"
 #: src/dialogs/resume/sections/experience.tsx
 msgid "Reorder"
 msgstr "Změnit pořadí"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
+msgid "Reorder custom field"
+msgstr "Změnit pořadí vlastního pole"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "Report a Bug"
@@ -2744,10 +3683,6 @@ msgstr "Resetovat"
 msgid "Reset Password"
 msgstr "Obnovit heslo"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/custom-styles.tsx
-msgid "Reset Style"
-msgstr "Obnovit styl"
-
 #: src/features/auth/pages/reset-password.tsx
 msgid "Reset your password"
 msgstr "Obnovte své heslo"
@@ -2760,14 +3695,21 @@ msgstr "Obnovování hesla…"
 msgid "Resources"
 msgstr "Zdroje"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Restore"
 msgstr "Obnovit"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Restore the resume to before this patch? This will roll back this patch and any patches applied after it."
 msgstr "Obnovit životopis do stavu před touto opravou? Tato akce vrátí zpět tuto opravu a všechny opravy použité po ní."
 
+#: src/routes/builder/$resumeId/-components/version-history.tsx
+msgid "Restore this version?"
+msgstr "Obnovit tuto verzi?"
+
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/resume/export/download-dialog.tsx
+#: src/routes/agent/-components/resume-pane.tsx
 #: src/routes/agent/$threadId.tsx
 msgid "Resume"
 msgstr "Resumé"
@@ -2780,7 +3722,23 @@ msgstr "Analýza životopisu"
 msgid "Resume analysis complete."
 msgstr "Analýza životopisu dokončena."
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/resume/preview/resume-accessible-text.tsx
+msgid "Resume content"
+msgstr "Obsah životopisu"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Resume file"
+msgstr "Soubor životopisu"
+
+#: src/features/applications/components/application-card.tsx
+msgid "Resume linked"
+msgstr "Životopis propojen"
+
+#: src/routes/builder/$resumeId/-components/header.tsx
+msgid "Resume options"
+msgstr "Možnosti životopisu"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Resume patch"
 msgstr "Obnovit opravu"
 
@@ -2792,25 +3750,37 @@ msgstr "Obnovit opravu"
 msgid "Resumes"
 msgstr "Životopisy"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Retry"
 msgstr "Zkusit znovu"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Review the resume against a job description and ask me questions before changing uncertain sections."
 msgstr "Projděte si životopis s ohledem na popis práce a před změnou nejasných částí se mě zeptejte na otázky."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Rework the summary so it targets a senior engineering manager role without sounding generic."
 msgstr "Přepracujte shrnutí tak, aby se zaměřovalo na pozici seniorního technického manažera, aniž by znělo genericky."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Rewrite this resume for a startup founder-to-product-lead transition with clear business impact."
 msgstr "Přepište tento životopis pro přechod od zakladatele startupu k vedoucímu produktu s jasným dopadem na podnikání."
 
 #: src/components/input/rich-input.tsx
 msgid "Right Align"
 msgstr "Zarovnat vpravo"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Role (optional)"
+msgstr "Role (volitelné)"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Role / title"
+msgstr "Role / titul"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Role A–Z"
+msgstr "Role od A do Z"
 
 #: src/dialogs/resume/sections/experience.tsx
 msgid "Role Progression"
@@ -2824,14 +3794,6 @@ msgstr "Rumunština"
 msgid "Rotation"
 msgstr "Otočení"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/custom-styles.tsx
-msgid "rule"
-msgstr "pravidlo"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/custom-styles.tsx
-msgid "rules"
-msgstr "pravidla"
-
 #: src/routes/builder/$resumeId/-sidebar/right/sections/resume-analysis.tsx
 msgid "Run your first analysis to get a scorecard, strengths, and prioritized suggestions."
 msgstr "Proveďte první analýzu a získejte hodnotící tabulku, silné stránky a návrhy priorit."
@@ -2840,10 +3802,32 @@ msgstr "Proveďte první analýzu a získejte hodnotící tabulku, silné strán
 msgid "Russian"
 msgstr "Ruština"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/table-view.tsx
+msgid "Salary"
+msgstr "Plat"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Salary range"
+msgstr "Platové rozpětí"
+
 #. Passkey rename prompt confirm action in authentication settings
+#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 msgid "Save"
 msgstr "Uložit"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Save & Test Provider"
+msgstr "Poskytovatel uložení a testování"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Save & Upload"
+msgstr "Uložit a nahrát"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Save changes"
+msgstr "Uložit změny"
 
 #: src/dialogs/resume/index.tsx
 #: src/dialogs/resume/sections/award.tsx
@@ -2866,8 +3850,16 @@ msgid "Save Changes"
 msgstr "Uložit změny"
 
 #: src/features/settings/integrations/components/ai-section.tsx
-msgid "Save Provider"
-msgstr "Uložit poskytovatele"
+msgid "Save model"
+msgstr "Uložit model"
+
+#: src/routes/builder/$resumeId/-components/header.tsx
+msgid "Saved"
+msgstr "Uloženo"
+
+#: src/routes/builder/$resumeId/-components/header.tsx
+msgid "Saving…"
+msgstr "Ukládání…"
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Scan the QR code below with your preferred authenticator app. You can also copy the secret below and paste it into your app."
@@ -2877,9 +3869,25 @@ msgstr "Naskenujte QR kód níže pomocí své preferované autentizační aplik
 msgid "School"
 msgstr "Škola"
 
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Score my fit"
+msgstr "Skóruj můj fit"
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/resume-analysis.tsx
 msgid "Scorecard"
 msgstr "Hodnotící karta"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Scoring your fit…"
+msgstr "Hodnocení vaší formy…"
+
+#: src/routes/dashboard/-components/sidebar.tsx
+msgid "Search"
+msgstr "Vyhledávání"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Search applications…"
+msgstr "Vyhledávání aplikací…"
 
 #. Accessible label for command palette search input
 #: src/features/command-palette/index.tsx
@@ -2896,6 +3904,10 @@ msgstr "Hledat ikonu"
 msgid "Search for…"
 msgstr "Hledat…"
 
+#: src/routes/dashboard/resumes/index.tsx
+msgid "Search resumes..."
+msgstr "Hledat životopisy..."
+
 #: src/components/ui/combobox.tsx
 msgid "Search..."
 msgstr "Hledat..."
@@ -2909,39 +3921,65 @@ msgstr "Hledat…"
 msgid "Secret copied to clipboard."
 msgstr "Tajný kód zkopírován do schránky."
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
+msgid "Section options"
+msgstr "Možnosti sekce"
+
 #: src/dialogs/resume/sections/custom.tsx
 msgid "Section Type"
 msgstr "Typ sekce"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "See how this resume matches the posting"
+msgstr "Podívejte se, jak tento životopis odpovídá inzerátu"
+
+#. placeholder {0}: app.company
+#: src/features/applications/components/table-view.tsx
+msgid "Select {0}"
+msgstr "Vyberte {0}"
 
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Select a resume"
 msgstr "Vyberte životopis"
 
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Select a tested provider"
-msgstr "Vyberte ověřeného poskytovatele"
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Select a tested provider before starting a thread."
-msgstr "Před zahájením vlákna vyberte ověřeného poskytovatele."
-
 #: src/routes/agent/index.tsx
 msgid "Select a thread"
 msgstr "Vyberte vlákno"
+
+#: src/features/applications/components/table-view.tsx
+msgid "Select all"
+msgstr "Vybrat vše"
 
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Select an agent model"
 msgstr "Vyberte model agenta"
 
+#: src/routes/agent/-components/new-thread-setup.tsx
+msgid "Select an AI provider"
+msgstr "Vyberte poskytovatele umělé inteligence"
+
 #: src/components/ui/combobox.tsx
 msgid "Select..."
 msgstr "Vybrat..."
+
+#: src/features/applications/components/table-view.tsx
+msgid "selected"
+msgstr "vybraný"
 
 #: src/routes/_home/-sections/features.tsx
 msgid "Self-Host with Docker"
 msgstr "Vlastní hosting pomocí Dockeru"
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/resume/stylesheet/editor.tsx
+msgid "Semantic CSS stylesheet"
+msgstr "Sémantický CSS stylový list"
+
+#: src/routes/agent/-components/agent-chat.tsx
+msgid "Send answer"
+msgstr "Odeslat odpověď"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Send message"
 msgstr "Odeslat zprávu"
 
@@ -2966,6 +4004,26 @@ msgstr "Srbština"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Set Password"
 msgstr "Nastavit heslo"
+
+#: src/dialogs/resume/import.tsx
+msgid "Set up a provider"
+msgstr "Nastavit poskytovatele"
+
+#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
+msgid "Set up an AI provider"
+msgstr "Nastavení poskytovatele umělé inteligence"
+
+#: src/routes/agent/-components/new-thread-setup.tsx
+msgid "Set up an AI provider before starting a thread."
+msgstr "Před zahájením vlákna nastavte poskytovatele umělé inteligence."
+
+#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
+msgid "Set up an AI provider to chat about this resume and apply edits automatically."
+msgstr "Nastavte poskytovatele umělé inteligence, který bude o tomto životopise diskutovat a automaticky provádět úpravy."
+
+#: src/routes/agent/-components/new-thread-setup.tsx
+msgid "Set up an AI provider to get started."
+msgstr "Pro začátek si nastavte poskytovatele umělé inteligence."
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/routes/agent/-components/new-thread-setup.tsx
@@ -2999,6 +4057,11 @@ msgstr "Sdílení"
 msgid "Show"
 msgstr "Zobrazit"
 
+#. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
+#: src/features/applications/components/board.tsx
+msgid "Show {0} more"
+msgstr "Zobrazit {0} více"
+
 #: src/dialogs/resume/sections/award.tsx
 #: src/dialogs/resume/sections/certification.tsx
 #: src/dialogs/resume/sections/education.tsx
@@ -3029,10 +4092,24 @@ msgstr "Zobrazit odkaz v nadpisu"
 msgid "Show password"
 msgstr "Zobrazit heslo"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Show picture"
+msgstr "Zobrazit obrázek"
+
+#: src/features/resume/export/download-dialog.tsx
+msgid "Show the same first-page header on the cover letter."
+msgstr "Zobrazit stejné záhlaví první stránky i v průvodním dopise."
+
+#. placeholder {0}: rows.length
+#. placeholder {1}: applications.length
+#: src/features/applications/components/table-view.tsx
+msgid "Showing {0} of {1}"
+msgstr "Zobrazeno {0} z {1}"
+
 #. Layout editor column label for the secondary sidebar area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Sidebar"
-msgstr "Postranní panel<<<<<<< HEAD"
+msgstr "Postranní panel"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 msgid "Sidebar Width"
@@ -3112,6 +4189,9 @@ msgid "Skills"
 msgstr "Dovednosti"
 
 #: src/routes/_home/route.tsx
+#: src/routes/builder/$resumeId/-components/desktop-builder-shell.tsx
+#: src/routes/builder/$resumeId/-components/mobile-builder-shell.tsx
+#: src/routes/dashboard/route.tsx
 msgid "Skip to main content"
 msgstr "Přeskočit na hlavní obsah"
 
@@ -3127,18 +4207,46 @@ msgstr "Slovinština"
 msgid "Slug"
 msgstr "Slug"
 
-#. Fallback error description when resume analysis request fails
-#: src/routes/builder/$resumeId/-sidebar/right/sections/resume-analysis.tsx
-msgid "Something went wrong while analyzing your resume."
-msgstr "Při analýze vašeho životopisu se něco pokazilo."
+#: src/libs/resume/ats.ts
+msgid "Some application systems require one before you can submit."
+msgstr "Některé aplikační systémy vyžadují jeden před odesláním."
 
+#: src/libs/resume/ats.ts
+msgid "Some parsers mishandle images, and photos are discouraged in some regions."
+msgstr "Některé analyzátory špatně zacházejí s obrázky a v některých oblastech se fotografie nedoporučuje."
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Some styles were ignored"
+msgstr "Některé styly byly ignorovány"
+
+#: src/routes/agent/-components/agent-chat.tsx
+msgid "Something else…"
+msgstr "Něco jiného…"
+
+#: src/components/layout/error-screen.tsx
+msgid "Something went wrong"
+msgstr "Něco se pokazilo"
+
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Something went wrong. Please try again."
 msgstr "Něco se pokazilo. Zkuste to prosím znovu."
 
+#: src/routes/dashboard/applications/index.tsx
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Sort by"
 msgstr "Seřadit podle"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Sort by…"
+msgstr "Seřadit podle…"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/table-view.tsx
+msgid "Source"
+msgstr "Zdroj"
 
 #: src/routes/_home/-sections/footer.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
@@ -3171,6 +4279,15 @@ msgstr "Sponzorství"
 msgid "Square"
 msgstr "Čtverec"
 
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/table-view.tsx
+msgid "Stage"
+msgstr "Fáze"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Stage date"
+msgstr "Datum fáze"
+
 #: src/components/input/github-stars-button.tsx
 msgid "Star us on GitHub (opens in new tab)"
 msgstr "Dejte nám hvězdičku na GitHubu (otevře se na nové kartě)"
@@ -3201,6 +4318,11 @@ msgstr "Začněte vytvářet životopis od nuly"
 msgid "Start new thread"
 msgstr "Začít nové vlákno"
 
+#. Layout editor toggle that forces a section to begin on a new page
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Start on new page"
+msgstr "Začít na nové stránce"
+
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Start Thread"
 msgstr "Začít vlákno"
@@ -3209,11 +4331,16 @@ msgstr "Začít vlákno"
 msgid "Statistics"
 msgstr "Statistiky"
 
+#: src/dialogs/resume/import.tsx
 #: src/hooks/use-form-blocker.tsx
 msgid "Stay"
 msgstr "Zůstat"
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Still waiting for {provider}… {elapsedSeconds}s"
+msgstr "Stále čekám na {provider}… {elapsedSeconds}s"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Stop generation"
 msgstr "Zastavit generování"
 
@@ -3224,6 +4351,18 @@ msgstr "Silné stránky"
 #: src/components/input/rich-input.tsx
 msgid "Strike"
 msgstr "Přeškrtnutí"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Strong fit"
+msgstr "Silné uchycení"
+
+#: src/features/resume/stylesheet/toolbar.tsx
+msgid "Stylesheet editor"
+msgstr "Editor stylů"
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Stylesheet has fatal errors"
+msgstr "Stylový list obsahuje fatální chyby"
 
 #: src/routes/_home/-sections/footer.tsx
 msgid "Subreddit"
@@ -3250,6 +4389,10 @@ msgstr "Podpořte Reactive Resume"
 msgid "Support the app by doing what you can!"
 msgstr "Podpořte aplikaci tím, co můžete!"
 
+#: src/libs/resume/ats.ts
+msgid "Swap the start and end dates."
+msgstr "Vyměňte počáteční a koncové datum."
+
 #: src/libs/locale.ts
 msgid "Swedish"
 msgstr "Švédština"
@@ -3262,11 +4405,22 @@ msgstr "Přepnout na tmavý motiv"
 msgid "Switch to light theme"
 msgstr "Přepnout na světlý motiv"
 
-#: src/components/input/rich-input.tsx
+#. placeholder {0}: templates[template].name
+#: src/dialogs/resume/template/gallery.tsx
+msgid "Switched to the {0} template."
+msgstr "Přepnuto na šablonu {0}."
+
+#: src/features/resume/builder/draft.ts
+msgid "Synced changes made in another tab."
+msgstr "Synchronizované změny provedené na jiné kartě."
+
+#: src/routes/dashboard/applications/index.tsx
 msgid "Table"
 msgstr "Tabulka"
 
 #: src/dialogs/resume/index.tsx
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/table-view.tsx
 msgid "Tags"
 msgstr "Tagy"
 
@@ -3274,9 +4428,17 @@ msgstr "Tagy"
 msgid "Tags can be used to categorize your resume by keywords."
 msgstr "Tagy lze použít k kategorizaci životopisu podle klíčových slov."
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Tailor my resume"
+msgstr "Přizpůsobte si životopis"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Tailor this resume to a product manager job description and emphasize roadmap ownership, stakeholder communication, and measurable launch outcomes."
 msgstr "Přizpůsobte tento životopis popisu práce produktového manažera a zdůrazněte odpovědnost za plán, komunikaci se zúčastněnými stranami a měřitelné výsledky uvedení na trh."
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Tailoring failed."
+msgstr "Krejčovství selhalo."
 
 #: src/libs/locale.ts
 msgid "Tamil"
@@ -3302,13 +4464,21 @@ msgstr "Šablony"
 msgid "Test"
 msgstr "Test"
 
-#: src/features/settings/integrations/components/ai-section.tsx
-msgid "Tested"
-msgstr "Testováno"
-
 #: src/routes/_home/-sections/testimonials.tsx
 msgid "Testimonials"
 msgstr "Reference uživatelů"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Testing…"
+msgstr "Testování…"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Testing… {elapsedSeconds}s"
+msgstr "Testování… {elapsedSeconds}s"
+
+#: src/components/input/rich-input.tsx
+msgid "Text alignment"
+msgstr "Zarovnání textu"
 
 #: src/components/input/rich-input.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
@@ -3319,14 +4489,13 @@ msgstr "Barva textu"
 msgid "Thai"
 msgstr "Thajština"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/_home/-sections/sponsors.tsx
+msgid "Thank you to our sponsors"
+msgstr "Děkujeme našim sponzorům"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "The agent needs your input."
 msgstr "Agent potřebuje váš vstup."
-
-#. Error description when AI returns invalid resume analysis format
-#: src/routes/builder/$resumeId/-sidebar/right/sections/resume-analysis.tsx
-msgid "The AI returned an invalid analysis format. Please try again."
-msgstr "UI vrátil neplatný formát analýzy. Zkuste to prosím znovu."
 
 #: src/features/settings/pages/api-keys.tsx
 msgid "The API key has been deleted successfully."
@@ -3346,9 +4515,17 @@ msgstr "Příkaz, který hledáte, neexistuje."
 msgid "The imported file could not be parsed into a valid resume."
 msgstr "Importovaný soubor se nepodařilo analyzovat do platného resumé."
 
+#: src/components/layout/not-found-screen.tsx
+msgid "The page you're looking for may have been moved or no longer exists."
+msgstr "Stránka, kterou hledáte, mohla být přesunuta nebo již neexistuje."
+
 #: src/features/auth/pages/resume-password.tsx
 msgid "The password you entered is incorrect"
 msgstr "Zadané heslo je nesprávné"
+
+#: src/features/resume/preview/preview.browser.tsx
+msgid "The resume preview could not be updated. The last valid preview is still shown."
+msgstr "Náhled životopisu se nepodařilo aktualizovat. Stále se zobrazuje poslední platný náhled."
 
 #: src/features/auth/pages/resume-password.tsx
 msgid "The resume you are trying to access is password protected"
@@ -3358,7 +4535,7 @@ msgstr "Životopis, ke kterému se snažíte získat přístup, je chráněn hes
 msgid "The URL you entered is not valid."
 msgstr "Zadaná URL adresa není platná."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/resume-pane.tsx
 msgid "The working resume was deleted. This thread is read-only."
 msgstr "Pracovní životopis byl smazán. Toto vlákno je pouze pro čtení."
 
@@ -3373,35 +4550,43 @@ msgstr "Motiv"
 msgid "Then, enter the 6 digit code that the app provides to continue."
 msgstr "Poté zadejte šestimístný kód, který aplikace poskytne, abyste mohli pokračovat."
 
-#: src/routes/builder/$resumeId/-components/dock.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
+#: src/features/resume/export/use-resume-export.ts
 msgid "There was a problem while generating the DOCX, please try again."
 msgstr "Při generování DOCX došlo k problému, zkuste to prosím znovu."
 
-#: src/features/resume/public/public-resume.tsx
-#: src/routes/agent/$threadId.tsx
-#: src/routes/builder/$resumeId/-components/dock.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
+#: src/features/resume/export/use-resume-export.ts
+#: src/routes/agent/-components/resume-pane.tsx
 msgid "There was a problem while generating the PDF, please try again."
 msgstr "Při generování PDF došlo k problému, zkuste to prosím znovu."
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/resume/export/use-resume-export.ts
+msgid "There was a problem while preparing your resume for printing, please try again."
+msgstr "Při přípravě životopisu k tisku došlo k problému, zkuste to prosím znovu."
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
+msgid "These checks run as you type and never leave your browser. They ask whether a machine can read your resume, not whether it reads well."
+msgstr "Tyto kontroly probíhají během psaní a nikdy neopouštějí prohlížeč. Ptají se, zda stroj dokáže přečíst váš životopis, ne zda se čte dobře."
+
+#: src/libs/resume/ats.ts
+msgid "These dates will not be read correctly."
+msgstr "Tato data nebudou správně přečtena."
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Thinking"
 msgstr "Myslící"
 
 #: src/routes/builder/$resumeId/-components/header.tsx
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
+#: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "This action cannot be undone."
 msgstr "Tuto akci nelze vrátit zpět."
 
-#: src/features/settings/pages/danger-zone.tsx
+#: src/features/settings/pages/account.tsx
 msgid "This action cannot be undone. All your data will be permanently deleted."
 msgstr "Tuto akci nelze vrátit zpět. Všechna vaše data budou trvale smazána."
 
-#: src/routes/agent/$threadId.tsx
-msgid "This action cannot be undone. Conversation messages and uploaded attachments will be removed. The working resume draft remains in your dashboard and can be deleted separately."
-msgstr "Tuto akci nelze vrátit zpět. Zprávy z konverzace a nahrané přílohy budou odstraněny. Pracovní koncept životopisu zůstane ve vašem řídicím panelu a lze jej smazat samostatně."
+#: src/routes/agent/-components/agent-chat.tsx
+msgid "This action cannot be undone. Conversation messages and uploaded attachments will be removed. The working resume remains in your dashboard and can be deleted separately."
+msgstr "Tuto akci nelze vrátit zpět. Zprávy z konverzace a nahrané přílohy budou odstraněny. Pracovní životopis zůstane ve vašem řídicím panelu a lze jej smazat samostatně."
 
 #: src/routes/agent/-components/thread-sidebar.tsx
 msgid "This action cannot be undone. Messages and thread attachments will be removed."
@@ -3411,39 +4596,107 @@ msgstr "Tuto akci nelze vrátit zpět. Zprávy a přílohy vláken budou odstran
 msgid "This agent thread could not be opened."
 msgstr "Toto vlákno agenta se nepodařilo otevřít."
 
+#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
+msgid "This assistant could not be opened."
+msgstr "Tohoto asistenta se nepodařilo otevřít."
+
+#: src/libs/resume/ats.ts
+msgid "This date will not be read correctly."
+msgstr "Toto datum nebude správně přečteno."
+
+#: src/libs/resume/ats.ts
+msgid "This email address will not be recognized."
+msgstr "Tato e-mailová adresa nebude rozpoznána."
+
+#: src/libs/resume/ats.ts
+msgid "This entry has no dates."
+msgstr "Tento záznam nemá žádná data."
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "This entry will be permanently deleted. This can't be undone."
+msgstr "Tento záznam bude trvale odstraněn. Tuto akci nelze vrátit zpět."
+
 #: src/dialogs/resume/import.tsx
-msgid "This feature requires a tested AI provider. Please add one in the settings."
-msgstr "Tato funkce vyžaduje ověřeného poskytovatele umělé inteligence. Přidejte ho prosím v nastavení."
+msgid "This feature requires a connected AI provider. Please set one up in the settings."
+msgstr "Tato funkce vyžaduje připojeného poskytovatele umělé inteligence. Nastavte si ho prosím v nastavení."
+
+#: src/libs/resume/ats.ts
+msgid "This heading is not one parsers look for."
+msgstr "Tento nadpis nehledají analyzátory."
 
 #: src/dialogs/resume/index.tsx
 msgid "This is a URL-friendly name for your resume."
 msgstr "Toto je název vašeho životopisu vhodný pro URL adresu."
 
+#: src/libs/resume/ats.ts
+msgid "This link is missing its protocol."
+msgstr "U tohoto odkazu chybí protokol."
+
 #: src/dialogs/resume/import.tsx
 msgid "This may take a few minutes, depending on the response of the AI provider. Please do not close the window or refresh the page."
 msgstr "Může to trvat několik minut v závislosti na odezvě poskytovatele AI. Nezavírejte prosím okno ani neobnovujte stránku."
+
+#: src/libs/resume/ats.ts
+msgid "This period ends before it starts."
+msgstr "Toto období končí dříve, než začne."
+
+#: src/libs/resume/ats.ts
+msgid "This period starts in the future."
+msgstr "Toto období začíná v budoucnosti."
+
+#: src/routes/builder/$resumeId/-sidebar/left/index.tsx
+msgid "This resume is locked"
+msgstr "Tento životopis je uzamčen"
 
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked and cannot be updated."
 msgstr "Tento životopis je uzamčen a nelze ho aktualizovat."
 
+#: src/features/resume/builder/draft.ts
+msgid "This resume was updated by an AI agent."
+msgstr "Tento životopis byl aktualizován agentem s umělou inteligencí."
+
+#: src/features/resume/builder/draft.ts
+msgid "This resume's sharing settings changed elsewhere."
+msgstr "Nastavení sdílení tohoto životopisu se změnilo jinde."
+
+#: src/libs/resume/ats.ts
+msgid "This role has no description."
+msgstr "Tato role nemá žádný popis."
+
+#: src/libs/resume/ats.ts
+msgid "This section has content but never appears."
+msgstr "Tato sekce má obsah, ale nikdy se nezobrazuje."
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "This section is reserved for your personal notes specific to this resume. The content here remains private and is not shared with anyone else."
 msgstr "Tato sekce je vyhrazena pro vaše osobní poznámky k tomuto životopisu. Obsah zde zůstává soukromý a s nikým jiným se nesdílí."
+
+#: src/libs/resume/ats.ts
+msgid "This section is split across columns."
+msgstr "Tato sekce je rozdělena do sloupců."
+
+#: src/libs/resume/ats.ts
+msgid "This section renders as an empty heading."
+msgstr "Tato sekce se vykreslí jako prázdný nadpis."
+
+#: src/libs/resume/ats.ts
+msgid "This section sits in the sidebar."
+msgstr "Tato sekce se nachází v postranním panelu."
 
 #: src/features/auth/pages/register.tsx
 msgid "This step is optional, but recommended."
 msgstr "Tento krok je volitelný, ale doporučený."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "This thread is archived. New messages cannot be sent."
 msgstr "Toto vlákno je archivováno. Nové zprávy nelze odesílat."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "This thread is read-only"
 msgstr "Toto vlákno je pouze pro čtení"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "This thread is read-only because the working resume or AI provider is unavailable."
 msgstr "Toto vlákno je pouze pro čtení, protože funkční životopis nebo poskytovatel umělé inteligence není k dispozici."
 
@@ -3459,31 +4712,37 @@ msgstr "To vám pomůže identifikovat jej později, pokud plánujete mít více
 msgid "This will remove all items from this section."
 msgstr "Tím se z této sekce odstraní všechny položky."
 
+#: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
-#: src/routes/agent/$threadId.tsx
 msgid "Thread actions"
 msgstr "Akce vlákna"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Thread archived."
 msgstr "Vlákno archivováno."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Thread deleted."
 msgstr "Vlákno smazáno."
 
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
 #: src/routes/agent/$threadId.tsx
 msgid "Threads"
 msgstr "Vlákna"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Tighten the skills section so it supports the target role instead of reading like a keyword dump."
 msgstr "Upřesněte sekci s dovednostmi tak, aby podporovala cílovou roli, a ne aby se četla jako výčet klíčových slov."
 
 #: src/routes/_home/-sections/hero.tsx
 msgid "Timelapse demonstration of building a resume with Reactive Resume"
 msgstr "Časosběrná ukázka vytváření životopisu v Reactive Resume"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Timeline"
+msgstr "Časová osa"
 
 #: src/dialogs/api-key/create.tsx
 msgid "Tip: Give your API key a name, corresponding to the purpose of the key, to help you identify it later."
@@ -3500,9 +4759,18 @@ msgstr "Tip: Životopis můžete pojmenovat podle pozice, na kterou se hlásíte
 msgid "Title"
 msgstr "Název"
 
-#: src/features/settings/pages/danger-zone.tsx
+#: src/features/settings/pages/account.tsx
 msgid "To delete your account, you need to enter the confirmation text and click the button below."
 msgstr "Pro smazání účtu musíte zadat potvrzovací text a kliknout na tlačítko níže."
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Together.ai"
+msgstr "Together.ai"
+
+#: src/routes/builder/$resumeId/-sidebar/left/shared/section-base.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/shared/section-base.tsx
+msgid "Toggle {sectionTitle} section"
+msgstr "Přepnout sekci {sectionTitle}"
 
 #. Screen-reader label for opening or closing the left sidebar in resume builder
 #: src/routes/builder/$resumeId/-components/header.tsx
@@ -3513,7 +4781,7 @@ msgstr "Přepínání levého postranního panelu"
 msgid "Toggle page stacking"
 msgstr "Přepnout stohování stránek"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Toggle resume preview"
 msgstr "Přepnout náhled životopisu"
 
@@ -3522,9 +4790,17 @@ msgstr "Přepnout náhled životopisu"
 msgid "Toggle right sidebar"
 msgstr "Přepnutí pravého postranního panelu"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Toggle threads"
 msgstr "Přepnout vlákna"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Track a job you're applying to and link the resume you sent."
+msgstr "Sledujte pracovní pozici, o kterou se ucházíte, a přidejte odkaz na životopis, který jste odeslali."
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Track your first application"
+msgstr "Sledujte svou první žádost"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
 msgid "Track your resume's views and downloads"
@@ -3534,6 +4810,10 @@ msgstr "Sledujte zobrazení a stažení svého životopisu"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "Translations"
 msgstr "Překlady"
+
+#: src/components/layout/error-screen.tsx
+msgid "Try again"
+msgstr "Zkuste to znovu"
 
 #: src/libs/locale.ts
 msgid "Turkish"
@@ -3602,7 +4882,7 @@ msgstr "Dvoufaktorové ověřování QR kódem"
 msgid "Type"
 msgstr "Typ"
 
-#: src/features/settings/pages/danger-zone.tsx
+#: src/features/settings/pages/account.tsx
 msgid "Type \"{CONFIRMATION_TEXT}\" to confirm"
 msgstr "Zadejte „{CONFIRMATION_TEXT}“ pro potvrzení"
 
@@ -3620,9 +4900,23 @@ msgstr "Typografie"
 msgid "Ukrainian"
 msgstr "Ukrajinština"
 
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Unarchive"
+msgstr "Zrušit archivaci"
+
 #: src/components/input/rich-input.tsx
 msgid "Underline"
 msgstr "Podtržení"
+
+#: src/dialogs/resume/template/gallery.tsx
+#: src/routes/builder/$resumeId/-components/dock.tsx
+msgid "Undo"
+msgstr "Zpět"
+
+#: src/features/resume/stylesheet/toolbar.tsx
+msgid "Undo stylesheet edit"
+msgstr "Zrušit úpravu stylového listu"
 
 #: src/routes/_home/-sections/features.tsx
 msgid "Unlimited Resumes"
@@ -3646,21 +4940,12 @@ msgstr "Odemknout"
 msgid "Unnamed passkey"
 msgstr "Nejmenovaný přístupový klíč"
 
-#: src/features/settings/integrations/components/ai-section.tsx
-msgid "Untested"
-msgstr "Netestované"
-
 #: src/features/settings/pages/profile.tsx
 msgid "Unverified"
 msgstr "Neověřeno"
 
-#. Resume card context menu action to edit resume metadata
-#. Resume card dropdown action to edit resume metadata
-#: src/routes/builder/$resumeId/-components/header.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
 msgid "Update"
 msgstr "Aktualizovat"
 
@@ -3730,13 +5015,25 @@ msgstr "Aktualizovat existující dobrovolnickou zkušenost"
 msgid "Update Password"
 msgstr "Aktualizovat heslo"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Update project bullets to show leadership, constraints, tradeoffs, and measurable outcomes."
 msgstr "Aktualizujte odrážky projektu tak, aby zobrazovaly vedení, omezení, kompromisy a měřitelné výsledky."
 
 #: src/dialogs/resume/index.tsx
 msgid "Update Resume"
 msgstr "Aktualizovat životopis"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Update the calendar date for this timeline entry."
+msgstr "Aktualizujte kalendářní datum pro tento záznam časové osy."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Update this application's details."
+msgstr "Aktualizujte podrobnosti této aplikace."
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Update this timeline note."
+msgstr "Aktualizujte tuto poznámku časové osy."
 
 #: src/dialogs/auth/change-password.tsx
 msgid "Update your password"
@@ -3750,7 +5047,11 @@ msgstr "Aktualizace hesla…"
 msgid "Updating your resume..."
 msgstr "Aktualizace životopisu…"
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Upload .csv"
+msgstr "Nahrát soubor .csv"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Upload attachments"
 msgstr "Nahrát přílohy"
 
@@ -3762,6 +5063,10 @@ msgstr "Nahrát obrázek"
 msgid "Uploading picture…"
 msgstr "Nahrávání obrázku…"
 
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "Uploading…"
+msgstr "Nahrávání…"
+
 #. Form field label for the generated public resume link in sharing settings
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
@@ -3772,9 +5077,34 @@ msgstr "URL"
 msgid "Use"
 msgstr "Použití"
 
+#: src/libs/resume/ats.ts
+msgid "Use a line height of at least 1.15 so lines are not merged together."
+msgstr "Použijte výšku řádku alespoň 1,15, aby se řádky neslučovaly dohromady."
+
+#: src/libs/resume/ats.ts
+msgid "Use a plain address such as name@example.com, with no surrounding text."
+msgstr "Použijte prostou adresu, například jméno@example.com, bez okolního textu."
+
+#: src/libs/resume/ats.ts
+msgid "Use a recognized form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
+msgstr "Use a recognized form such as \\\"Jan 2020 - Mar 2022\\\" or \\\"2020 - 2022\\\"."
+
+#: src/libs/resume/ats.ts
+msgid "Use a recognized form such as \"March 2022\" or \"2022\"."
+msgstr "Use a recognized form such as \\\"March 2022\\\" or \\\"2022\\\"."
+
+#: src/libs/resume/ats.ts
+msgid "Use a size of at least 9pt so re-rendered copies stay accurate."
+msgstr "Použijte velikost alespoň 9 bodů, aby znovu vykreslené kopie zůstaly přesné."
+
 #: src/components/input/color-picker.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Use color {color}"
 msgstr "Použijte barvu {color}"
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Use sample"
+msgstr "Použít vzorek"
 
 #. Label for username input on registration form
 #: src/dialogs/resume/sections/profile.tsx
@@ -3791,9 +5121,21 @@ msgstr "Uživatelé"
 msgid "Uzbek"
 msgstr "Uzbečtina"
 
+#: src/features/resume/stylesheet/status.tsx
+msgid "Valid"
+msgstr "Platné"
+
 #: src/components/input/rich-input.tsx
 msgid "Valid URLs must start with http:// or https://."
 msgstr "Platné URL adresy musí začínat http:// nebo https://."
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Valid with errors"
+msgstr "Platné s chybami"
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Valid with warnings"
+msgstr "Platné s varováními"
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Vercel AI Gateway"
@@ -3805,16 +5147,15 @@ msgstr "Ověřeno"
 
 #. Primary action button to submit 2FA code
 #. Primary action button to submit backup code
-#: src/features/auth/pages/verify-2fa-backup.tsx
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Verify"
 msgstr "Ověřit"
 
-#: src/features/auth/pages/verify-2fa-backup.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Verify with a Backup Code"
 msgstr "Ověřit pomocí záložního kódu"
 
-#: src/features/auth/pages/verify-2fa-backup.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying backup code..."
 msgstr "Ověřování záložního kódu…"
 
@@ -3834,6 +5175,10 @@ msgstr "Ověřování hesla…"
 msgid "Verifying your email is required when resetting your password."
 msgstr "Ověření e-mailu je při obnovování hesla povinné."
 
+#: src/routes/builder/$resumeId/-components/version-history.tsx
+msgid "Version history"
+msgstr "Historie verzí"
+
 #: src/libs/locale.ts
 msgid "Vietnamese"
 msgstr "Vietnamština"
@@ -3848,6 +5193,26 @@ msgstr "Zobrazení"
 msgid "Volunteer"
 msgstr "Dobrovolnictví"
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
+msgid "vs previous 30 days"
+msgstr "oproti předchozím 30 dnům"
+
+#: src/routes/agent/-components/agent-chat.tsx
+msgid "Waiting for the agent…"
+msgstr "Čekání na agenta…"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
+msgid "Warning"
+msgstr "Varování"
+
+#: src/dialogs/resume/import.tsx
+msgid "We couldn't detect the format automatically — please choose it above."
+msgstr "Formát se nám nepodařilo automaticky rozpoznat – vyberte jej prosím výše."
+
+#: src/components/layout/not-found-screen.tsx
+msgid "We couldn't find that page"
+msgstr "Tuto stránku jsme nenašli"
+
 #: src/dialogs/resume/sections/award.tsx
 #: src/dialogs/resume/sections/certification.tsx
 #: src/dialogs/resume/sections/education.tsx
@@ -3861,7 +5226,7 @@ msgstr "Dobrovolnictví"
 msgid "Website"
 msgstr "Web"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "What do you want to do?"
 msgstr "Co chceš dělat?"
 
@@ -3878,22 +5243,41 @@ msgid "What's new in the latest version?"
 msgstr "Co je nového v poslední verzi?"
 
 #: src/routes/builder/$resumeId/-components/header.tsx
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
+#: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "When locked, the resume cannot be updated or deleted."
 msgstr "Pokud je životopis uzamčen, nelze ho aktualizovat ani smazat."
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Where applications come from"
+msgstr "Odkud pocházejí žádosti"
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Where your applications went"
+msgstr "Kam se vaše žádosti poděly"
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Work OpenAI"
 msgstr "Práce s OpenAI"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Working…"
 msgstr "Funguje…"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Worth a shot"
+msgstr "Stojí za to vyzkoušet"
+
+#: src/libs/resume/ats.ts
+msgid "Write the full address, including https://."
+msgstr "Napište celou adresu včetně https://."
 
 #: src/routes/_home/-sections/footer.tsx
 msgid "X (Twitter)"
 msgstr "X (Twitter)"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "xAI Grok"
+msgstr "xAI Grok"
 
 #: src/routes/_home/-sections/faq.tsx
 msgid "Yes, Reactive Resume is available in multiple languages. You can choose your preferred language in the settings page, or using the language switcher in the top right corner. If you don't see your language, or you would like to improve the existing translations, you can <0>contribute to the translations on Crowdin<1> (opens in new tab)</1></0>."
@@ -3919,12 +5303,16 @@ msgstr "Svůj životopis můžete sdílet pomocí jedinečné veřejné URL adre
 msgid "You have unsaved changes that will be lost."
 msgstr "Máte neuložené změny, které budou ztraceny."
 
+#: src/dialogs/resume/import.tsx
+msgid "You'll be taken to the Integrations page. The file you selected won't be imported."
+msgstr "Budete přesměrováni na stránku Integrace. Vybraný soubor nebude importován."
+
 #: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/register.tsx
 msgid "You've got mail!"
 msgstr "Máte poštu!"
 
-#: src/features/settings/pages/danger-zone.tsx
+#: src/features/settings/pages/account.tsx
 msgid "Your account has been deleted successfully."
 msgstr "Váš účet byl úspěšně smazán."
 
@@ -3932,9 +5320,17 @@ msgstr "Váš účet byl úspěšně smazán."
 msgid "Your API key has been copied to the clipboard."
 msgstr "Váš API klíč byl zkopírován do schránky."
 
+#: src/libs/resume/ats.ts
+msgid "Your body text is very small."
+msgstr "Váš hlavní text je velmi malý."
+
 #: src/routes/builder/$resumeId/-components/preview-page.tsx
 msgid "Your changes are saved automatically."
 msgstr "Vaše změny se ukládají automaticky."
+
+#: src/features/settings/pages/account.tsx
+msgid "Your data has been exported successfully."
+msgstr "Vaše data byla úspěšně exportována."
 
 #: src/routes/_home/-sections/features.tsx
 msgid "Your data is secure, and never shared or sold to anyone."
@@ -3947,6 +5343,18 @@ msgstr "Vaše data jsou ukládána bezpečně a nikdy nejsou sdílena s třetím
 #: src/features/resume/builder/draft.ts
 msgid "Your latest changes could not be saved."
 msgstr "Vaše poslední změny se nepodařilo uložit."
+
+#: src/features/resume/stylesheet/legacy-banner.tsx
+msgid "Your legacy styles remain active until you explicitly activate this Semantic CSS draft."
+msgstr "Vaše starší styly zůstanou aktivní, dokud explicitně neaktivujete tento koncept sémantického CSS."
+
+#: src/libs/resume/ats.ts
+msgid "Your lines are packed very tightly."
+msgstr "Vaše linky jsou nabité velmi pevně."
+
+#: src/libs/resume/ats.ts
+msgid "Your page margins are very narrow."
+msgstr "Okraje vaší stránky jsou velmi úzké."
 
 #: src/features/auth/pages/reset-password.tsx
 msgid "Your password has been reset successfully. You can now sign in with your new password."
@@ -3965,8 +5373,7 @@ msgid "Your resume has been created successfully."
 msgstr "Váš životopis byl úspěšně vytvořen."
 
 #: src/routes/builder/$resumeId/-components/header.tsx
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
+#: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "Your resume has been deleted successfully."
 msgstr "Váš životopis byl úspěšně smazán."
 
@@ -3978,9 +5385,37 @@ msgstr "Váš životopis byl úspěšně duplikován."
 msgid "Your resume has been imported successfully."
 msgstr "Váš životopis byl úspěšně importován."
 
+#: src/routes/builder/$resumeId/-components/version-history.tsx
+msgid "Your resume has been restored to the selected version."
+msgstr "Váš životopis byl obnoven do vybrané verze."
+
 #: src/dialogs/resume/index.tsx
 msgid "Your resume has been updated successfully."
 msgstr "Váš životopis byl úspěšně aktualizován."
+
+#: src/libs/resume/ats.ts
+msgid "Your resume has no email address."
+msgstr "Váš životopis nemá e-mailovou adresu."
+
+#: src/libs/resume/ats.ts
+msgid "Your resume has no location."
+msgstr "Váš životopis nemá žádné místo."
+
+#: src/libs/resume/ats.ts
+msgid "Your resume has no name."
+msgstr "Váš životopis nemá jméno."
+
+#: src/libs/resume/ats.ts
+msgid "Your resume has no phone number."
+msgstr "Váš životopis neobsahuje telefonní číslo."
+
+#: src/libs/resume/ats.ts
+msgid "Your resume includes a photo."
+msgstr "Váš životopis obsahuje fotografii."
+
+#: src/libs/resume/ats.ts
+msgid "Your resume shows no work experience."
+msgstr "Váš životopis neukazuje žádné pracovní zkušenosti."
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Your resume's public link is currently protected by a password. Share the password only with people you trust."
@@ -3990,11 +5425,16 @@ msgstr "Veřejný odkaz na váš životopis je aktuálně chráněn heslem. Hesl
 msgid "Your support ensures the project remains free and accessible for everyone, now and in the future."
 msgstr "Vaše podpora zajišťuje, že projekt zůstane nyní i v budoucnu zdarma a dostupný pro všechny."
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Zoom"
+msgstr "Přiblížení"
+
 #: src/routes/builder/$resumeId/-components/dock.tsx
 msgid "Zoom in"
 msgstr "Přiblížit"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/resume-pane.tsx
+#: src/routes/builder/$resumeId/-components/dock.tsx
 msgid "Zoom level"
 msgstr "Úroveň přiblížení"
 

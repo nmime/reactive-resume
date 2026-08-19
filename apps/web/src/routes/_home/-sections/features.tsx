@@ -20,7 +20,6 @@ import {
 	TranslateIcon,
 } from "@phosphor-icons/react";
 import { m } from "motion/react";
-import { useMemo } from "react";
 import { cn } from "@reactive-resume/utils/style";
 
 type Feature = {
@@ -167,7 +166,7 @@ function FeatureCard({ icon: Icon, title, description }: FeatureCardProps) {
 }
 
 export function Features() {
-	const features = useMemo(() => getFeatures(), []);
+	const features = getFeatures();
 
 	return (
 		<section id="features">

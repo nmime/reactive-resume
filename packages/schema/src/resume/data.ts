@@ -1,13 +1,14 @@
 import z from "zod";
 import { templateSchema } from "../templates";
+import { semanticStylesheetSchema } from "./stylesheet";
 
-export const iconSchema = z
+const iconSchema = z
 	.string()
 	.describe(
 		"The icon to display for the custom field. Must be a valid icon name from @phosphor-icons/web icon set, or an empty string to hide. Default to '' (empty string) when unsure which icons are available.",
 	);
 
-export const iconColorSchema = z
+const iconColorSchema = z
 	.string()
 	.catch("")
 	.describe(
@@ -19,7 +20,7 @@ export const websiteSchema = z.object({
 	label: z.string().describe("The label to display for the URL. Leave blank to display the URL as-is."),
 });
 
-export const itemWebsiteSchema = websiteSchema
+const itemWebsiteSchema = websiteSchema
 	.extend({
 		inlineLink: z
 			.boolean()
@@ -102,10 +103,15 @@ export const summarySchema = z.object({
 		),
 	columns: z.number().int().min(1).max(6).catch(1).describe("The number of columns the summary should span across."),
 	hidden: z.boolean().describe("Whether to hide the summary from the resume."),
+	keepTogether: z
+		.boolean()
+		.catch(false)
+		.describe("If true, the summary is kept on a single page instead of splitting across a page break."),
+	startOnNewPage: z.boolean().catch(false).describe("If true, the summary always begins on a new page."),
 	content: z.string().describe("The content of the summary of the resume. This should be a HTML-formatted string."),
 });
 
-export const baseItemSchema = z.object({
+const baseItemSchema = z.object({
 	id: z.string().describe("The unique identifier for the item. Usually generated as a UUID."),
 	hidden: z.boolean().describe("Whether to hide the item from the resume."),
 });
@@ -143,7 +149,7 @@ export const educationItemSchema = baseItemSchema.extend({
 	description: z.string().describe("The description of the education. This should be a HTML-formatted string."),
 });
 
-export const roleItemSchema = z.object({
+const roleItemSchema = z.object({
 	id: z.string().describe("The unique identifier for the role. Usually generated as a UUID."),
 	position: z.string().describe("The position or job title for this role."),
 	period: z.string().describe("The period of time this role was held."),
@@ -285,57 +291,37 @@ export const baseSectionSchema = z.object({
 		),
 	columns: z.number().int().min(1).max(6).catch(1).describe("The number of columns the section should span across."),
 	hidden: z.boolean().describe("Whether to hide the section from the resume."),
+	keepTogether: z
+		.boolean()
+		.catch(false)
+		.describe("If true, the section is kept on a single page instead of splitting across a page break."),
+	startOnNewPage: z.boolean().catch(false).describe("If true, the section always begins on a new page."),
 });
 
-export const awardsSectionSchema = baseSectionSchema.extend({
-	items: z.array(awardItemSchema).describe("The items to display in the awards section."),
-});
+// ponytail: 12 identical baseSectionSchema.extend({ items }) blocks collapsed to a factory
+const itemSection = <T extends z.ZodTypeAny>(itemSchema: T, description: string) =>
+	baseSectionSchema.extend({ items: z.array(itemSchema).describe(description) });
 
-export const certificationsSectionSchema = baseSectionSchema.extend({
-	items: z.array(certificationItemSchema).describe("The items to display in the certifications section."),
-});
+const awardsSectionSchema = itemSection(awardItemSchema, "The items to display in the awards section.");
+const certificationsSectionSchema = itemSection(
+	certificationItemSchema,
+	"The items to display in the certifications section.",
+);
+const educationSectionSchema = itemSection(educationItemSchema, "The items to display in the education section.");
+const experienceSectionSchema = itemSection(experienceItemSchema, "The items to display in the experience section.");
+const interestsSectionSchema = itemSection(interestItemSchema, "The items to display in the interests section.");
+const languagesSectionSchema = itemSection(languageItemSchema, "The items to display in the languages section.");
+const profilesSectionSchema = itemSection(profileItemSchema, "The items to display in the profiles section.");
+const projectsSectionSchema = itemSection(projectItemSchema, "The items to display in the projects section.");
+const publicationsSectionSchema = itemSection(
+	publicationItemSchema,
+	"The items to display in the publications section.",
+);
+const referencesSectionSchema = itemSection(referenceItemSchema, "The items to display in the references section.");
+const skillsSectionSchema = itemSection(skillItemSchema, "The items to display in the skills section.");
+const volunteerSectionSchema = itemSection(volunteerItemSchema, "The items to display in the volunteer section.");
 
-export const educationSectionSchema = baseSectionSchema.extend({
-	items: z.array(educationItemSchema).describe("The items to display in the education section."),
-});
-
-export const experienceSectionSchema = baseSectionSchema.extend({
-	items: z.array(experienceItemSchema).describe("The items to display in the experience section."),
-});
-
-export const interestsSectionSchema = baseSectionSchema.extend({
-	items: z.array(interestItemSchema).describe("The items to display in the interests section."),
-});
-
-export const languagesSectionSchema = baseSectionSchema.extend({
-	items: z.array(languageItemSchema).describe("The items to display in the languages section."),
-});
-
-export const profilesSectionSchema = baseSectionSchema.extend({
-	items: z.array(profileItemSchema).describe("The items to display in the profiles section."),
-});
-
-export const projectsSectionSchema = baseSectionSchema.extend({
-	items: z.array(projectItemSchema).describe("The items to display in the projects section."),
-});
-
-export const publicationsSectionSchema = baseSectionSchema.extend({
-	items: z.array(publicationItemSchema).describe("The items to display in the publications section."),
-});
-
-export const referencesSectionSchema = baseSectionSchema.extend({
-	items: z.array(referenceItemSchema).describe("The items to display in the references section."),
-});
-
-export const skillsSectionSchema = baseSectionSchema.extend({
-	items: z.array(skillItemSchema).describe("The items to display in the skills section."),
-});
-
-export const volunteerSectionSchema = baseSectionSchema.extend({
-	items: z.array(volunteerItemSchema).describe("The items to display in the volunteer section."),
-});
-
-export const sectionsSchema = z.object({
+const sectionsSchema = z.object({
 	profiles: profilesSectionSchema.describe("The section to display the profiles of the author."),
 	experience: experienceSectionSchema.describe("The section to display the experience of the author."),
 	education: educationSectionSchema.describe("The section to display the education of the author."),
@@ -351,7 +337,7 @@ export const sectionsSchema = z.object({
 });
 
 export type SectionType = keyof z.infer<typeof sectionsSchema>;
-export type SectionData<T extends SectionType = SectionType> = z.infer<typeof sectionsSchema>[T];
+type SectionData<T extends SectionType = SectionType> = z.infer<typeof sectionsSchema>[T];
 export type SectionItem<T extends SectionType = SectionType> = SectionData<T>["items"][number];
 
 export const sectionTypeSchema = z.enum([
@@ -373,45 +359,54 @@ export const sectionTypeSchema = z.enum([
 
 export type CustomSectionType = z.infer<typeof sectionTypeSchema>;
 
-export const customSectionItemSchema = z.union([
-	// coverLetterItemSchema must come before summaryItemSchema because both have 'content',
-	// but coverLetterItemSchema also requires 'recipient'. If summaryItemSchema is first,
-	// cover letter items will match it and lose the 'recipient' field.
-	coverLetterItemSchema,
-	summaryItemSchema,
-	profileItemSchema,
-	experienceItemSchema,
-	educationItemSchema,
-	projectItemSchema,
-	skillItemSchema,
-	languageItemSchema,
-	interestItemSchema,
-	awardItemSchema,
-	certificationItemSchema,
-	publicationItemSchema,
-	volunteerItemSchema,
-	referenceItemSchema,
+// Correlation protects renderer requirements; it does not make otherwise-overlapping item shapes exclusive.
+// Keep cover-letter before summary so the overlapping content shapes retain their established precedence.
+export const customSectionItemDefinitionByType = {
+	"cover-letter": { schemaName: "coverLetterItemSchema", schema: coverLetterItemSchema.catchall(z.any()) },
+	summary: { schemaName: "summaryItemSchema", schema: summaryItemSchema.catchall(z.any()) },
+	profiles: { schemaName: "profileItemSchema", schema: profileItemSchema.catchall(z.any()) },
+	experience: { schemaName: "experienceItemSchema", schema: experienceItemSchema.catchall(z.any()) },
+	education: { schemaName: "educationItemSchema", schema: educationItemSchema.catchall(z.any()) },
+	projects: { schemaName: "projectItemSchema", schema: projectItemSchema.catchall(z.any()) },
+	skills: { schemaName: "skillItemSchema", schema: skillItemSchema.catchall(z.any()) },
+	languages: { schemaName: "languageItemSchema", schema: languageItemSchema.catchall(z.any()) },
+	interests: { schemaName: "interestItemSchema", schema: interestItemSchema.catchall(z.any()) },
+	awards: { schemaName: "awardItemSchema", schema: awardItemSchema.catchall(z.any()) },
+	certifications: { schemaName: "certificationItemSchema", schema: certificationItemSchema.catchall(z.any()) },
+	publications: { schemaName: "publicationItemSchema", schema: publicationItemSchema.catchall(z.any()) },
+	volunteer: { schemaName: "volunteerItemSchema", schema: volunteerItemSchema.catchall(z.any()) },
+	references: { schemaName: "referenceItemSchema", schema: referenceItemSchema.catchall(z.any()) },
+} as const satisfies Record<CustomSectionType, { schemaName: string; schema: z.ZodType }>;
+
+export type CustomSectionItem = z.infer<(typeof customSectionItemDefinitionByType)[CustomSectionType]["schema"]>;
+
+const customSectionSchemaOptions = Object.entries(customSectionItemDefinitionByType).map(([type, { schema }]) =>
+	baseSectionSchema.extend({
+		id: z.string().describe("The unique identifier for the custom section. Usually generated as a UUID."),
+		type: z
+			.literal(type as CustomSectionType)
+			.describe("The type of items this custom section contains. Determines which item schema and form fields to use."),
+		items: z
+			.array(schema)
+			.describe("The items to display in the custom section. Items follow the schema of the section type."),
+	}),
+);
+
+const [firstCustomSectionSchema, ...remainingCustomSectionSchemas] = customSectionSchemaOptions;
+if (!firstCustomSectionSchema) throw new Error("At least one custom section schema is required.");
+
+export const customSectionSchema = z.discriminatedUnion("type", [
+	firstCustomSectionSchema,
+	...remainingCustomSectionSchemas,
 ]);
-
-export type CustomSectionItem = z.infer<typeof customSectionItemSchema>;
-
-export const customSectionSchema = baseSectionSchema.extend({
-	id: z.string().describe("The unique identifier for the custom section. Usually generated as a UUID."),
-	type: sectionTypeSchema.describe(
-		"The type of items this custom section contains. Determines which item schema and form fields to use.",
-	),
-	items: z
-		.array(customSectionItemSchema)
-		.describe("The items to display in the custom section. Items follow the schema of the section type."),
-});
 
 export type CustomSection = z.infer<typeof customSectionSchema>;
 
-export const customSectionsSchema = z.array(customSectionSchema);
+const customSectionsSchema = z.array(customSectionSchema);
 
-export const fontWeightSchema = z.enum(["100", "200", "300", "400", "500", "600", "700", "800", "900"]);
+const fontWeightSchema = z.enum(["100", "200", "300", "400", "500", "600", "700", "800", "900"]);
 
-export const typographyItemSchema = z.object({
+const typographyItemSchema = z.object({
 	fontFamily: z.string().describe("The family of the font to use. Must be a supported resume font."),
 	fontWeights: z
 		.array(fontWeightSchema)
@@ -428,7 +423,7 @@ export const typographyItemSchema = z.object({
 		.describe("The line height of the font to use, defined as a multiplier of the font size (e.g. 1.5 for 1.5x)."),
 });
 
-export const pageLayoutSchema = z.object({
+const pageLayoutSchema = z.object({
 	fullWidth: z
 		.boolean()
 		.describe(
@@ -459,8 +454,8 @@ export const layoutSchema = z.object({
 export const pageSchema = z.object({
 	gapX: z.number().min(0).describe("The horizontal gap between the sections of the page, defined in points (pt)."),
 	gapY: z.number().min(0).describe("The vertical gap between the sections of the page, defined in points (pt)."),
-	marginX: z.number().min(0).describe("The horizontal margin of the page, defined in points (pt)."),
-	marginY: z.number().min(0).describe("The vertical margin of the page, defined in points (pt)."),
+	marginX: z.number().min(0).max(100).catch(14).describe("The horizontal margin of the page, defined in points (pt)."),
+	marginY: z.number().min(0).max(100).catch(12).describe("The vertical margin of the page, defined in points (pt)."),
 	format: z
 		.enum(["a4", "letter", "free-form"])
 		.describe("The format of the page. Can be 'a4', 'letter', or 'free-form'.")
@@ -498,7 +493,7 @@ export const colorDesignSchema = z.object({
 		),
 });
 
-export const designSchema = z.object({
+const designSchema = z.object({
 	level: levelDesignSchema,
 	colors: colorDesignSchema,
 });
@@ -508,7 +503,7 @@ export const typographySchema = z.object({
 	heading: typographyItemSchema.describe("The typography for the headings of the resume."),
 });
 
-export const styleSlotSchema = z.enum([
+const styleSlotSchema = z.enum([
 	"section",
 	"heading",
 	"item",
@@ -528,7 +523,7 @@ export const styleSlotSchema = z.enum([
 
 export type StyleSlot = z.infer<typeof styleSlotSchema>;
 
-export const styleIntentSchema = z
+const styleIntentSchema = z
 	.strictObject({
 		color: z.string().optional(),
 		backgroundColor: z.string().optional(),
@@ -563,29 +558,14 @@ export const styleIntentSchema = z
 
 export type StyleIntent = z.infer<typeof styleIntentSchema>;
 
-export const styleRuleSlotsSchema = z
-	.strictObject({
-		section: styleIntentSchema.optional(),
-		heading: styleIntentSchema.optional(),
-		item: styleIntentSchema.optional(),
-		text: styleIntentSchema.optional(),
-		secondaryText: styleIntentSchema.optional(),
-		link: styleIntentSchema.optional(),
-		icon: styleIntentSchema.optional(),
-		level: styleIntentSchema.optional(),
-		richParagraph: styleIntentSchema.optional(),
-		richList: styleIntentSchema.optional(),
-		richListItemRow: styleIntentSchema.optional(),
-		richListItemContent: styleIntentSchema.optional(),
-		richLink: styleIntentSchema.optional(),
-		richBold: styleIntentSchema.optional(),
-		richMark: styleIntentSchema.optional(),
-	})
+// ponytail: 15 hand-listed optional slots collapsed to partialRecord; unknown keys still rejected
+const styleRuleSlotsSchema = z
+	.partialRecord(styleSlotSchema, styleIntentSchema)
 	.refine((slots) => Object.values(slots).some(Boolean), {
 		message: "At least one style slot must be configured.",
 	});
 
-export const styleRuleTargetSchema = z.discriminatedUnion("scope", [
+const styleRuleTargetSchema = z.discriminatedUnion("scope", [
 	z.strictObject({ scope: z.literal("global") }),
 	z.strictObject({ scope: z.literal("sectionType"), sectionType: sectionTypeSchema }),
 	z.strictObject({ scope: z.literal("sectionId"), sectionId: z.string().min(1) }),
@@ -599,7 +579,47 @@ export const styleRuleSchema = z.strictObject({
 	slots: styleRuleSlotsSchema.describe("The semantic style slots configured by this rule."),
 });
 
-export const styleRulesSchema = z.array(styleRuleSchema).catch([]);
+const filterStyleIntent = (intent: unknown): StyleIntent | undefined => {
+	const styleIntentShape = styleIntentSchema.shape;
+	if (typeof intent !== "object" || intent === null) return undefined;
+	const filteredIntent = Object.entries(intent).filter(([key, value]) => {
+		const fieldSchema = styleIntentSchema.shape[key as keyof typeof styleIntentShape];
+		if (!fieldSchema) return false;
+		return fieldSchema.safeParse(value).success;
+	});
+	return filteredIntent.length > 0 ? (Object.fromEntries(filteredIntent) as StyleIntent) : undefined;
+};
+
+export const styleRulesSchema = z
+	.array(z.unknown())
+	.transform((arr) =>
+		arr
+			.map((item) => {
+				const base = z
+					.strictObject({
+						id: z.string().min(1),
+						label: z.string().catch(""),
+						enabled: z.boolean().catch(true),
+						target: styleRuleTargetSchema,
+						slots: z.partialRecord(styleSlotSchema, z.unknown()),
+					})
+					.safeParse(item);
+
+				if (!base.success) return undefined;
+
+				const cleanedSlots = Object.fromEntries(
+					Object.entries(base.data.slots)
+						.map(([slot, intent]) => [slot, filterStyleIntent(intent)])
+						.filter((entry): entry is [string, StyleIntent] => entry[1] !== undefined),
+				);
+
+				if (Object.keys(cleanedSlots).length === 0) return undefined;
+
+				return { ...base.data, slots: cleanedSlots };
+			})
+			.filter((rule): rule is StyleRule => rule !== undefined),
+	)
+	.catch([]);
 
 export type StyleRule = z.infer<typeof styleRuleSchema>;
 export type StyleRuleTarget = z.infer<typeof styleRuleTargetSchema>;
@@ -628,6 +648,7 @@ export const metadataSchema = z.object({
 	styleRules: styleRulesSchema.describe(
 		"Structured style rules that target semantic resume sections and slots for React PDF rendering.",
 	),
+	stylesheet: semanticStylesheetSchema.optional(),
 });
 
 export const resumeDataSchema = z.looseObject({
@@ -646,7 +667,9 @@ export const resumeDataSchema = z.looseObject({
 });
 
 export type ResumeData = z.infer<typeof resumeDataSchema>;
-export type Metadata = z.infer<typeof metadataSchema>;
+
+export const parseResumeData = (data: unknown): ResumeData => resumeDataSchema.parse(data);
+
 export type LayoutPage = z.infer<typeof pageLayoutSchema>;
 export type Typography = z.infer<typeof typographySchema>;
 export type Design = z.infer<typeof designSchema>;
@@ -672,7 +695,6 @@ export type EducationSection = z.infer<typeof educationSectionSchema>;
 export type ExperienceSection = z.infer<typeof experienceSectionSchema>;
 export type InterestsSection = z.infer<typeof interestsSectionSchema>;
 export type LanguagesSection = z.infer<typeof languagesSectionSchema>;
-export type ProfilesSection = z.infer<typeof profilesSectionSchema>;
 export type ProjectsSection = z.infer<typeof projectsSectionSchema>;
 export type PublicationsSection = z.infer<typeof publicationsSectionSchema>;
 export type ReferencesSection = z.infer<typeof referencesSectionSchema>;

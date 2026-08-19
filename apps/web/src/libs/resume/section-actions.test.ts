@@ -21,6 +21,8 @@ describe("createSectionItem", () => {
 				icon: "",
 				columns: 1,
 				hidden: false,
+				keepTogether: false,
+				startOnNewPage: false,
 				items: [],
 			});
 		});
@@ -79,6 +81,8 @@ describe("updateSectionItem", () => {
 				icon: "",
 				columns: 1,
 				hidden: false,
+				keepTogether: false,
+				startOnNewPage: false,
 				items: [{ id: "x", value: "old" } as never],
 			});
 		});
@@ -88,7 +92,8 @@ describe("updateSectionItem", () => {
 		});
 
 		const customSection = result.customSections.find((s) => s.id === "custom-1");
-		expect((customSection?.items[0] as { value?: string }).value).toBe("new");
+		if (!customSection) throw new Error("Custom section not found");
+		expect((customSection.items[0] as { value?: string }).value).toBe("new");
 	});
 
 	it("does nothing when custom section is not found", () => {

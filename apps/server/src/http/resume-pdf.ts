@@ -24,14 +24,23 @@ function errorStatus(error: unknown) {
 }
 
 export async function handleResumePdfDownload(request: Request, id: string) {
-	const token = new URL(request.url).searchParams.get("token");
+	const searchParams = new URL(request.url).searchParams;
+	const token = searchParams.get("token");
 	if (!token) return unauthorizedResponse();
 
 	const verification = verifyResumePdfDownloadToken({ resumeId: id, token });
 	if (!verification.ok) return verification.reason === "expired" ? expiredResponse() : unauthorizedResponse();
+	const queryTarget = searchParams.get("target");
+	if (
+		verification.target
+			? queryTarget !== null && queryTarget !== verification.target
+			: queryTarget && queryTarget !== "resume"
+	)
+		return unauthorizedResponse();
 
 	try {
-		const download = await createResumePdfDownload({ id, userId: verification.userId });
+		const target = verification.target ?? "resume";
+		const download = await createResumePdfDownload({ id, userId: verification.userId, target });
 
 		return new Response(download.body, {
 			headers: {

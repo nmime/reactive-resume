@@ -4,14 +4,15 @@ import { Trans } from "@lingui/react/macro";
 import { ArrowRightIcon, ChatCircleDotsIcon, FilePlusIcon, GearSixIcon } from "@phosphor-icons/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { toast } from "sonner";
+import { useState } from "react";
 import { useIsClient } from "usehooks-ts";
 import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Label } from "@reactive-resume/ui/components/label";
 import { Spinner } from "@reactive-resume/ui/components/spinner";
+import { toast } from "@reactive-resume/ui/components/toast";
 import { Combobox } from "@/components/ui/combobox";
+import { useHasUsableAiProvider } from "@/features/settings/integrations/hooks/use-has-usable-ai-provider";
 import { getOrpcErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 
@@ -34,20 +35,12 @@ function isAgentConfigError(error: unknown) {
 export function NewThreadSetup({ resumeId }: NewThreadSetupProps) {
 	const isClient = useIsClient();
 	const navigate = useNavigate();
-	const {
-		data: providers,
-		isLoading: isLoadingProviders,
-		error: providersError,
-	} = useQuery(orpc.aiProviders.list.queryOptions());
+	const { usableProviders, isLoading: isLoadingProviders, error: providersError } = useHasUsableAiProvider();
 	const { data: resumes, isLoading: isLoadingResumes } = useQuery(
 		orpc.resume.list.queryOptions({ input: { sort: "lastUpdatedAt", tags: [] } }),
 	);
 	const { mutate: createThread, isPending } = useMutation(orpc.agent.threads.create.mutationOptions());
 
-	const usableProviders = useMemo(
-		() => providers?.filter((provider) => provider.enabled && provider.testStatus === "success") ?? [],
-		[providers],
-	);
 	const [aiProviderIdOverride, setAiProviderIdOverride] = useState<string | null | undefined>(undefined);
 	const [sourceResumeIdOverride, setSourceResumeIdOverride] = useState<string | null | undefined>(undefined);
 	const aiProviderId = aiProviderIdOverride ?? usableProviders[0]?.id ?? null;
@@ -116,13 +109,13 @@ export function NewThreadSetup({ resumeId }: NewThreadSetupProps) {
 								value={aiProviderId}
 								options={providerOptions}
 								disabled={isLoadingProviders || providerOptions.length === 0}
-								placeholder={isLoadingProviders ? t`Loading providers…` : t`Select a tested provider`}
+								placeholder={isLoadingProviders ? t`Loading providers…` : t`Select an AI provider`}
 								onValueChange={setAiProviderIdOverride}
 							/>
 							{providerOptions.length === 0 && !isLoadingProviders ? (
 								<div className="flex flex-col gap-3 rounded-md border border-dashed p-3 text-sm lg:flex-row lg:items-center lg:justify-between">
 									<span className="text-muted-foreground">
-										<Trans>Add and test a provider before starting a thread.</Trans>
+										<Trans>Set up an AI provider to get started.</Trans>
 									</span>
 									<Button
 										size="sm"
@@ -183,15 +176,16 @@ export function NewThreadSetup({ resumeId }: NewThreadSetupProps) {
 										void navigate({ to: "/agent/$threadId", params: { threadId: thread.id } });
 									},
 									onError: (error) =>
-										toast.error(
-											getOrpcErrorMessage(error, {
+										toast.add({
+											type: "error",
+											description: getOrpcErrorMessage(error, {
 												byCode: {
 													PRECONDITION_FAILED: t`AI agent setup is unavailable until REDIS_URL and ENCRYPTION_SECRET are configured.`,
-													BAD_REQUEST: t`Select a tested provider before starting a thread.`,
+													BAD_REQUEST: t`Set up an AI provider before starting a thread.`,
 												},
 												fallback: t`Failed to start agent thread.`,
 											}),
-										),
+										}),
 								},
 							)
 						}

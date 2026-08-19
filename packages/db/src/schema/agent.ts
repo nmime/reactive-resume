@@ -1,10 +1,11 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
+import { sql } from "drizzle-orm";
 import * as pg from "drizzle-orm/pg-core";
 import { generateId } from "@reactive-resume/utils/string";
 import { user } from "./auth";
 import { resume } from "./resume";
 
-export type AgentUiMessage = Record<string, unknown>;
+type AgentUiMessage = Record<string, unknown>;
 type StoredJsonPatchOperation =
 	| { op: "add"; path: string; value: unknown }
 	| { op: "remove"; path: string }
@@ -86,6 +87,12 @@ export const agentThread = pg.pgTable(
 		pg.index().on(t.userId, t.status, t.lastMessageAt.desc()),
 		pg.index().on(t.workingResumeId),
 		pg.index().on(t.aiProviderId),
+		// At most one active in-place thread per (user, working, source) resume; guards the
+		// getOrCreateForResume SELECT-then-INSERT race via onConflictDoNothing.
+		pg
+			.uniqueIndex("agent_threads_active_in_place_unique")
+			.on(t.userId, t.workingResumeId, t.sourceResumeId)
+			.where(sql`${t.status} = 'active' and ${t.deletedAt} is null`),
 	],
 );
 

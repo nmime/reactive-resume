@@ -1,6 +1,6 @@
-import { defineDialogRenderer, defineDialogRendererRegistry } from "../renderer-registry";
+import type { AnyDialogRendererEntry } from "../renderer-registry";
 import { CreateApiKeyDialog } from "./create";
 
-export const apiKeyDialogRendererRegistry = defineDialogRendererRegistry("api-key", [
-	defineDialogRenderer("api-key.create", () => <CreateApiKeyDialog />),
-]);
+export const apiKeyDialogRenderers: readonly AnyDialogRendererEntry[] = [
+	{ type: "api-key.create", render: () => <CreateApiKeyDialog /> },
+];

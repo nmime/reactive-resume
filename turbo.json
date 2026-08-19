@@ -1,6 +1,6 @@
 {
-	"$schema": "https://turbo.build/schema.json",
-	"ui": "tui",
+	"$schema": "https://v2-10-7.turborepo.dev/schema.json",
+	"ui": "stream",
 	"boundaries": {
 		"dependencies": {
 			"deny": ["web", "server"]
@@ -51,6 +51,7 @@
 		"DATABASE_URL",
 		"AUTH_SECRET",
 		"BETTER_AUTH_API_KEY",
+		"BETTER_AUTH_INTERNAL_URL",
 		"GOOGLE_CLIENT_ID",
 		"GOOGLE_CLIENT_SECRET",
 		"GITHUB_CLIENT_ID",
@@ -83,11 +84,10 @@
 		"FLAG_DISABLE_SIGNUPS",
 		"FLAG_DISABLE_EMAIL_AUTH",
 		"FLAG_DISABLE_IMAGE_PROCESSING",
+		"FLAG_DISABLE_API_RATE_LIMIT",
+		"FLAG_SHOW_SPONSORS",
 		"FLAG_ALLOW_UNSAFE_OAUTH_REDIRECT_URI",
-		"FLAG_ALLOW_UNSAFE_AI_BASE_URL",
-		"GOOGLE_CLOUD_API_KEY",
-		"CROWDIN_PROJECT_ID",
-		"CROWDIN_API_TOKEN"
+		"FLAG_ALLOW_UNSAFE_AI_BASE_URL"
 	],
 	"tasks": {
 		"build": {
@@ -99,6 +99,9 @@
 		"test": {},
 		"test:coverage": {},
 		"test:ci": {},
+		"test:e2e": {
+			"cache": false
+		},
 		"test:agent": {},
 		"dev": {
 			"cache": false,

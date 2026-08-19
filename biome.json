@@ -47,13 +47,14 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"recommended": true,
+			"preset": "recommended",
 			"correctness": {
 				"useExhaustiveDependencies": "info"
 			},
 			"suspicious": {
 				"noArrayIndexKey": "off",
-				"noExplicitAny": "error"
+				"noExplicitAny": "error",
+				"useAwait": "error"
 			},
 			"nursery": {
 				"useSortedClasses": {
@@ -108,5 +109,27 @@
 		"parser": {
 			"tailwindDirectives": true
 		}
-	}
+	},
+	"overrides": [
+		{
+			"includes": ["docs/spec.json"],
+			"files": {
+				"maxSize": 2097152
+			},
+			"json": {
+				"formatter": {
+					"expand": "always"
+				}
+			}
+		},
+		{
+			"includes": ["packages/pdf/src/semantic/__fixtures__/**/*.css"],
+			"formatter": {
+				"enabled": false
+			},
+			"linter": {
+				"enabled": false
+			}
+		}
+	]
 }

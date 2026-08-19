@@ -19,10 +19,3 @@ export function downloadWithAnchor(blob: Blob, filename: string) {
 
 	setTimeout(() => URL.revokeObjectURL(url), 5000);
 }
-
-export async function downloadFromUrl(url: string, filename: string) {
-	const response = await fetch(url);
-	const blob = await response.blob();
-
-	downloadWithAnchor(blob, filename);
-}

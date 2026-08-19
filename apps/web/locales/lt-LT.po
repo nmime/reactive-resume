@@ -8,7 +8,7 @@ msgstr ""
 "Language: lt\n"
 "Project-Id-Version: reactive-resume\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-06-01 13:32\n"
+"PO-Revision-Date: 2026-08-17 22:30\n"
 "Last-Translator: \n"
 "Language-Team: Lithuanian\n"
 "Plural-Forms: nplurals=4; plural=(n%10==1 && (n%100>19 || n%100<11) ? 0 : (n%10>=2 && n%10<=9) && (n%100>19 || n%100<11) ? 1 : n%1!=0 ? 2: 3);\n"
@@ -18,20 +18,14 @@ msgstr ""
 "X-Crowdin-File: /apps/web/locales/en-US.po\n"
 "X-Crowdin-File-ID: 545\n"
 
-#. js-lingui-explicit-id
-#: src/routes/dashboard/resumes/index.tsx
-msgid "Last Updated"
-msgstr "Paskutinį kartą atnaujinta"
-
-#. js-lingui-explicit-id
-#: src/routes/dashboard/resumes/index.tsx
-msgid "Created"
-msgstr "Sukurta"
-
-#. js-lingui-explicit-id
-#: src/routes/dashboard/resumes/index.tsx
-msgid "Name"
-msgstr "Pavadinimas"
+#. placeholder {0}: application.role
+#. placeholder {0}: current.role
+#. placeholder {1}: application.company
+#. placeholder {1}: current.company
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "\"{0} · {1}\" and its full timeline will be permanently deleted. This can't be undone."
+msgstr "\"{0} · {1}\" ir visa jos laiko juosta bus visam laikui ištrinta. To negalima atšaukti."
 
 #: src/routes/_home/-sections/footer.tsx
 #: src/routes/_home/-sections/hero.tsx
@@ -48,10 +42,60 @@ msgstr "{0, plural, one {# elementas} few {# elementai} many {# elementų} other
 msgid "{0, plural, one {# role} other {# roles}}"
 msgstr "{0, plural, one {# vaidmuo} few {# vaidmenys} many {# vaidmenų} other {# vaidmenys}}"
 
+#. placeholder {0}: insights.total
+#: src/features/applications/components/insights-view.tsx
+msgid "{0} applications tracked"
+msgstr "Stebima {0} paraiškų"
+
+#. Character count readout for the rich-text editor
+#. placeholder {0}: state.characterCount
+#: src/components/input/rich-input.tsx
+msgid "{0} characters"
+msgstr "{0} simbolių"
+
+#. placeholder {0}: importable.length
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "{0} ready to import"
+msgstr "{0} paruošta importuoti"
+
+#. placeholder {0}: insights.rejected
+#: src/features/applications/components/insights-view.tsx
+msgid "{0} rejected"
+msgstr "{0} atmesta"
+
+#. placeholder {0}: parsed.skipped
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "{0} skipped (missing company/role)"
+msgstr "{0} praleista (trūksta įmonės / pareigų)"
+
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 msgid "{column, plural, one {# Column} other {# Columns}}"
 msgstr "{column, plural, one {# stulpelis} few {# stulpeliai} many {# stulpelių} other {# stulpelio}}"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
+msgid "{count, plural, one {# error} other {# errors}}"
+msgstr "{count, plural, one {# klaida} other {# klaidos}}"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
+msgid "{count, plural, one {# note} other {# notes}}"
+msgstr "{count, plural, one {# nata} other {# natos}}"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
+msgid "{count, plural, one {# warning} other {# warnings}}"
+msgstr "{count, plural, one {# įspėjimas} other {# įspėjimai}}"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
+msgid "{label} over the last 30 days"
+msgstr "{label} per pastarąsias 30 dienų"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
+msgid "{passedRules} of {totalRules} checks passed"
+msgstr "Patikslinimų: {passedRules} iš {totalRules}"
+
+#: src/libs/resume/ats.ts
+msgid "{sectionTitle} · Item {itemNumber}"
+msgstr "{sectionTitle} · Prekė {itemNumber}"
 
 #: src/routes/_home/-sections/hero.tsx
 msgid "<0>Finally,</0><1>A free and open-source resume builder</1>"
@@ -94,6 +138,10 @@ msgstr "Į jūsų dabartinį el. pašto adresą išsiųsta patvirtinimo nuoroda.
 msgid "A free and open-source resume builder that simplifies the process of creating, updating, and sharing your resume."
 msgstr "Nemokama atvirojo kodo gyvenimo aprašymų kūrimo priemonė, supaprastinanti gyvenimo aprašymo kūrimo, atnaujinimo ir bendrinimo procesą."
 
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "A friendly nudge for the recruiter"
+msgstr "Draugiškas priminimas atrankos specialistui"
+
 #: src/routes/builder/$resumeId/-components/dock.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "A link to your resume has been copied to clipboard."
@@ -111,6 +159,10 @@ msgstr "Į jūsų el. pašto adresą išsiųsta nauja patvirtinimo nuoroda. Pati
 msgid "A passion project by <0>Amruth Pillai</0>."
 msgstr "Aistros projektas, kurį sukūrė <0>Amruth Pillai</0>."
 
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "A stretch"
+msgstr "Šiek tiek per aukšta kartelė"
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "A4"
 msgstr "A4"
@@ -123,9 +175,40 @@ msgstr "Žinoma! Galite vienu spustelėjimu eksportuoti savo gyvenimo aprašymą
 msgid "Access your resumes and data programmatically using the API."
 msgstr "Programiškai pasiekite savo gyvenimo aprašymus ir duomenis naudodami API."
 
+#: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/-components/sidebar.tsx
+#: src/routes/dashboard/settings/account.tsx
+msgid "Account"
+msgstr "Paskyra"
+
+#: src/routes/builder/$resumeId/-sidebar/left/index.tsx
+msgid "Account menu"
+msgstr "Paskyros meniu"
+
+#: src/features/applications/components/table-view.tsx
+msgid "Actions"
+msgstr "Veiksmai"
+
+#: src/features/resume/stylesheet/legacy-banner.tsx
+msgid "Activate Semantic CSS"
+msgstr "Semantinio CSS aktyvavimas"
+
+#: src/routes/builder/$resumeId/-components/dock.tsx
+msgid "Actual size (100%)"
+msgstr "Tikrasis dydis (100 %)"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/table-view.tsx
+msgid "Add"
+msgstr "Pridėti"
+
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
 msgid "Add a custom field"
 msgstr "Pridėti pasirinktinį lauką"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Add a job you're applying to, link the resume you sent, and move it through your pipeline as things progress."
+msgstr "Pridėkite darbą, į kurį kandidatuojate, susiekite išsiųstą gyvenimo aprašymą ir eigai keičiantis perkelkite jį per savo procesą."
 
 #: src/components/input/chip-input.tsx
 msgid "Add a keyword..."
@@ -193,25 +276,52 @@ msgstr "Pridėti naują įgūdį"
 msgid "Add a new volunteer experience"
 msgstr "Pridėti naują savanorišką veiklą"
 
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Add and test a provider before starting a thread."
-msgstr "Prieš pradėdami temą, pridėkite ir išbandykite teikėją."
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Add a note…"
+msgstr "Pridėti pastabą…"
+
+#: src/libs/resume/ats.ts
+msgid "Add a period such as \"Jan 2020 - Present\" so it lands on your timeline."
+msgstr "Pridėkite laikotarpį, pvz., \"2020 m. sausio mėn. – dabartis\", kad jis atsidurtų jūsų laiko juostoje."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Add a tag and press Enter…"
+msgstr "Pridėkite žymą ir paspauskite Enter…"
+
+#: src/libs/resume/ats.ts
+msgid "Add an entry, or use projects and volunteer work to show equivalent history."
+msgstr "Pridėkite įrašą arba naudokite projektus ir savanorišką darbą, kad parodytumėte lygiavertę istoriją."
+
+#: src/libs/resume/ats.ts
+msgid "Add an item to it, or hide it."
+msgstr "Pridėkite prie jo elementą arba paslėpkite jį."
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Add and test a provider before starting an agent thread."
 msgstr "Prieš pradėdami agento giją, pridėkite ir išbandykite teikėją."
 
-#: src/components/input/rich-input.tsx
-msgid "Add Column After"
-msgstr "Pridėti stulpelį po"
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/routes/dashboard/applications/index.tsx
+msgid "Add application"
+msgstr "Pridėti paraišką"
 
-#: src/components/input/rich-input.tsx
-msgid "Add Column Before"
-msgstr "Pridėti stulpelį prieš"
+#: src/libs/resume/ats.ts
+msgid "Add at least a city and country so roles can be matched to your region."
+msgstr "Pridėkite bent miestą ir šalį, kad vaidmenys būtų suderinti su jūsų regionu."
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Add contact"
+msgstr "Pridėti kontaktą"
 
 #: src/components/input/chip-input.tsx
 msgid "Add keyword"
 msgstr "Pridėti raktažodį"
+
+#: src/components/input/rich-input.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
+msgid "Add link"
+msgstr "Pridėti nuorodą"
 
 #: src/dialogs/resume/sections/experience.tsx
 msgid "Add multiple roles to show career progression at the same company."
@@ -229,23 +339,32 @@ msgstr "Pridėti teikėją"
 msgid "Add Role"
 msgstr "Pridėti vaidmenį"
 
-#: src/components/input/rich-input.tsx
-msgid "Add Row After"
-msgstr "Pridėti eilutę po"
+#: src/features/applications/components/table-view.tsx
+msgid "Add tag"
+msgstr "Pridėti žymą"
 
-#: src/components/input/rich-input.tsx
-msgid "Add Row Before"
-msgstr "Pridėti eilutę prieš"
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Add to pipeline"
+msgstr "Pridėti į procesą"
 
-#: src/routes/agent/$threadId.tsx
+#: src/libs/resume/ats.ts
+msgid "Add your full name under Basics."
+msgstr "Skiltyje „Pagrindai“ pridėkite savo vardą ir pavardę."
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Adjust the resume for a remote-first role that values async communication and ownership."
 msgstr "Koreguokite gyvenimo aprašymą, kad jis atitiktų nuotolinio darbo prioritetą turintį vaidmenį, kuriame vertinamas asinchroninis bendravimas ir atsakomybė."
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Advanced"
+msgstr "Išplėstinis"
 
 #: src/libs/locale.ts
 msgid "Afrikaans"
 msgstr "Afrikanso"
 
 #: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 msgid "Agent"
 msgstr "Agentas"
 
@@ -269,6 +388,10 @@ msgstr "Šiuo metu dirbtinio intelekto agento sąranka negalima. Bandykite dar k
 msgid "AI agent setup is unavailable until REDIS_URL and ENCRYPTION_SECRET are configured."
 msgstr "Dirbtinio intelekto agento sąranka negalima, kol nesukonfigūruoti REDIS_URL ir ENCRYPTION_SECRET."
 
+#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
+msgid "AI assistant"
+msgstr "Dirbtinio intelekto asistentas"
+
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "AI provider management is unavailable until REDIS_URL and ENCRYPTION_SECRET are configured."
 msgstr "Dirbtinio intelekto teikėjo valdymas negalimas, kol nesukonfigūruoti REDIS_URL ir ENCRYPTION_SECRET."
@@ -276,10 +399,6 @@ msgstr "Dirbtinio intelekto teikėjo valdymas negalimas, kol nesukonfigūruoti R
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "AI provider management is unavailable. Please try again."
 msgstr "Dirbtinio intelekto teikėjo valdymas nepasiekiamas. Bandykite dar kartą."
-
-#: src/features/settings/integrations/components/ai-section.tsx
-msgid "AI provider saved. Test it before use."
-msgstr "Dirbtinio intelekto teikėjas išsaugotas. Prieš naudojimą išbandykite."
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "AI Providers"
@@ -306,9 +425,8 @@ msgid "Amharic"
 msgstr "Amharų"
 
 #: src/components/layout/error-screen.tsx
-#: src/components/layout/not-found-screen.tsx
-msgid "An error occurred while loading the page."
-msgstr "Įkeliant puslapį įvyko klaida."
+msgid "An unexpected error stopped this page from loading. You can try again or head back."
+msgstr "Šio puslapio įkėlimas sustabdė netikėtą klaidą. Galite bandyti dar kartą arba grįžti atgal."
 
 #. Fallback toast when importing a resume fails for an unknown reason
 #: src/dialogs/resume/import.tsx
@@ -327,9 +445,17 @@ msgstr "Analizuojama…"
 msgid "And many more..."
 msgstr "Ir dar daugiau..."
 
+#: src/routes/agent/-components/agent-chat.tsx
+msgid "Answer in your own words"
+msgstr "Atsakykite savais žodžiais"
+
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Anthropic Claude"
 msgstr "Antropinis Klodas"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Any tag"
+msgstr "Bet kuri žyma"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Anyone visiting the resume's public URL must enter this password to access it."
@@ -369,22 +495,69 @@ msgstr "API nuoroda"
 msgid "App"
 msgstr "Programa"
 
+#: src/features/applications/components/application-actions-menu.tsx
+msgid "Application actions"
+msgstr "Paraiškos veiksmai"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Application added to your pipeline."
+msgstr "Paraiška pridėta prie jūsų proceso."
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Application Copilot"
+msgstr "Paraiškų Copilot"
+
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Application deleted."
+msgstr "Paraiška ištrinta."
+
 #: src/routes/_home/-sections/statistics.tsx
 msgid "Application Statistics"
 msgstr "Programos statistika"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/custom-styles.tsx
-msgid "Applied Rules"
-msgstr "Taikomos taisyklės"
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Application updated."
+msgstr "Paraiška atnaujinta."
+
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
+#: src/routes/dashboard/-components/sidebar.tsx
+#: src/routes/dashboard/applications/index.tsx
+msgid "Applications"
+msgstr "Paraiškos"
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Applications over time"
+msgstr "Paraiškos laikui bėgant"
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Applications sent per week (last 8 weeks)"
+msgstr "Per savaitę išsiųstos paraiškos (paskutinės 8 savaitės)"
+
+#: src/features/applications/components/table-view.tsx
+msgid "Applied"
+msgstr "Pateikta"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Applied on"
+msgstr "Pateikta"
 
 #: src/libs/locale.ts
 msgid "Arabic"
 msgstr "Arabų"
 
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/table-view.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
-#: src/routes/agent/$threadId.tsx
 msgid "Archive"
 msgstr "Archyvas"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Archived"
+msgstr "Archyvuota"
 
 #: src/hooks/use-form-blocker.tsx
 msgid "Are you sure you want to close this dialog?"
@@ -403,18 +576,16 @@ msgid "Are you sure you want to delete this item?"
 msgstr "Ar tikrai norite ištrinti šį elementą?"
 
 #: src/routes/builder/$resumeId/-components/header.tsx
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
+#: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "Are you sure you want to delete this resume?"
 msgstr "Ar tikrai norite ištrinti šį gyvenimo aprašymą?"
 
-#: src/features/settings/pages/danger-zone.tsx
+#: src/features/settings/pages/account.tsx
 msgid "Are you sure you want to delete your account?"
 msgstr "Ar tikrai norite ištrinti savo paskyrą?"
 
 #: src/routes/builder/$resumeId/-components/header.tsx
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
+#: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "Are you sure you want to lock this resume?"
 msgstr "Ar tikrai norite užrakinti šį gyvenimo aprašymą?"
 
@@ -434,7 +605,7 @@ msgstr "Studijų sritis"
 msgid "Artificial Intelligence"
 msgstr "Dirbtinis intelektas"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Ask anything about this resume"
 msgstr "Klauskite bet ko apie šį gyvenimo aprašymą"
 
@@ -442,11 +613,32 @@ msgstr "Klauskite bet ko apie šį gyvenimo aprašymą"
 msgid "Aspect Ratio"
 msgstr "Vaizdo santykis"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/_home/-sections/sponsors.tsx
+msgid "Atlas Cloud supports Reactive Resume as a project sponsor. If your company would like to sponsor the project, email <0>{sponsorshipEmail}</0>."
+msgstr "„Atlas Cloud“ remia „Reactive Resume“ kaip projekto rėmėją. Jei jūsų įmonė norėtų remti projektą, rašykite el. paštu <0>{sponsorshipEmail}</0> ."
+
+#: src/libs/resume/section.tsx
+msgid "ATS Check"
+msgstr "ATS patikrinimas"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Attach a cover letter (PDF)"
+msgstr "Pridėti motyvacinį laišką (PDF)"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Attach a resume file (PDF)"
+msgstr "Pridėti gyvenimo aprašymo failą (PDF)"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Attach files"
 msgstr "Pridėti failus"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
+msgid "Attachment"
+msgstr "Priedas"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Attachment uploaded."
 msgstr "Priedas įkeltas."
 
@@ -455,6 +647,10 @@ msgstr "Priedas įkeltas."
 #: src/routes/dashboard/settings/authentication/index.tsx
 msgid "Authentication"
 msgstr "Tapatybės nustatymas"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Auto-fill failed."
+msgstr "Nepavyko automatiškai užpildyti."
 
 #: src/routes/_home/-sections/features.tsx
 msgid "Available in multiple languages. If you would like to contribute, check out Crowdin."
@@ -508,9 +704,17 @@ msgstr "Gražūs šablonai, iš kurių galima rinktis, ir dar daugiau pakeliui."
 msgid "Bengali"
 msgstr "Bengalų"
 
+#: src/features/resume/export/download-dialog.tsx
+msgid "Best for applications, sharing, and printing."
+msgstr "Geriausia paraiškoms, bendrinimui ir spausdinimui."
+
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Blank draft"
 msgstr "Tuščias juodraštis"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Board"
+msgstr "Lenta"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
 msgctxt "Body Text (paragraphs, lists, etc.)"
@@ -529,6 +733,10 @@ msgstr "Rėmelio spindulys"
 msgid "Border Width"
 msgstr "Rėmelio plotis"
 
+#: src/features/resume/public/public-resume.tsx
+msgid "Build your own resume"
+msgstr "Sukurkite savo gyvenimo aprašymą"
+
 #. Screen-reader dialog title for the command palette in the resume builder
 #: src/features/command-palette/index.tsx
 msgid "Builder Command Palette"
@@ -537,6 +745,14 @@ msgstr "Kūrėjo komandų paletė"
 #: src/libs/locale.ts
 msgid "Bulgarian"
 msgstr "Bulgarų"
+
+#: src/features/applications/components/table-view.tsx
+msgid "Bulk delete failed. Please try again."
+msgstr "Masinis ištrynimas nepavyko. Bandykite dar kartą."
+
+#: src/features/applications/components/table-view.tsx
+msgid "Bulk update failed. Please try again."
+msgstr "Masinis atnaujinimas nepavyko. Bandykite dar kartą."
 
 #: src/components/input/rich-input.tsx
 msgid "Bullet List"
@@ -554,40 +770,32 @@ msgid "Can I export my resume to PDF?"
 msgstr "Ar galiu eksportuoti savo gyvenimo aprašymą į PDF?"
 
 #. API key deletion confirmation dialog cancel action in settings
-#. Account deletion confirmation dialog cancel action in danger zone
+#. Account deletion confirmation dialog cancel action in account settings
 #. Confirmation dialog button label to abort deleting a custom section in resume builder
 #. Confirmation dialog button label to abort deleting a section item in resume builder
 #. Confirmation dialog button label to abort resetting a resume section
 #. Profile settings form action to discard unsaved edits
 #. Secondary action button to close two-factor setup dialog
 #: src/dialogs/auth/enable-two-factor.tsx
-#: src/dialogs/resume/sections/award.tsx
-#: src/dialogs/resume/sections/certification.tsx
-#: src/dialogs/resume/sections/cover-letter.tsx
 #: src/dialogs/resume/sections/custom.tsx
-#: src/dialogs/resume/sections/education.tsx
-#: src/dialogs/resume/sections/experience.tsx
-#: src/dialogs/resume/sections/interest.tsx
-#: src/dialogs/resume/sections/language.tsx
-#: src/dialogs/resume/sections/profile.tsx
-#: src/dialogs/resume/sections/project.tsx
-#: src/dialogs/resume/sections/publication.tsx
-#: src/dialogs/resume/sections/reference.tsx
-#: src/dialogs/resume/sections/skill.tsx
-#: src/dialogs/resume/sections/summary-item.tsx
-#: src/dialogs/resume/sections/volunteer.tsx
+#: src/dialogs/resume/sections/section-item-dialog.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/features/settings/integrations/components/ai-section.tsx
+#: src/features/settings/pages/account.tsx
 #: src/features/settings/pages/api-keys.tsx
-#: src/features/settings/pages/danger-zone.tsx
 #: src/features/settings/pages/profile.tsx
 #: src/hooks/use-prompt.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Cancel"
 msgstr "Atšaukti"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Cannot restore; the resume has changed since this edit was applied."
 msgstr "Nepavyksta atkurti; gyvenimo aprašymas pasikeitė nuo tada, kai buvo pritaikytas šis redagavimas."
 
@@ -599,9 +807,9 @@ msgstr "Katalonų"
 msgid "Center Align"
 msgstr "Lygiuoti centre"
 
-#: src/routes/builder/$resumeId/-components/dock.tsx
-msgid "Center view"
-msgstr "Centruoti vaizdą"
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Cerebras"
+msgstr "Smegenys"
 
 #: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
@@ -629,6 +837,7 @@ msgstr "Persigalvojote? Pervardinkite savo gyvenimo aprašymą į apibūdinantį
 msgid "Changelog"
 msgstr "Pakeitimų žurnalas"
 
+#: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/$threadId.tsx
 msgid "Chat"
 msgstr "Pokalbis"
@@ -640,6 +849,14 @@ msgstr "Patikrinkite el. paštą – ten rasite nuorodą slaptažodžiui atkurti
 #: src/features/auth/pages/register.tsx
 msgid "Check your email for a link to verify your account."
 msgstr "Patikrinkite el. paštą – ten rasite nuorodą paskyrai patvirtinti."
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Checking"
+msgstr "Tikrinama"
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Checking draft"
+msgstr "Tikrinamas juodraštis"
 
 #: src/libs/locale.ts
 msgid "Chinese (Simplified)"
@@ -667,6 +884,10 @@ msgstr "Pasirinkite gyvenimo aprašymą"
 msgid "Choose an existing conversation from the sidebar, or start a new draft-focused thread."
 msgstr "Šoninėje juostoje pasirinkite esamą pokalbį arba pradėkite naują, į juodraštį orientuotą temą."
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
+msgid "Choose PDF, DOCX, Markdown, or JSON. Export your resume and cover letter separately when available."
+msgstr "Pasirinkite PDF, DOCX, „Markdown“ arba JSON formatą. Jei įmanoma, eksportuokite savo gyvenimo aprašymą ir motyvacinį laišką atskirai."
+
 #: src/components/level/combobox.tsx
 msgid "Circle"
 msgstr "Apskritimas"
@@ -674,8 +895,13 @@ msgstr "Apskritimas"
 #. Clear the highlight color
 #. Clear the text color
 #: src/components/input/rich-input.tsx
+#: src/features/applications/components/table-view.tsx
 msgid "Clear"
 msgstr "Skaidrus"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Clear filters"
+msgstr "Išvalyti filtrus"
 
 #: src/components/ui/combobox.tsx
 msgid "Clear selection"
@@ -685,14 +911,22 @@ msgstr "Išvalyti pasirinkimą"
 msgid "Click here to select a file to import"
 msgstr "Spustelėkite čia, kad pasirinktumėte importuojamą failą"
 
-#: src/components/input/rich-input.tsx
-msgid "Code Block"
-msgstr "Kodo blokas"
+#: src/routes/agent/-components/agent-chat.tsx
+msgid "Close AI assistant"
+msgstr "Uždaryti DI asistentą"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Cohere"
+msgstr "Koheras"
 
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 msgid "Columns"
 msgstr "Stulpeliai"
+
+#: src/libs/resume/ats.ts
+msgid "Columns commonly scramble the order text is read in. Set it to a single column."
+msgstr "Stulpeliai paprastai maišosi, kai tekstas yra skaitomas. Nustatykite jį į vieną stulpelį."
 
 #. Accessible label for command list region inside command palette
 #. Accessible label for the command palette dialog
@@ -710,10 +944,19 @@ msgid "Community"
 msgstr "Bendruomenė"
 
 #: src/dialogs/resume/sections/experience.tsx
+#: src/features/applications/components/application-form-sheet.tsx
 msgid "Company"
 msgstr "Įmonė"
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/applications/components/table-view.tsx
+msgid "Company / Role"
+msgstr "Įmonė / pareigos"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Company A–Z"
+msgstr "Įmonė A–Z"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Compare this resume against this role URL and update keywords while keeping the voice concise and credible."
 msgstr "Palyginkite šį gyvenimo aprašymą su šio vaidmens URL adresu ir atnaujinkite raktinius žodžius, išlaikydami glaustą ir įtikinamą toną."
 
@@ -721,10 +964,10 @@ msgstr "Palyginkite šį gyvenimo aprašymą su šio vaidmens URL adresu ir atna
 msgid "Completely free, forever, no hidden costs."
 msgstr "Visiškai nemokama, visada, be jokių paslėptų mokesčių."
 
-#. Account deletion confirmation dialog confirm action in danger zone
+#. Account deletion confirmation dialog confirm action in account settings
 #. Create API key dialog acknowledgment action after copying
 #: src/dialogs/api-key/create.tsx
-#: src/features/settings/pages/danger-zone.tsx
+#: src/features/settings/pages/account.tsx
 #: src/hooks/use-prompt.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Confirm"
@@ -734,6 +977,26 @@ msgstr "Patvirtinti"
 #: src/features/settings/authentication/components/social-provider.tsx
 msgid "Connect"
 msgstr "Prisijungti"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Connected"
+msgstr "Prijungtas"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Connection failed"
+msgstr "Ryšys nepavyko"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Connection failed."
+msgstr "Ryšys nepavyko."
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Connection verified — provider is ready to use."
+msgstr "Ryšys patvirtintas – tiekėjas paruoštas naudoti."
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Contacts"
+msgstr "Kontaktai"
 
 #: src/dialogs/resume/sections/cover-letter.tsx
 #: src/dialogs/resume/sections/summary-item.tsx
@@ -761,17 +1024,26 @@ msgstr "Tęskite nuo ten, kur sustojote, importuodami esamą gyvenimo aprašymą
 msgid "Contributions fund bug fixes, security updates, and continuous improvements to keep the app running smoothly."
 msgstr "Įnašai finansuoja klaidų taisymus, saugumo atnaujinimus ir nuolatinius patobulinimus, kad programa veiktų sklandžiai."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Conversation copied."
 msgstr "Pokalbis nukopijuotas."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Conversation JSON copied."
 msgstr "Pokalbio JSON nukopijuotas."
 
+#: src/features/resume/stylesheet/legacy-banner.tsx
+msgid "Converted stylesheet draft"
+msgstr "Konvertuotas stilių lapo juodraštis"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Copied to clipboard."
+msgstr "Nukopijuota į iškarpinę."
+
 #. Action button to copy two-factor backup codes to clipboard
 #: src/dialogs/auth/enable-two-factor.tsx
-#: src/routes/agent/$threadId.tsx
+#: src/features/applications/components/application-ai-copilot.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Copy"
 msgstr "Kopijuoti"
 
@@ -783,32 +1055,99 @@ msgstr "Nukopijuokite ir išsaugokite šiuos atsarginius kodus tam atvejui, jei 
 msgid "Copy Backup Codes"
 msgstr "Kopijuoti atsarginius kodus"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Copy JSON"
 msgstr "Kopijuoti JSON"
+
+#. Accessible label for the button that copies the two-factor secret key
+#: src/dialogs/auth/enable-two-factor.tsx
+msgid "Copy secret"
+msgstr "Kopijuoti slaptą kodą"
+
+#: src/features/resume/stylesheet/toolbar.tsx
+msgid "Copy stylesheet"
+msgstr "Kopijuoti stiliaus lapą"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Copy the entire job description from the posting and paste it below. We'll fill in the fields for you and keep the text with this application for match scoring and tailoring."
+msgstr "Nukopijuokite visą darbo aprašymą iš skelbimo ir įklijuokite jį žemiau. Užpildysime laukus už jus ir išsaugosime tekstą kartu su šia paraiška, kad galėtume įvertinti atitiktį ir pritaikyti gyvenimo aprašymą."
 
 #: src/dialogs/api-key/create.tsx
 msgid "Copy this secret key and use it in your applications to access your data."
 msgstr "Nukopijuokite šį slaptą raktą ir naudokite jį savo programose duomenims pasiekti."
 
 #: src/routes/builder/$resumeId/-components/dock.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Copy URL"
 msgstr "Kopijuoti URL"
 
-#. Error description when AI provider cannot be reached during resume analysis
+#: src/libs/resume/ats.ts
+msgid "Correct the year, or use \"Present\" for ongoing work."
+msgstr "Pataisykite metus arba naudokite \"Dabar\" atliekamiems darbams."
+
 #. Error shown when AI provider is unreachable during PDF/DOCX resume import
 #: src/dialogs/resume/import.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/resume-analysis.tsx
 msgid "Could not reach the AI provider. Please try again."
 msgstr "Nepavyko susisiekti su AI teikėju. Bandykite dar kartą."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Could not restore this patch."
 msgstr "Nepavyko atkurti šio pataisymo."
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Could not verify provider connection."
 msgstr "Nepavyko patvirtinti tiekėjo ryšio."
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Could not verify the connection. Check the API key, model, and base URL."
+msgstr "Nepavyko patvirtinti ryšio. Patikrinkite API raktą, modelį ir bazinį URL."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Couldn't add the application. Please try again."
+msgstr "Nepavyko pridėti paraiškos. Bandykite dar kartą."
+
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Couldn't delete the application."
+msgstr "Nepavyko ištrinti paraiškos."
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Couldn't delete the timeline entry."
+msgstr "Nepavyko ištrinti laiko juostos įrašo."
+
+#: src/features/applications/components/board.tsx
+msgid "Couldn't move the application. Please try again."
+msgstr "Nepavyko perkelti paraiškos. Bandykite dar kartą."
+
+#: src/routes/builder/$resumeId/-components/header.tsx
+msgid "Couldn't save"
+msgstr "Nepavyko išsaugoti"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Couldn't save the note."
+msgstr "Nepavyko išsaugoti pastabos."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Couldn't save your changes. Please try again."
+msgstr "Nepavyko išsaugoti pakeitimų. Bandykite dar kartą."
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Couldn't update the timeline entry."
+msgstr "Nepavyko atnaujinti laiko juostos įrašo."
+
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "Couldn't upload the file. Please try again."
+msgstr "Nepavyko įkelti failo. Bandykite dar kartą."
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Count by source"
+msgstr "Skaičius pagal šaltinį"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/resume/export/download-dialog.tsx
+msgid "Cover letter"
+msgstr "Motyvacinis laiškas"
 
 #. Fallback title for a custom cover letter item in resume builder when recipient is empty
 #. Fallback title for a custom cover letter item in resume builder when recipient is unavailable
@@ -818,6 +1157,10 @@ msgstr "Nepavyko patvirtinti tiekėjo ryšio."
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 msgid "Cover Letter"
 msgstr "Motyvacinis laiškas"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Cover letter draft"
+msgstr "Motyvacinio laiško juodraštis"
 
 #. Create API key dialog submit action
 #: src/dialogs/api-key/create.tsx
@@ -837,8 +1180,13 @@ msgstr "Motyvacinis laiškas"
 #: src/dialogs/resume/sections/skill.tsx
 #: src/dialogs/resume/sections/summary-item.tsx
 #: src/dialogs/resume/sections/volunteer.tsx
+#: src/routes/dashboard/resumes/index.tsx
 msgid "Create"
 msgstr "Sukurti"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Create a copy tuned to this job"
+msgstr "Sukurti šiam darbui pritaikytą kopiją"
 
 #: src/features/auth/pages/register.tsx
 msgid "Create a new account"
@@ -938,6 +1286,15 @@ msgstr "Sukurkite jį dabar"
 msgid "Create resume with options"
 msgstr "Sukurti CV su parinktimis"
 
+#: src/routes/dashboard/resumes/index.tsx
+msgid "Created"
+msgstr "Sukurta"
+
+#. placeholder {0}: result.name
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Created \"{0}\" and linked it to this application."
+msgstr "Sukurta \"{0}\" ir susieta su šia paraiška."
+
 #: src/dialogs/api-key/create.tsx
 msgid "Creating your API key..."
 msgstr "Kuriamas jūsų API raktas..."
@@ -946,9 +1303,21 @@ msgstr "Kuriamas jūsų API raktas..."
 msgid "Creating your resume..."
 msgstr "Kuriamas jūsų gyvenimo aprašymas..."
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Crop picture"
+msgstr "Apkirpti paveikslėlį"
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "CSV data"
+msgstr "CSV duomenys"
+
 #: src/dialogs/auth/change-password.tsx
 msgid "Current Password"
 msgstr "Dabartinis slaptažodis"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Current stage"
+msgstr "Dabartinis etapas"
 
 #: src/components/input/color-picker.tsx
 msgid "Custom"
@@ -971,12 +1340,6 @@ msgstr "Pasirinktiniai stiliai"
 msgid "Czech"
 msgstr "Čekų"
 
-#: src/features/command-palette/pages/navigation.tsx
-#: src/routes/dashboard/-components/sidebar.tsx
-#: src/routes/dashboard/settings/danger-zone.tsx
-msgid "Danger Zone"
-msgstr "Pavojinga zona"
-
 #: src/libs/locale.ts
 msgid "Danish"
 msgstr "Danų"
@@ -991,6 +1354,10 @@ msgstr "Tamsus"
 msgid "Dark theme"
 msgstr "Tamsi tema"
 
+#: src/routes/dashboard/-components/sidebar.tsx
+msgid "Dashboard"
+msgstr "Prietaisų skydelis"
+
 #: src/routes/_home/-sections/features.tsx
 msgid "Data Security"
 msgstr "Duomenų sauga"
@@ -1001,9 +1368,21 @@ msgstr "Duomenų sauga"
 msgid "Date"
 msgstr "Data"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/dashboard/applications/index.tsx
+msgid "Date applied"
+msgstr "Pateikimo data"
+
+#: src/components/input/rich-input.tsx
+msgid "Decrease indent"
+msgstr "Sumažinti įtrauką"
+
+#: src/routes/agent/-components/resume-pane.tsx
 msgid "Decrease zoom"
 msgstr "Sumažinti mastelį"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "DeepSeek"
+msgstr "DeepSeek"
 
 #: src/dialogs/resume/sections/education.tsx
 msgid "Degree"
@@ -1015,10 +1394,13 @@ msgstr "Laipsnis"
 #. Passkey row action to remove the selected passkey
 #. Resume card context menu destructive action to remove a resume
 #. Resume card dropdown destructive action to remove a resume
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/table-view.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 #: src/features/settings/pages/api-keys.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
-#: src/routes/agent/$threadId.tsx
 #: src/routes/builder/$resumeId/-components/header.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
@@ -1027,13 +1409,10 @@ msgstr "Laipsnis"
 msgid "Delete"
 msgstr "Ištrinti"
 
-#: src/features/settings/pages/danger-zone.tsx
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/settings/pages/account.tsx
 msgid "Delete Account"
 msgstr "Ištrinti paskyrą"
-
-#: src/components/input/rich-input.tsx
-msgid "Delete Column"
-msgstr "Ištrinti stulpelį"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Delete Page"
@@ -1047,20 +1426,30 @@ msgstr "Ištrinti paveikslėlį"
 msgid "Delete provider"
 msgstr "Ištrinti teikėją"
 
-#: src/components/input/rich-input.tsx
-msgid "Delete Row"
-msgstr "Ištrinti eilutę"
-
-#: src/components/input/rich-input.tsx
-msgid "Delete Table"
-msgstr "Ištrinti lentelę"
-
+#: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
-#: src/routes/agent/$threadId.tsx
 msgid "Delete this agent thread?"
 msgstr "Ištrinti šią agento temą?"
 
-#: src/features/settings/pages/danger-zone.tsx
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Delete this application?"
+msgstr "Ištrinti šią paraišką?"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Delete this timeline entry?"
+msgstr "Ištrinti šį laiko juostos įrašą?"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Delete timeline entry"
+msgstr "Ištrinti laiko juostos įrašą"
+
+#. placeholder {0}: result.deleted
+#: src/features/applications/components/table-view.tsx
+msgid "Deleted {0} application(s)."
+msgstr "Ištrinta paraiškų: {0}."
+
+#: src/features/settings/pages/account.tsx
 msgid "Deleting your account..."
 msgstr "Jūsų paskyra ištrinama..."
 
@@ -1069,10 +1458,13 @@ msgid "Deleting your API key..."
 msgstr "Ištrinamas jūsų API raktas..."
 
 #: src/routes/builder/$resumeId/-components/header.tsx
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
+#: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "Deleting your resume..."
 msgstr "Jūsų gyvenimo aprašymas ištrinamas..."
+
+#: src/libs/resume/ats.ts
+msgid "Describe what you did so the entry contributes keywords for matching."
+msgstr "Aprašykite, ką padarėte, kad įraše būtų pateikti atitikimo raktiniai žodžiai."
 
 #: src/dialogs/resume/sections/award.tsx
 #: src/dialogs/resume/sections/certification.tsx
@@ -1086,6 +1478,7 @@ msgid "Description"
 msgstr "Aprašymas"
 
 #: src/libs/resume/section.tsx
+#: src/routes/builder/$resumeId/-components/mobile-builder-shell.tsx
 msgid "Design"
 msgstr "Dizainas"
 
@@ -1112,7 +1505,7 @@ msgstr "Atsijungti"
 msgid "Discord"
 msgstr "Discord"
 
-#: src/components/ui/donation-toast.tsx
+#: src/features/applications/components/application-ai-copilot.tsx
 msgid "Dismiss"
 msgstr "Atmesti"
 
@@ -1120,6 +1513,10 @@ msgstr "Atmesti"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "Documentation"
 msgstr "Dokumentacija"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Documents sent"
+msgstr "Išsiųsti dokumentai"
 
 #: src/features/auth/pages/login.tsx
 msgid "Don't have an account? <0/>"
@@ -1134,33 +1531,25 @@ msgid "Donate to Reactive Resume"
 msgstr "Paaukoti „Reactive Resume“"
 
 #. Action button to download two-factor backup codes as a text file
+#. Primary action in the builder header to open resume download options
 #: src/dialogs/auth/enable-two-factor.tsx
+#: src/features/resume/export/download-dialog.tsx
+#: src/routes/builder/$resumeId/-components/header.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
 msgid "Download"
 msgstr "Atsisiųsti"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
-msgid "Download a copy of your resume as a Word document. Use this file to further customize your resume in Microsoft Word or Google Docs."
-msgstr "Atsisiųskite savo gyvenimo aprašymo kopiją kaip \"Word\" dokumentą. Šį failą naudokite norėdami dar labiau pritaikyti savo gyvenimo aprašymą \"Microsoft Word\" arba \"Google Docs\"."
+#: src/features/settings/pages/account.tsx
+msgid "Download a copy of all your data, including your profile and every resume, as a JSON file."
+msgstr "Atsisiųskite visų savo duomenų, įskaitant profilį ir kiekvieną gyvenimo aprašymą, kopiją kaip JSON failą."
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
-msgid "Download a copy of your resume in JSON format. Use this file for backup or to import your resume into other applications, including AI assistants."
-msgstr "Atsisiųskite savo gyvenimo aprašymo kopiją JSON formatu. Naudokite šį failą atsarginėms kopijoms arba importuokite savo gyvenimo aprašymą į kitas programas, įskaitant DI asistentus."
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
-msgid "Download a copy of your resume in PDF format. Use this file for printing or to easily share your resume with recruiters."
-msgstr "Atsisiųskite savo gyvenimo aprašymo kopiją PDF formatu. Naudokite šį failą spausdinimui arba lengvam dalijimuisi su personalo atrankos specialistais."
-
-#: src/routes/builder/$resumeId/-components/dock.tsx
-msgid "Download DOCX"
-msgstr "Atsisiųsti DOCX"
-
-#: src/routes/builder/$resumeId/-components/dock.tsx
-msgid "Download JSON"
-msgstr "Atsisiųsti JSON"
+#. Primary action in the builder header to open resume download options
+#: src/routes/builder/$resumeId/-components/header.tsx
+msgid "Download options"
+msgstr "Atsisiuntimo parinktys"
 
 #: src/features/resume/public/public-resume.tsx
-#: src/routes/agent/$threadId.tsx
-#: src/routes/builder/$resumeId/-components/dock.tsx
+#: src/routes/agent/-components/resume-pane.tsx
 msgid "Download PDF"
 msgstr "Atsisiųsti PDF"
 
@@ -1168,9 +1557,25 @@ msgstr "Atsisiųsti PDF"
 msgid "Downloads"
 msgstr "Atsisiuntimai"
 
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Draft a cover letter"
+msgstr "Parengti motyvacinio laiško juodraštį"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Draft a follow-up"
+msgstr "Parengti priminimo juodraštį"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Drafting failed."
+msgstr "Juodraščio parengti nepavyko."
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Drag and drop sections here to move them between columns"
 msgstr "Vilkite ir numeskite skyrius čia, kad perkeltumėte juos tarp stulpelių"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Drag to reposition and use the slider to zoom before uploading."
+msgstr "Prieš įkeldami, vilkite, kad pakeistumėte padėtį, ir naudokite slankiklį, kad pakeistumėte mastelį."
 
 #. Resume card context menu action to create a copy
 #. Resume card dropdown action to create a copy
@@ -1203,7 +1608,14 @@ msgstr "Dubliuojamas jūsų gyvenimo aprašymas..."
 msgid "Dutch"
 msgstr "Olandų"
 
+#: src/routes/builder/$resumeId/-components/version-history.tsx
+msgid "Earlier versions are kept; the builder's undo history is reset."
+msgstr "Ankstesnės versijos išsaugomos; kūrimo priemonės atšaukimų istorija nustatoma iš naujo."
+
 #: src/components/input/chip-input.tsx
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/routes/builder/$resumeId/-components/mobile-builder-shell.tsx
 msgid "Edit"
 msgstr "Redaguoti"
 
@@ -1212,14 +1624,51 @@ msgstr "Redaguoti"
 msgid "Edit {chip}"
 msgstr "Redaguoti {chip}"
 
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Edit application"
+msgstr "Redaguoti paraišką"
+
+#. placeholder {0}: selectedColor.token.value
+#: src/features/resume/stylesheet/editor.tsx
+msgid "Edit color {0}"
+msgstr "Redaguoti spalvą {0}"
+
 #. Screen reader description for the fullscreen rich-text editor dialog
 #: src/components/input/rich-input.tsx
 msgid "Edit content in fullscreen mode"
 msgstr "Turinio redagavimas viso ekrano režimu"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Edit date"
+msgstr "Redaguoti datą"
+
+#. Resume card context menu action to edit resume metadata
+#. Resume card dropdown action to edit resume metadata
+#: src/routes/builder/$resumeId/-components/header.tsx
+#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
+#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
+msgid "Edit details"
+msgstr "Redaguoti informaciją"
+
 #: src/components/input/chip-input.tsx
 msgid "Edit keyword"
 msgstr "Redaguoti raktinį žodį"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Edit model"
+msgstr "Redaguoti modelį"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Edit note"
+msgstr "Redaguoti pastabą"
+
+#: src/features/resume/export/download-dialog.tsx
+msgid "Editable in Word, Google Docs, and Pages."
+msgstr "Galima redaguoti Word, Google Docs ir Pages."
+
+#: src/routes/builder/$resumeId/-sidebar/left/index.tsx
+msgid "Editing is disabled until you unlock it."
+msgstr "Redaguoti negalima, kol neatrakinsite."
 
 #: src/components/input/chip-input.tsx
 msgid "Editing keyword..."
@@ -1245,9 +1694,17 @@ msgstr "El. paštas"
 msgid "Email Address"
 msgstr "El. pašto adresas"
 
+#: src/features/settings/pages/profile.tsx
+msgid "Email delivery isn't configured on this instance, so verification is disabled."
+msgstr "Šiuo atveju el. pašto pristatymas nėra sukonfigūruotas, todėl patvirtinimas yra išjungtas."
+
 #: src/features/settings/authentication/components/two-factor.tsx
 msgid "Enable 2FA"
 msgstr "Įjungti 2FA"
+
+#: src/routes/builder/$resumeId/-sidebar/left/index.tsx
+msgid "Enable editing"
+msgstr "Įgalinti redagavimą"
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Enable Two-Factor Authentication"
@@ -1281,7 +1738,7 @@ msgstr "Sustiprinkite savo paskyros saugumą papildomais apsaugos lygiais."
 msgid "Enter a name for your passkey."
 msgstr "Įveskite slaptažodžio pavadinimą."
 
-#: src/features/auth/pages/verify-2fa-backup.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Enter one of your saved backup codes to access your account"
 msgstr "Įveskite vieną iš išsaugotų atsarginių kodų, kad pasiektumėte savo paskyrą"
 
@@ -1305,6 +1762,14 @@ msgstr "Įveskite slaptažodį, kad patvirtintumėte dviejų veiksnių tapatumo 
 msgid "Enter your password to disable two-factor authentication. Your account will be less secure without 2FA enabled."
 msgstr "Įveskite slaptažodį, kad išjungtumėte dviejų veiksnių tapatumo patvirtinimą. Be įjungto 2FA jūsų paskyra bus mažiau saugi."
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
+msgid "Error"
+msgstr "Klaida"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
+msgid "Every check passed. Nothing here should stop a parser from reading your resume."
+msgstr "Kiekvienas patikrinimas praėjo. "
+
 #: src/routes/_home/-sections/donate.tsx
 msgid "Every contribution, big or small, makes a huge difference to the project.<0/>Thank you for your support!"
 msgstr "Kiekvienas įnašas, didelis ar mažas, daro milžinišką įtaką projektui.<0/>Ačiū už jūsų palaikymą!"
@@ -1312,6 +1777,10 @@ msgstr "Kiekvienas įnašas, didelis ar mažas, daro milžinišką įtaką proje
 #: src/routes/_home/-sections/features.tsx
 msgid "Everything you need to create, customize, and share professional resumes. Built with privacy in mind, powered by open source, and completely free forever."
 msgstr "Viskas, ko reikia sukurti, pritaikyti ir bendrinti profesionalius gyvenimo aprašymus. Sukurta atsižvelgiant į privatumą, paremta atviruoju kodu ir visiškai nemokama visam laikui."
+
+#: src/features/resume/stylesheet/toolbar.tsx
+msgid "Exit focus mode"
+msgstr "Išeiti iš fokusavimo režimo"
 
 #: src/components/input/rich-input.tsx
 msgid "Exit Fullscreen"
@@ -1327,7 +1796,7 @@ msgstr "Patirtis"
 msgid "Expires in"
 msgstr "Galioja iki"
 
-#. placeholder {0}: key.expiresAt?.toLocaleDateString()
+#. placeholder {0}: key.expiresAt.toLocaleDateString()
 #: src/features/settings/pages/api-keys.tsx
 msgid "Expires on {0}"
 msgstr "Baigia galioti {0}"
@@ -1344,20 +1813,36 @@ msgstr "Peržiūrėkite API dokumentaciją, kad sužinotumėte, kaip integruoti 
 msgid "Export"
 msgstr "Eksportuoti"
 
+#: src/features/command-palette/pages/navigation.tsx
+msgid "Export Data"
+msgstr "Eksportuoti duomenis"
+
+#: src/features/settings/pages/account.tsx
+msgid "Export my data"
+msgstr "Eksportuoti mano duomenis"
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Export PNG"
+msgstr "Eksportuoti PNG"
+
+#: src/features/resume/export/download-dialog.tsx
+msgid "Export your resume or cover letter in the format you need."
+msgstr "Eksportuokite gyvenimo aprašymą arba motyvacinį laišką reikiamu formatu."
+
 #: src/routes/_home/-sections/features.tsx
 msgid "Export your resume to PDF instantly, without any waiting or delays."
 msgstr "Eksportuokite savo gyvenimo aprašymą į PDF formatą akimirksniu, be jokio laukimo ar vėlavimų."
 
-#: src/features/settings/integrations/components/ai-section.tsx
-msgid "Failed"
-msgstr "Nepavyko"
+#: src/features/applications/components/insights-view.tsx
+msgid "Exported pipeline-flow.png"
+msgstr "pipeline-flow.png eksportuota"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/resume-analysis.tsx
 msgid "Failed to analyze resume."
 msgstr "Nepavyko išanalizuoti atnaujinimo."
 
+#: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
-#: src/routes/agent/$threadId.tsx
 msgid "Failed to archive thread."
 msgstr "Nepavyko archyvuoti temos."
 
@@ -1385,13 +1870,13 @@ msgstr "Nepavyko ištrinti teikėjo."
 msgid "Failed to delete the API key. Please try again."
 msgstr "Nepavyko ištrinti API rakto. Bandykite dar kartą."
 
+#: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
-#: src/routes/agent/$threadId.tsx
 msgid "Failed to delete thread."
 msgstr "Nepavyko ištrinti temos."
 
 #. Fallback toast when account deletion fails
-#: src/features/settings/pages/danger-zone.tsx
+#: src/features/settings/pages/account.tsx
 msgid "Failed to delete your account. Please try again."
 msgstr "Nepavyko ištrinti jūsų paskyros. Bandykite dar kartą."
 
@@ -1404,6 +1889,11 @@ msgstr "Nepavyko išjungti dviejų veiksnių autentifikavimo. Bandykite dar kart
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Failed to enable two-factor authentication. Please try again."
 msgstr "Nepavyko įjungti dviejų veiksnių autentifikavimo. Bandykite dar kartą."
+
+#. Fallback toast when data export fails
+#: src/features/settings/pages/account.tsx
+msgid "Failed to export your data. Please try again."
+msgstr "Nepavyko eksportuoti jūsų duomenų. Bandykite dar kartą."
 
 #. Fallback toast when linking a social authentication provider fails
 #: src/features/settings/authentication/components/hooks.tsx
@@ -1448,10 +1938,8 @@ msgstr "Nepavyko išsiųsti slaptažodžio atstatymo el. laiško. Bandykite dar 
 msgid "Failed to setup two-factor authentication."
 msgstr "Nepavyko nustatyti dviejų veiksnių tapatumo patvirtinimo."
 
-#. Fallback toast when custom OAuth sign-in fails without a provider error message
-#. Fallback toast when passkey sign-in fails without an error message
 #. Fallback toast when sign-in fails and no server error message is available
-#. Fallback toast when social sign-in fails without a provider error message
+#. Fallback toast when sign-in fails without an error message
 #: src/features/auth/components/social-auth.tsx
 #: src/features/auth/pages/login.tsx
 msgid "Failed to sign in. Please try again."
@@ -1465,6 +1953,10 @@ msgstr "Nepavyko išsiregistruoti. Bandykite dar kartą."
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Failed to start agent thread."
 msgstr "Nepavyko paleisti agento gijos."
+
+#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
+msgid "Failed to start the AI assistant."
+msgstr "Nepavyko paleisti dirbtinio intelekto asistento."
 
 #. Fallback toast when unlinking a social authentication provider fails
 #: src/features/settings/authentication/components/hooks.tsx
@@ -1485,7 +1977,7 @@ msgstr "Nepavyko atnaujinti slaptažodžio. Bandykite dar kartą."
 msgid "Failed to update your profile. Please try again."
 msgstr "Nepavyko atnaujinti profilio. Bandykite dar kartą."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Failed to upload attachment."
 msgstr "Nepavyko įkelti priedo."
 
@@ -1500,7 +1992,7 @@ msgid "Failed to verify the password. Please try again."
 msgstr "Nepavyko patikrinti slaptažodžio. Bandykite dar kartą."
 
 #. Fallback toast when verifying a backup two-factor authentication code fails
-#: src/features/auth/pages/verify-2fa-backup.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Failed to verify your backup code. Please try again."
 msgstr "Nepavyko patikrinti atsarginės kopijos kodo. Bandykite dar kartą."
 
@@ -1511,21 +2003,49 @@ msgstr "Nepavyko patikrinti atsarginės kopijos kodo. Bandykite dar kartą."
 msgid "Failed to verify your code. Please try again."
 msgstr "Nepavyko patikrinti jūsų kodo. Bandykite dar kartą."
 
+#: src/features/resume/stylesheet/status.tsx
+msgid "Fatal error"
+msgstr "Kritinė klaida"
+
 #: src/routes/_home/-sections/features.tsx
 msgid "Features"
 msgstr "Funkcijos"
+
+#: src/dialogs/resume/import.tsx
+msgid "File"
+msgstr "Failas"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Fill fields"
+msgstr "Užpildyti laukus"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Filled in what we could from the posting."
+msgstr "Užpildėme tai, ką galėjome iš skelbimo."
 
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Filter by"
 msgstr "Filtruoti pagal"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/dashboard/applications/index.tsx
+msgid "Filter by tags"
+msgstr "Filtruoti pagal žymas"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Find weak bullets and rewrite them with stronger outcomes, numbers, scope, and sharper verbs."
 msgstr "Raskite silpnus sąrašus ir perrašykite juos su stipresniais rezultatais, skaičiais, apimtimi ir aštresniais veiksmažodžiais."
 
 #: src/libs/locale.ts
 msgid "Finnish"
 msgstr "Suomių"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Fireworks"
+msgstr "Fejerverkai"
+
+#: src/routes/builder/$resumeId/-components/dock.tsx
+msgid "Fit to view"
+msgstr "Pritaikyti peržiūrai"
 
 #: src/routes/_home/-sections/features.tsx
 msgid "Flexibility"
@@ -1534,6 +2054,22 @@ msgstr "Lankstumas"
 #: src/dialogs/resume/sections/language.tsx
 msgid "Fluency"
 msgstr "Kalbos mokėjimas"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Follow-up"
+msgstr "Priminimas"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Follow-up date"
+msgstr "Priminimo data"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Follow-up draft"
+msgstr "Priminimo juodraštis"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Follow-up note"
+msgstr "Priminimo pastaba"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
 msgid "Font Family"
@@ -1577,6 +2113,10 @@ msgctxt "Page Format (A4, Letter, Free-form)"
 msgid "Format"
 msgstr "Formatas"
 
+#: src/features/resume/stylesheet/toolbar.tsx
+msgid "Format stylesheet"
+msgstr "Formatuoti stiliaus lapą"
+
 #: src/routes/_home/-sections/features.tsx
 msgid "Free"
 msgstr "Nemokama"
@@ -1588,6 +2128,14 @@ msgstr "Laisva forma"
 #: src/libs/locale.ts
 msgid "French"
 msgstr "Prancūzų"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "From your resume and the posting"
+msgstr "Iš jūsų gyvenimo aprašymo ir skelbimo"
+
+#: src/features/resume/export/download-dialog.tsx
+msgid "Full resume data for backup or import."
+msgstr "Visi gyvenimo aprašymo duomenys atsarginei kopijai arba importui."
 
 #. Layout editor toggle label that makes a page single-column
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
@@ -1602,6 +2150,10 @@ msgstr "Visas ekranas"
 #: src/components/input/rich-input.tsx
 msgid "Fullscreen Editor"
 msgstr "Viso ekrano redaktorius"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Gaps:"
+msgstr "Trūkumai:"
 
 #: src/dialogs/resume/index.tsx
 msgid "Generate a random name"
@@ -1632,11 +2184,16 @@ msgid "GitHub"
 msgstr "\"GitHub\""
 
 #. Secondary navigation button on backup-code verification screen
-#: src/components/layout/not-found-screen.tsx
-#: src/features/auth/pages/verify-2fa-backup.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Go Back"
 msgstr "Grįžti"
 
+#: src/components/layout/not-found-screen.tsx
+msgid "Go home"
+msgstr "Eik namo"
+
+#: src/components/layout/error-screen.tsx
+#: src/components/layout/not-found-screen.tsx
 #: src/routes/_home/-sections/header.tsx
 msgid "Go to dashboard"
 msgstr "Eikite į prietaisų skydelį"
@@ -1676,6 +2233,10 @@ msgstr "Graikų"
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Grid"
 msgstr "Tinklelis"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Groq"
+msgstr "Groq"
 
 #: src/routes/_home/-sections/donate.tsx
 msgid "Grow the Team"
@@ -1772,6 +2333,10 @@ msgstr "Slėpti nuorodos pabraukimą"
 msgid "Hide password"
 msgstr "Paslėpti slaptažodį"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Hide picture"
+msgstr "Slėpti paveikslėlį"
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/page.tsx
 msgid "Hide Section Icons"
 msgstr "Slėpti skyrių piktogramas"
@@ -1822,19 +2387,47 @@ msgstr "Vengrų"
 msgid "Icon"
 msgstr "Ikona"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Identify gaps for an applicant tracking system and apply only high-confidence keyword improvements."
 msgstr "Nustatykite kandidatų stebėjimo sistemos spragas ir taikykite tik didelio patikimumo raktinių žodžių patobulinimus."
 
 #: src/dialogs/resume/import.tsx
+#: src/routes/dashboard/resumes/index.tsx
 msgid "Import"
 msgstr "Importas"
+
+#. placeholder {0}: importable.length
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Import {0}"
+msgstr "Importuoti {0}"
 
 #: src/dialogs/resume/import.tsx
 #: src/routes/dashboard/resumes/-components/cards/import-card.tsx
 #: src/routes/dashboard/resumes/-components/list-view.tsx
 msgid "Import an existing resume"
 msgstr "Importuoti esamą gyvenimo aprašymą"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Import CSV"
+msgstr "Importuoti CSV"
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Import failed. Check the CSV and try again."
+msgstr "Importuoti nepavyko. Patikrinkite CSV ir bandykite dar kartą."
+
+#: src/features/applications/components/import-applications-sheet.tsx
+#: src/routes/dashboard/applications/index.tsx
+msgid "Import from CSV"
+msgstr "Importuoti iš CSV"
+
+#. placeholder {0}: result.imported
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Imported {0} application(s)."
+msgstr "Importuota paraiškų: {0}."
+
+#: src/dialogs/resume/import.tsx
+msgid "Importing from PDF or Word requires a connected AI provider."
+msgstr "Importavimui iš PDF arba „Word“ reikalingas prijungtas dirbtinio intelekto teikėjas."
 
 #: src/dialogs/resume/import.tsx
 msgid "Importing your resume..."
@@ -1844,7 +2437,19 @@ msgstr "Importuojamas jūsų gyvenimo aprašymas..."
 msgid "Importing…"
 msgstr "Importuojama…"
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/resume/export/download-dialog.tsx
+msgid "Include resume header"
+msgstr "Įtraukti gyvenimo aprašymo antraštę"
+
+#: src/components/input/rich-input.tsx
+msgid "Increase indent"
+msgstr "Padidinti įtrauką"
+
+#: src/libs/resume/ats.ts
+msgid "Increase them so content stays inside the reliably read area."
+msgstr "Padidinkite juos, kad turinys liktų patikimai nuskaitomoje srityje."
+
+#: src/routes/agent/-components/resume-pane.tsx
 msgid "Increase zoom"
 msgstr "Padidinti mastelį"
 
@@ -1860,9 +2465,9 @@ msgstr "Informacija"
 msgid "Inline Code"
 msgstr "Įterptinis kodas"
 
-#: src/components/input/rich-input.tsx
-msgid "Insert Table"
-msgstr "Įterpti lentelę"
+#: src/routes/dashboard/applications/index.tsx
+msgid "Insights"
+msgstr "Įžvalgos"
 
 #: src/routes/_home/-sections/features.tsx
 msgid "Instant Generation"
@@ -1908,6 +2513,30 @@ msgstr "Kursyvas"
 msgid "Japanese"
 msgstr "Japonų"
 
+#: src/features/command-palette/pages/navigation.tsx
+msgid "Job"
+msgstr "Darbas"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Job description"
+msgstr "Darbo aprašymas"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Job posting"
+msgstr "Darbo skelbimas"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Job posting link"
+msgstr "Darbo skelbimo nuoroda"
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Job search pipeline"
+msgstr "Darbo paieškos eiga"
+
+#: src/features/command-palette/pages/navigation.tsx
+msgid "Jobs"
+msgstr "Darbai"
+
 #. Example full name placeholder on profile settings form
 #. Example full name placeholder on registration form
 #: src/features/auth/pages/register.tsx
@@ -1946,6 +2575,11 @@ msgstr "Lygiuoti iš abiejų pusių"
 msgid "Kannada"
 msgstr "Kanadų"
 
+#. Layout editor toggle that prevents a section from splitting across pages
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Keep together"
+msgstr "Laikykitės kartu"
+
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Key"
 msgstr "Raktas"
@@ -1965,6 +2599,7 @@ msgstr "Korėjiečių"
 
 #. Short field label for custom display text associated with a URL
 #: src/components/input/url-input.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Label"
 msgstr "Etiketė"
@@ -1998,6 +2633,14 @@ msgstr "Paskutinį kartą analizuota {updatedAtLabel}"
 msgid "Last downloaded on {0}"
 msgstr "Paskutinį kartą atsisiųsta {0}"
 
+#: src/routes/dashboard/applications/index.tsx
+msgid "Last updated"
+msgstr "Paskutinį kartą atnaujinta"
+
+#: src/routes/dashboard/resumes/index.tsx
+msgid "Last Updated"
+msgstr "Paskutinį kartą atnaujinta"
+
 #: src/routes/dashboard/resumes/-components/cards/resume-card.tsx
 #: src/routes/dashboard/resumes/-components/list-view.tsx
 msgid "Last updated on {updatedAt}"
@@ -2020,6 +2663,7 @@ msgstr "Išdėstymas"
 msgid "Learn More"
 msgstr "Sužinokite daugiau"
 
+#: src/dialogs/resume/import.tsx
 #: src/hooks/use-form-blocker.tsx
 msgid "Leave"
 msgstr "Išeiti"
@@ -2027,6 +2671,10 @@ msgstr "Išeiti"
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
 msgid "Leave empty to reset the title to the original."
 msgstr "Palikite tuščią, jei norite atstatyti pirminį pavadinimą."
+
+#: src/dialogs/resume/import.tsx
+msgid "Leave to set up an AI provider?"
+msgstr "Norite nustatyti AI teikėją?"
 
 #: src/components/input/rich-input.tsx
 msgid "Left Align"
@@ -2061,9 +2709,27 @@ msgstr "Šviesi"
 msgid "Light theme"
 msgstr "Šviesi tema"
 
+#. placeholder {0}: diagnostic.range.start.line
+#. placeholder {1}: diagnostic.range.start.column
+#: src/features/resume/stylesheet/status.tsx
+msgid "Line {0}, column {1}"
+msgstr "Eilutė {0}, stulpelis {1}"
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/typography.tsx
 msgid "Line Height"
 msgstr "Tarpueilio aukštis"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Link a Reactive Resume (recommended)"
+msgstr "Susieti Reactive Resume (rekomenduojama)"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Link a resume and paste the job description (Edit) to score your fit and tailor a copy."
+msgstr "Susiekite gyvenimo aprašymą ir įklijuokite darbo aprašymą (Redaguoti), kad įvertintumėte atitiktį ir pritaikytumėte kopiją."
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Linked Reactive Resume"
+msgstr "Susietas Reactive Resume"
 
 #. Authentication provider display name in account settings
 #. Brand name label for LinkedIn social sign-in button
@@ -2072,6 +2738,14 @@ msgstr "Tarpueilio aukštis"
 #: src/routes/_home/-sections/footer.tsx
 msgid "LinkedIn"
 msgstr "LinkedIn"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "LinkedIn, Referral…"
+msgstr "LinkedIn, rekomendacija…"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Linking a Reactive Resume enables AI match scoring and tailoring."
+msgstr "Susiejus Reactive Resume įjungiamas AI atitikties vertinimas ir pritaikymas."
 
 #: src/features/settings/authentication/components/hooks.tsx
 msgid "Linking your {providerName} account..."
@@ -2085,13 +2759,13 @@ msgstr "Sąrašas"
 msgid "Lithuanian"
 msgstr "Lietuvių"
 
-#: src/routes/agent/$threadId.tsx
-msgid "Loading agent workspace…"
-msgstr "Kraunama agento darbo vieta…"
-
 #: src/dialogs/resume/import.tsx
 msgid "Loading AI providers. Please try again in a moment."
 msgstr "Įkeliami dirbtinio intelekto teikėjai. Bandykite dar kartą po akimirkos."
+
+#: src/features/command-palette/pages/resumes.tsx
+msgid "Loading applications…"
+msgstr "Įkeliamos programos…"
 
 #: src/features/settings/integrations/components/ai-section.tsx
 #: src/routes/agent/-components/new-thread-setup.tsx
@@ -2103,17 +2777,20 @@ msgstr "Įkeliami paslaugų teikėjai…"
 msgid "Loading resumes…"
 msgstr "Kraunami gyvenimo aprašymai…"
 
+#: src/features/command-palette/pages/resumes.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
 msgid "Loading threads…"
 msgstr "Įkeliamos gijos…"
 
-#: src/components/layout/loading-screen.tsx
+#: src/routes/builder/$resumeId/-components/version-history.tsx
 msgid "Loading…"
 msgstr "Kraunama…"
 
 #: src/dialogs/resume/sections/education.tsx
 #: src/dialogs/resume/sections/experience.tsx
 #: src/dialogs/resume/sections/volunteer.tsx
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/table-view.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
 msgid "Location"
 msgstr "Vieta"
@@ -2154,7 +2831,7 @@ msgstr "Pagrindinis"
 msgid "Main navigation"
 msgstr "Pagrindinė navigacija"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Make the experience section more results-oriented and remove vague responsibilities."
 msgstr "Patirties skyrių labiau orientuoti į rezultatus ir pašalinti neaiškias pareigas."
 
@@ -2178,27 +2855,63 @@ msgstr "Paraštė (horizontali)"
 msgid "Margin (Vertical)"
 msgstr "Paraštė (vertikali)"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Mark rejected"
+msgstr "Pažymėti kaip atmestą"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Match scoring failed."
+msgstr "Atitikimo vertinimas nepavyko."
+
 #. Impact severity label in resume analysis suggestion card
 #: src/routes/builder/$resumeId/-sidebar/right/sections/resume-analysis.tsx
 msgid "Medium"
 msgstr "Vidutinis"
 
 #. File format label in import source selector
+#. File format label in import source selector
 #: src/dialogs/resume/import.tsx
 msgid "Microsoft Word"
 msgstr "\"Microsoft Word"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/resume-pane.tsx
 msgid "Missing working resume"
 msgstr "Trūksta darbo gyvenimo aprašymo"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Mistral AI"
+msgstr "Mistral AI"
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Model"
 msgstr "Modelis"
 
+#: src/libs/resume/ats.ts
+msgid "Most systems file candidates by email. Add one under Basics."
+msgstr "Dauguma sistemų pateikia kandidatus el. paštu. "
+
+#: src/libs/resume/ats.ts
+msgid "Move it into the main column and keep the sidebar for short lists."
+msgstr "Perkelkite jį į pagrindinį stulpelį ir palikite trumpųjų sąrašų šoninę juostą."
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Move section to another column or page"
+msgstr "Perkelti skyrių į kitą stulpelį arba puslapį"
+
+#: src/features/applications/components/table-view.tsx
+msgid "Move stage"
+msgstr "Perkelti etapą"
+
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Move to"
 msgstr "Perkelti į"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Moved to"
+msgstr "Perkelta į"
 
 #: src/routes/_home/-sections/features.tsx
 msgid "Multilingual"
@@ -2216,9 +2929,11 @@ msgstr "Turi prasidėti nuo https://"
 #: src/dialogs/resume/sections/project.tsx
 #: src/dialogs/resume/sections/reference.tsx
 #: src/dialogs/resume/sections/skill.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/auth/pages/register.tsx
 #: src/features/settings/pages/profile.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/basics.tsx
+#: src/routes/dashboard/resumes/index.tsx
 msgid "Name"
 msgstr "Pavadinimas"
 
@@ -2230,6 +2945,15 @@ msgstr "Nepalų"
 msgid "Network"
 msgstr "Tinklas"
 
+#: src/features/settings/pages/api-keys.tsx
+msgid "Never expires"
+msgstr "Niekada nesibaigia"
+
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
+msgid "New Application"
+msgstr "Nauja paraiška"
+
 #: src/routes/_home/-sections/features.tsx
 msgid "New features are constantly being added and improved, so be sure to check back often."
 msgstr "Nuolat pridedamos ir tobulinamos naujos funkcijos, todėl dažnai tikrinkite iš naujo."
@@ -2239,6 +2963,7 @@ msgid "New Line"
 msgstr "Nauja eilutė"
 
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "New Page"
 msgstr "Naujas puslapis"
 
@@ -2252,13 +2977,35 @@ msgstr "Naujas slaptažodis"
 msgid "New Section"
 msgstr "Naujas skyrius"
 
+#: src/features/applications/components/table-view.tsx
+msgid "New tag…"
+msgstr "Nauja žyma…"
+
+#: src/features/command-palette/pages/resumes.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
 msgid "New thread"
+msgstr "Nauja tema"
+
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
+msgid "New Thread"
 msgstr "Nauja tema"
 
 #: src/routes/_home/-sections/features.tsx
 msgid "No Advertising, No Tracking"
 msgstr "Be reklamų, be sekimo"
+
+#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
+msgid "No AI provider connected"
+msgstr "Nėra prijungto AI teikėjo"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "No applications match your filters."
+msgstr "Nėra paraiškų, atitinkančių jūsų filtrus."
+
+#: src/features/applications/components/insights-view.tsx
+msgid "No applications yet — add a few to see your funnel and reply rates."
+msgstr "Paraiškų dar nėra — pridėkite kelias, kad matytumėte piltuvą ir atsakymų rodiklius."
 
 #. Error shown when AI import endpoint returns no parsed resume data
 #: src/dialogs/resume/import.tsx
@@ -2269,13 +3016,34 @@ msgstr "AI teikėjas negrąžino jokių duomenų."
 msgid "No passkeys registered yet."
 msgstr "Kol kas neužregistruota jokių passkeys."
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
+msgid "No prior data"
+msgstr "Ankstesnių duomenų nėra"
+
 #: src/components/ui/combobox.tsx
 msgid "No results found."
 msgstr "Rezultatų nerasta."
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/custom-styles.tsx
-msgid "No style rules yet."
-msgstr "Stiliaus taisyklių dar nėra."
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "No resume linked."
+msgstr "Nėra susieto gyvenimo aprašymo."
+
+#: src/routes/dashboard/resumes/-components/grid-view.tsx
+#: src/routes/dashboard/resumes/-components/list-view.tsx
+msgid "No resumes match your search."
+msgstr "Nėra gyvenimo aprašymų, atitinkančių jūsų paiešką."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "No resumes yet."
+msgstr "Gyvenimo aprašymų dar nėra."
+
+#: src/routes/builder/$resumeId/-components/version-history.tsx
+msgid "No saved versions yet."
+msgstr "Kol kas nėra išsaugotų versijų."
+
+#: src/features/applications/components/insights-view.tsx
+msgid "No source data yet."
+msgstr "Šaltinio duomenų dar nėra."
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "No tested provider"
@@ -2289,6 +3057,19 @@ msgstr "Kol kas nėra gijų."
 msgid "Norwegian"
 msgstr "Norvegų"
 
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Not connected"
+msgstr "Nesusijungta"
+
+#: src/features/resume/stylesheet/editor.tsx
+msgid "Not sure what to write?"
+msgstr "Nežinote, ką rašyti?"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
+msgid "Note"
+msgstr "Pastaba"
+
+#: src/features/applications/components/application-form-sheet.tsx
 #: src/libs/resume/section.tsx
 msgid "Notes"
 msgstr "Pastabos"
@@ -2298,8 +3079,8 @@ msgid "Odia"
 msgstr "Odijų"
 
 #: src/features/settings/integrations/components/ai-section.tsx
-msgid "Ollama"
-msgstr "Ollama"
+msgid "Ollama Cloud"
+msgstr "Ollama Cloud"
 
 #: src/routes/_home/-sections/features.tsx
 msgid "One-Click Sign-In"
@@ -2308,6 +3089,15 @@ msgstr "Vieno paspaudimo prisijungimas"
 #: src/routes/_home/-sections/donate.tsx
 msgid "Ongoing Maintenance"
 msgstr "Nuolatinė priežiūra"
+
+#. Helper note explaining the keep-together limitation
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Only applies when the section fits on a single page."
+msgstr "Taikoma tik tada, kai skyrius telpa viename puslapyje."
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Only the first {MAX_IMPORT} rows import at once — {overflow} left out. Split the file to import the rest."
+msgstr "Vienu metu importuojamos tik pirmos {MAX_IMPORT} eilutės — {overflow} neįtraukta. Padalykite failą, kad importuotumėte likusią dalį."
 
 #. Resume card context menu action to open the resume editor
 #. Resume card dropdown action to open the resume editor
@@ -2320,12 +3110,20 @@ msgstr "Atidaryti"
 msgid "Open AI agent"
 msgstr "Atviras dirbtinio intelekto agentas"
 
+#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
+msgid "Open AI assistant"
+msgstr "Atidaryti dirbtinio intelekto asistentą"
+
 #. Button label to open the user's default email app
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Open Email Client"
 msgstr "Atidaryti el. pašto programą"
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/resume/stylesheet/toolbar.tsx
+msgid "Open focus mode"
+msgstr "Atidaryti fokusavimo režimą"
+
+#: src/routes/agent/-components/resume-pane.tsx
 msgid "Open in builder"
 msgstr "Atidaryti kūrimo priemonėje"
 
@@ -2349,6 +3147,7 @@ msgstr "Suderinamas su OpenAI"
 msgid "OpenRouter"
 msgstr "\"OpenRouter\""
 
+#: src/features/resume/stylesheet/editor.tsx
 #: src/routes/_home/-sections/donate.tsx
 #: src/routes/_home/-sections/footer.tsx
 msgid "opens in new tab"
@@ -2358,10 +3157,18 @@ msgstr "atidaro naujame skirtuke"
 msgid "Optionally, set a password so that only people with the password can view your resume through the link."
 msgstr "Papildomai galite nustatyti slaptažodį, kad per nuorodą gyvenimo aprašymą matytų tik slaptažodį žinantys žmonės."
 
+#: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
+msgid "Options for {title}"
+msgstr "{title} parinktys"
+
 #: src/features/auth/components/social-auth.tsx
 msgctxt "Choose to authenticate with a social provider (Google, GitHub, etc.) instead of email and password"
 msgid "or continue with"
 msgstr "arba tęsti su"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Or upload a resume PDF"
+msgstr "Arba įkelkite gyvenimo aprašymo PDF"
 
 #: src/components/input/rich-input.tsx
 msgid "Ordered List"
@@ -2381,6 +3188,7 @@ msgstr "Puslapis"
 
 #. Layout editor page label with 1-based page number
 #. placeholder {0}: pageIndex + 1
+#. placeholder {0}: targetPageIndex + 1
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Page {0}"
@@ -2389,6 +3197,10 @@ msgstr "Puslapis {0}"
 #: src/components/input/rich-input.tsx
 msgid "Paragraph"
 msgstr "Pastraipa"
+
+#: src/components/input/rich-input.tsx
+msgid "Paragraph and heading style"
+msgstr "Pastraipos ir antraštės stilius"
 
 #. Authentication provider display name in account settings
 #. Label for passkey sign-in button
@@ -2443,30 +3255,43 @@ msgstr "Apsauga slaptažodžiu išjungta."
 msgid "Password protection has been enabled."
 msgstr "Apsauga slaptažodžiu įjungta."
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Paste rows or upload a .csv. We map columns like Company, Role, Stage, Stage Date, Salary, Source and Tags."
+msgstr "Įklijuokite eilutes arba įkelkite .csv. Susiejame stulpelius, pvz., Įmonė, Pareigos, Etapas, Etapo data, Atlyginimas, Šaltinis ir Žymos."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Paste the full job description here…"
+msgstr "Įklijuokite visą darbo aprašymą čia…"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Pasting fills the fields automatically."
+msgstr "Įklijavus laukai užpildomi automatiškai."
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Patch applied"
 msgstr "Pataisa pritaikyta"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Patch conflicted"
 msgstr "Pataisa nesuderinama"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Patch failed"
 msgstr "Pataisymas nepavyko"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Patch pending"
 msgstr "Laukiama pataisos"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Patch rolled back"
 msgstr "Pataisa atšaukta"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Patch rolled back."
 msgstr "Lopas atsuktas atgal."
 
+#. File format label in import source selector
 #. File format label in import source selector
 #: src/dialogs/resume/import.tsx
 msgid "PDF"
@@ -2478,6 +3303,10 @@ msgstr "PDF"
 #: src/dialogs/resume/sections/volunteer.tsx
 msgid "Period"
 msgstr "Laikotarpis"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Perplexity"
+msgstr "Sumišimas"
 
 #: src/libs/locale.ts
 msgid "Persian"
@@ -2492,9 +3321,29 @@ msgstr "Personalizuokite savo gyvenimo aprašymą bet kokiomis spalvomis, šrift
 msgid "Phone"
 msgstr "Telefonas"
 
+#: src/components/input/icon-picker.tsx
+msgid "Pick an icon"
+msgstr "Pasirinkite piktogramą"
+
 #: src/libs/resume/section.tsx
 msgid "Picture"
 msgstr "Paveikslėlis"
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Pipeline flow"
+msgstr "Proceso eiga"
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Pipeline health across all applications"
+msgstr "Proceso būklė visose paraiškose"
+
+#: src/libs/resume/ats.ts
+msgid "Place it on a page from the Layout panel, or hide it if you meant to park it."
+msgstr "Įdėkite jį į puslapį iš išdėstymo skydelio arba paslėpkite, jei norėjote jį pastatyti."
+
+#: src/features/resume/export/download-dialog.tsx
+msgid "Plain text, ideal for AI tools and quick edits."
+msgstr "Paprastas tekstas, puikiai tinka AI įrankiams ir greitiems taisymams."
 
 #: src/features/auth/pages/reset-password.tsx
 msgid "Please enter a new password for your account"
@@ -2512,13 +3361,15 @@ msgstr "Įveskite URL, su kuriuo norite susieti:"
 msgid "Please support the project"
 msgstr "Prašome paremti projektą"
 
-#: src/features/resume/public/public-resume.tsx
-#: src/routes/builder/$resumeId/-components/dock.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "Please upload a PDF file."
+msgstr "Įkelkite PDF failą."
+
+#: src/features/resume/export/use-resume-export.ts
 msgid "Please wait while your PDF is being generated..."
 msgstr "Palaukite, kol bus sugeneruotas jūsų PDF..."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/resume-pane.tsx
 msgid "Please wait while your PDF is being generated…"
 msgstr "Palaukite, kol generuojamas jūsų PDF failas…"
 
@@ -2544,6 +3395,10 @@ msgstr "Portugalų (Portugalija)"
 msgid "Position"
 msgstr "Pareigos"
 
+#: src/libs/resume/ats.ts
+msgid "Prefer a conventional heading such as \"Work Experience\" or \"Education\"."
+msgstr "Pirmenybę teikite įprastai antraštei, pvz., \"Darbo patirtis\" arba \"Išsilavinimas\"."
+
 #: src/features/command-palette/pages/navigation.tsx
 #: src/features/command-palette/pages/preferences/index.tsx
 #: src/routes/dashboard/-components/sidebar.tsx
@@ -2551,9 +3406,13 @@ msgstr "Pareigos"
 msgid "Preferences"
 msgstr "Nustatymai"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Prepare a conservative patch that improves clarity without changing my career narrative."
 msgstr "Parengti konservatyvų pataisymą, kuris pagerintų aiškumą nekeisdamas mano karjeros naratyvo."
+
+#: src/features/resume/export/use-resume-export.ts
+msgid "Preparing your resume for printing..."
+msgstr "Ruošiame gyvenimo aprašymą spausdinimui..."
 
 #: src/components/input/color-picker.tsx
 msgid "Presets"
@@ -2567,6 +3426,18 @@ msgstr "Paspauskite <0>{RETURN_KEY}</0> arba <1>{COMMA_KEY}</1>, kad pridėtumė
 #: src/features/command-palette/pages/resumes.tsx
 msgid "Press <0>Enter</0> to open"
 msgstr "Paspauskite <0>Enter</0>, kad atidarytumėte"
+
+#: src/routes/builder/$resumeId/-components/mobile-builder-shell.tsx
+msgid "Preview"
+msgstr "Peržiūra"
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Preview and export fall back to base styles."
+msgstr "Peržiūra ir eksportas naudos bazinius stilius."
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Preview and export keep valid styles and ignore invalid styles."
+msgstr "Peržiūra ir eksportas išlaiko tinkamus stilius ir ignoruoja netinkamus."
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Primary Color"
@@ -2614,6 +3485,10 @@ msgstr "Tiekėjas"
 msgid "Provider connection verified."
 msgstr "Tiekėjo ryšys patvirtintas."
 
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Provider model"
+msgstr "Paslaugų teikėjo modelis"
+
 #: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
@@ -2623,6 +3498,10 @@ msgstr "Publikacijos"
 #: src/dialogs/resume/sections/publication.tsx
 msgid "Publisher"
 msgstr "Leidėjas"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Re-score"
+msgstr "Vertinti iš naujo"
 
 #: src/routes/_home/-sections/header.tsx
 msgid "Reactive Resume - Go to homepage"
@@ -2653,15 +3532,39 @@ msgstr "„Reactive Resume“ yra nemokamas ir atvirojo kodo. Jei jis jums padė
 msgid "Reactive Resume is open-source, privacy-focused, and completely free. Unlike other resume builders, it doesn't show ads, track your data, or limit your features behind a paywall."
 msgstr "„Reactive Resume“ yra atvirojo kodo, orientuota į privatumą ir visiškai nemokama. Skirtingai nei kiti gyvenimo aprašymų kūrėjai, ji nerodo reklamų, nerenka jūsų duomenų ir neapriboja funkcijų už mokamos sienos."
 
+#: src/routes/_home/-sections/sponsors.tsx
+msgid "Reactive Resume stays free, open-source, and independent because companies choose to support the work behind it. Their sponsorship helps fund hosting, maintenance, and continued development for the community."
+msgstr "„Reactive Resume“ išlieka nemokama, atvirojo kodo ir nepriklausoma, nes įmonės nusprendžia remti su ja susijusį darbą. Jų rėmimas padeda finansuoti bendruomenės talpinimą, priežiūrą ir tolesnį kūrimą."
+
 #. App version label in footer; includes semantic version variable
 #: src/components/ui/copyright.tsx
-msgid "Reactive Resume v{__APP_VERSION__}"
-msgstr "Reaktyvusis CV prieš{__APP_VERSION__}"
+msgid "Reactive Resume v<0>{__APP_VERSION__}</0>"
+msgstr "Reaktyvus gyvenimo aprašymas v<0>{__APP_VERSION__}</0>"
 
 #. Import source option for legacy Reactive Resume v4 JSON format
 #: src/dialogs/resume/import.tsx
 msgid "Reactive Resume v4 (JSON)"
 msgstr "Reaktyvusis CV v4 (JSON)"
+
+#: src/features/resume/stylesheet/editor.tsx
+msgid "Read the Applying Custom Styles guide."
+msgstr "Perskaitykite vadovą „Pasirinktinių stilių taikymas“."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Reading the posting…"
+msgstr "Skaitomas skelbimas…"
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Ready to activate"
+msgstr "Paruošta aktyvuoti"
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Ready to activate with errors"
+msgstr "Paruošta aktyvuoti su klaidomis"
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Ready to activate with warnings"
+msgstr "Paruošta aktyvuoti su įspėjimais"
 
 #: src/dialogs/resume/sections/cover-letter.tsx
 msgid "Recipient"
@@ -2675,15 +3578,23 @@ msgstr "Stačiakampis"
 msgid "Rectangle (Full Width)"
 msgstr "Stačiakampis (visas plotis)"
 
+#: src/routes/builder/$resumeId/-components/dock.tsx
+msgid "Redo"
+msgstr "Pakartoti"
+
+#: src/features/resume/stylesheet/toolbar.tsx
+msgid "Redo stylesheet edit"
+msgstr "Grąžinti stiliaus lapo redagavimą"
+
 #: src/dialogs/resume/sections/custom.tsx
 #: src/libs/resume/section-title.ts
 #: src/libs/resume/section.tsx
 msgid "References"
 msgstr "Rekomendacijos"
 
-#: src/components/layout/error-screen.tsx
-msgid "Refresh"
-msgstr "Perkrauti"
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Referred by…, things to emphasize, etc."
+msgstr "Rekomendavo…, ką pabrėžti ir pan."
 
 #: src/features/settings/authentication/components/passkeys.tsx
 msgid "Register New Device"
@@ -2692,6 +3603,10 @@ msgstr "Naujo įrenginio registravimas"
 #: src/features/auth/pages/forgot-password.tsx
 msgid "Remember your password? <0/>"
 msgstr "Prisimenate slaptažodį? <0/>"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Remote, Hybrid, a city…"
+msgstr "Nuotolinis, hibridinis, miestas…"
 
 #: src/dialogs/resume/sections/experience.tsx
 msgid "Remove"
@@ -2702,9 +3617,29 @@ msgstr "Pašalinti"
 msgid "Remove {chip}"
 msgstr "Pašalinti {chip}"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Remove contact"
+msgstr "Pašalinti kontaktą"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
+msgid "Remove custom field"
+msgstr "Pašalinti pasirinktinį lauką"
+
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "Remove file"
+msgstr "Pašalinti failą"
+
+#: src/components/input/rich-input.tsx
+msgid "Remove link"
+msgstr "Pašalinti nuorodą"
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Remove Password"
 msgstr "Pašalinti slaptažodį"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Remove tag"
+msgstr "Pašalinti žymą"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Removing password protection..."
@@ -2717,6 +3652,10 @@ msgstr "Pervadinti"
 #: src/dialogs/resume/sections/experience.tsx
 msgid "Reorder"
 msgstr "Pertvarkyti"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/custom-fields.tsx
+msgid "Reorder custom field"
+msgstr "Pertvarkyti pasirinktinį lauką"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "Report a Bug"
@@ -2744,10 +3683,6 @@ msgstr "Nustatyti iš naujo"
 msgid "Reset Password"
 msgstr "Atkurti slaptažodį"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/custom-styles.tsx
-msgid "Reset Style"
-msgstr "Atstatyti stilių"
-
 #: src/features/auth/pages/reset-password.tsx
 msgid "Reset your password"
 msgstr "Atkurkite slaptažodį"
@@ -2760,14 +3695,21 @@ msgstr "Atstatomas slaptažodis..."
 msgid "Resources"
 msgstr "Ištekliai"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Restore"
 msgstr "Atkurti"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Restore the resume to before this patch? This will roll back this patch and any patches applied after it."
 msgstr "Atkurti gyvenimo aprašymą į ankstesnę būseną? Tai anuliuos šį ir visus po jo pritaikytus pataisymus."
 
+#: src/routes/builder/$resumeId/-components/version-history.tsx
+msgid "Restore this version?"
+msgstr "Atkurti šią versiją?"
+
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/resume/export/download-dialog.tsx
+#: src/routes/agent/-components/resume-pane.tsx
 #: src/routes/agent/$threadId.tsx
 msgid "Resume"
 msgstr "Gyvenimo aprašymas"
@@ -2780,7 +3722,23 @@ msgstr "Gyvenimo aprašymo analizė"
 msgid "Resume analysis complete."
 msgstr "Baigta gyvenimo aprašymo analizė."
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/resume/preview/resume-accessible-text.tsx
+msgid "Resume content"
+msgstr "Gyvenimo aprašymo turinys"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Resume file"
+msgstr "Gyvenimo aprašymo failas"
+
+#: src/features/applications/components/application-card.tsx
+msgid "Resume linked"
+msgstr "Gyvenimo aprašymas susietas"
+
+#: src/routes/builder/$resumeId/-components/header.tsx
+msgid "Resume options"
+msgstr "Gyvenimo aprašymo parinktys"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Resume patch"
 msgstr "Gyvenimo aprašymo pataisa"
 
@@ -2792,25 +3750,37 @@ msgstr "Gyvenimo aprašymo pataisa"
 msgid "Resumes"
 msgstr "Gyvenimo aprašymai"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Retry"
 msgstr "Bandyti dar kartą"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Review the resume against a job description and ask me questions before changing uncertain sections."
 msgstr "Peržiūrėkite gyvenimo aprašymą pagal pareigybės aprašymą ir užduokite man klausimus prieš keisdami neaiškias dalis."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Rework the summary so it targets a senior engineering manager role without sounding generic."
 msgstr "Pertvarkykite santrauką taip, kad ji būtų skirta vyresniojo inžinerijos vadovo pareigoms, bet neskambėtų bendro pobūdžio."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Rewrite this resume for a startup founder-to-product-lead transition with clear business impact."
 msgstr "Perrašykite šį gyvenimo aprašymą, kad jis atitiktų pradedančiojo verslininko perėjimo iš įkūrėjo į produkto vadovą reikalavimus, turinčius aiškų poveikį verslui."
 
 #: src/components/input/rich-input.tsx
 msgid "Right Align"
 msgstr "Lygiuoti dešinėje"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Role (optional)"
+msgstr "Pareigos (nebūtina)"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Role / title"
+msgstr "Pareigos / pavadinimas"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Role A–Z"
+msgstr "Pareigos A–Z"
 
 #: src/dialogs/resume/sections/experience.tsx
 msgid "Role Progression"
@@ -2824,14 +3794,6 @@ msgstr "Rumunų"
 msgid "Rotation"
 msgstr "Sukimas"
 
-#: src/routes/builder/$resumeId/-sidebar/right/sections/custom-styles.tsx
-msgid "rule"
-msgstr "taisyklė"
-
-#: src/routes/builder/$resumeId/-sidebar/right/sections/custom-styles.tsx
-msgid "rules"
-msgstr "taisyklės"
-
 #: src/routes/builder/$resumeId/-sidebar/right/sections/resume-analysis.tsx
 msgid "Run your first analysis to get a scorecard, strengths, and prioritized suggestions."
 msgstr "Atlikite pirmąją analizę, kad gautumėte rezultatų lentelę, stipriąsias puses ir prioritetinius pasiūlymus."
@@ -2840,10 +3802,32 @@ msgstr "Atlikite pirmąją analizę, kad gautumėte rezultatų lentelę, stipri�
 msgid "Russian"
 msgstr "Rusų"
 
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/table-view.tsx
+msgid "Salary"
+msgstr "Atlyginimas"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Salary range"
+msgstr "Atlyginimo intervalas"
+
 #. Passkey rename prompt confirm action in authentication settings
+#: src/features/applications/components/application-detail-sheet.tsx
 #: src/features/settings/authentication/components/passkeys.tsx
 msgid "Save"
 msgstr "Išsaugoti"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Save & Test Provider"
+msgstr "Išsaugoti ir išbandyti teikėją"
+
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Save & Upload"
+msgstr "Išsaugoti ir įkelti"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Save changes"
+msgstr "Išsaugoti pakeitimus"
 
 #: src/dialogs/resume/index.tsx
 #: src/dialogs/resume/sections/award.tsx
@@ -2866,8 +3850,16 @@ msgid "Save Changes"
 msgstr "Išsaugoti pakeitimus"
 
 #: src/features/settings/integrations/components/ai-section.tsx
-msgid "Save Provider"
-msgstr "Išsaugoti teikėją"
+msgid "Save model"
+msgstr "Išsaugoti modelį"
+
+#: src/routes/builder/$resumeId/-components/header.tsx
+msgid "Saved"
+msgstr "Išsaugota"
+
+#: src/routes/builder/$resumeId/-components/header.tsx
+msgid "Saving…"
+msgstr "Taupymas…"
 
 #: src/dialogs/auth/enable-two-factor.tsx
 msgid "Scan the QR code below with your preferred authenticator app. You can also copy the secret below and paste it into your app."
@@ -2877,9 +3869,25 @@ msgstr "Nuskenuokite žemiau esantį QR kodą pasirinkta autentifikavimo program
 msgid "School"
 msgstr "Mokykla"
 
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Score my fit"
+msgstr "Įvertinti mano atitikimą"
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/resume-analysis.tsx
 msgid "Scorecard"
 msgstr "Rezultatų kortelė"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Scoring your fit…"
+msgstr "Vertinamas jūsų atitikimas…"
+
+#: src/routes/dashboard/-components/sidebar.tsx
+msgid "Search"
+msgstr "Paieška"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Search applications…"
+msgstr "Ieškoti paraiškų…"
 
 #. Accessible label for command palette search input
 #: src/features/command-palette/index.tsx
@@ -2896,6 +3904,10 @@ msgstr "Ieškoti ikonos"
 msgid "Search for…"
 msgstr "Ieškoti…"
 
+#: src/routes/dashboard/resumes/index.tsx
+msgid "Search resumes..."
+msgstr "Ieškoti gyvenimo aprašymų..."
+
 #: src/components/ui/combobox.tsx
 msgid "Search..."
 msgstr "Ieškoti..."
@@ -2909,39 +3921,65 @@ msgstr "Paieška…"
 msgid "Secret copied to clipboard."
 msgstr "Slaptas kodas nukopijuotas į iškarpinę."
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
+#: src/routes/builder/$resumeId/-sidebar/left/shared/section-menu.tsx
+msgid "Section options"
+msgstr "Skyriaus parinktys"
+
 #: src/dialogs/resume/sections/custom.tsx
 msgid "Section Type"
 msgstr "Skyriaus tipas"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "See how this resume matches the posting"
+msgstr "Pažiūrėkite, kaip šis gyvenimo aprašymas atitinka skelbimą"
+
+#. placeholder {0}: app.company
+#: src/features/applications/components/table-view.tsx
+msgid "Select {0}"
+msgstr "Pasirinkti {0}"
 
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Select a resume"
 msgstr "Pasirinkite gyvenimo aprašymą"
 
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Select a tested provider"
-msgstr "Pasirinkite patikrintą tiekėją"
-
-#: src/routes/agent/-components/new-thread-setup.tsx
-msgid "Select a tested provider before starting a thread."
-msgstr "Prieš pradėdami temą, pasirinkite patikrintą tiekėją."
-
 #: src/routes/agent/index.tsx
 msgid "Select a thread"
 msgstr "Pasirinkite giją"
+
+#: src/features/applications/components/table-view.tsx
+msgid "Select all"
+msgstr "Pasirinkti viską"
 
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Select an agent model"
 msgstr "Pasirinkite agento modelį"
 
+#: src/routes/agent/-components/new-thread-setup.tsx
+msgid "Select an AI provider"
+msgstr "Pasirinkite dirbtinio intelekto teikėją"
+
 #: src/components/ui/combobox.tsx
 msgid "Select..."
 msgstr "Pasirinkite..."
+
+#: src/features/applications/components/table-view.tsx
+msgid "selected"
+msgstr "pasirinkta"
 
 #: src/routes/_home/-sections/features.tsx
 msgid "Self-Host with Docker"
 msgstr "Savarankiškas talpinimas naudojant Docker"
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/resume/stylesheet/editor.tsx
+msgid "Semantic CSS stylesheet"
+msgstr "Semantinis CSS stiliaus lapas"
+
+#: src/routes/agent/-components/agent-chat.tsx
+msgid "Send answer"
+msgstr "Siųsti atsakymą"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Send message"
 msgstr "Siųsti žinutę"
 
@@ -2966,6 +4004,26 @@ msgstr "Serbų"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Set Password"
 msgstr "Nustatyti slaptažodį"
+
+#: src/dialogs/resume/import.tsx
+msgid "Set up a provider"
+msgstr "Nustatykite paslaugų teikėją"
+
+#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
+msgid "Set up an AI provider"
+msgstr "Nustatykite dirbtinio intelekto teikėją"
+
+#: src/routes/agent/-components/new-thread-setup.tsx
+msgid "Set up an AI provider before starting a thread."
+msgstr "Prieš pradėdami temą, nustatykite dirbtinio intelekto teikėją."
+
+#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
+msgid "Set up an AI provider to chat about this resume and apply edits automatically."
+msgstr "Nustatykite dirbtinio intelekto teikėją, kad jis galėtų kalbėtis apie šį gyvenimo aprašymą ir automatiškai pritaikyti pakeitimus."
+
+#: src/routes/agent/-components/new-thread-setup.tsx
+msgid "Set up an AI provider to get started."
+msgstr "Norėdami pradėti, nustatykite dirbtinio intelekto teikėją."
 
 #: src/features/command-palette/pages/navigation.tsx
 #: src/routes/agent/-components/new-thread-setup.tsx
@@ -2999,6 +4057,11 @@ msgstr "Dalijimasis"
 msgid "Show"
 msgstr "Rodyti"
 
+#. placeholder {0}: Math.min(remaining, COLUMN_PAGE_SIZE)
+#: src/features/applications/components/board.tsx
+msgid "Show {0} more"
+msgstr "Rodyti dar {0}"
+
 #: src/dialogs/resume/sections/award.tsx
 #: src/dialogs/resume/sections/certification.tsx
 #: src/dialogs/resume/sections/education.tsx
@@ -3029,10 +4092,24 @@ msgstr "Rodyti nuorodą pavadinime"
 msgid "Show password"
 msgstr "Rodyti slaptažodį"
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Show picture"
+msgstr "Rodyti paveikslėlį"
+
+#: src/features/resume/export/download-dialog.tsx
+msgid "Show the same first-page header on the cover letter."
+msgstr "Rodyti tą pačią pirmojo puslapio antraštę ir motyvaciniame laiške."
+
+#. placeholder {0}: rows.length
+#. placeholder {1}: applications.length
+#: src/features/applications/components/table-view.tsx
+msgid "Showing {0} of {1}"
+msgstr "Rodoma {0} iš {1}"
+
 #. Layout editor column label for the secondary sidebar area
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
 msgid "Sidebar"
-msgstr "Šoninė juosta<<<<<<< HEAD"
+msgstr "Šoninė juosta"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/layout/index.tsx
 msgid "Sidebar Width"
@@ -3112,6 +4189,9 @@ msgid "Skills"
 msgstr "Įgūdžiai"
 
 #: src/routes/_home/route.tsx
+#: src/routes/builder/$resumeId/-components/desktop-builder-shell.tsx
+#: src/routes/builder/$resumeId/-components/mobile-builder-shell.tsx
+#: src/routes/dashboard/route.tsx
 msgid "Skip to main content"
 msgstr "Pereiti prie pagrindinio turinio"
 
@@ -3127,18 +4207,46 @@ msgstr "Slovėnų"
 msgid "Slug"
 msgstr "Nuorodos dalis"
 
-#. Fallback error description when resume analysis request fails
-#: src/routes/builder/$resumeId/-sidebar/right/sections/resume-analysis.tsx
-msgid "Something went wrong while analyzing your resume."
-msgstr "Analizuojant jūsų gyvenimo aprašymą kažkas nepavyko."
+#: src/libs/resume/ats.ts
+msgid "Some application systems require one before you can submit."
+msgstr "Kai kurioms paraiškų teikimo sistemoms reikia, kad galėtumėte pateikti."
 
+#: src/libs/resume/ats.ts
+msgid "Some parsers mishandle images, and photos are discouraged in some regions."
+msgstr "Kai kurie analizatoriai netinkamai tvarko vaizdus, ​​o kai kuriuose regionuose nuotraukos nerekomenduojamos."
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Some styles were ignored"
+msgstr "Kai kurie stiliai buvo ignoruoti"
+
+#: src/routes/agent/-components/agent-chat.tsx
+msgid "Something else…"
+msgstr "Kažkas kita…"
+
+#: src/components/layout/error-screen.tsx
+msgid "Something went wrong"
+msgstr "Kažkas nutiko ne taip"
+
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Something went wrong. Please try again."
 msgstr "Kažkas nepavyko. Bandykite dar kartą."
 
+#: src/routes/dashboard/applications/index.tsx
 #: src/routes/dashboard/resumes/index.tsx
 msgid "Sort by"
 msgstr "Rikiuoti pagal"
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Sort by…"
+msgstr "Rikiuoti pagal…"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/table-view.tsx
+msgid "Source"
+msgstr "Šaltinis"
 
 #: src/routes/_home/-sections/footer.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
@@ -3171,6 +4279,15 @@ msgstr "Rėmimas"
 msgid "Square"
 msgstr "Kvadratinis"
 
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/table-view.tsx
+msgid "Stage"
+msgstr "Etapas"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Stage date"
+msgstr "Etapo data"
+
 #: src/components/input/github-stars-button.tsx
 msgid "Star us on GitHub (opens in new tab)"
 msgstr "Pridėkite žvaigždutę „GitHub“ (atidaro naujame skirtuke)"
@@ -3201,6 +4318,11 @@ msgstr "Pradėkite kurti savo gyvenimo aprašymą nuo nulio"
 msgid "Start new thread"
 msgstr "Pradėti naują temą"
 
+#. Layout editor toggle that forces a section to begin on a new page
+#: src/routes/builder/$resumeId/-sidebar/right/sections/layout/pages.tsx
+msgid "Start on new page"
+msgstr "Pradėti naujame puslapyje"
+
 #: src/routes/agent/-components/new-thread-setup.tsx
 msgid "Start Thread"
 msgstr "Pradėti temą"
@@ -3209,11 +4331,16 @@ msgstr "Pradėti temą"
 msgid "Statistics"
 msgstr "Statistika"
 
+#: src/dialogs/resume/import.tsx
 #: src/hooks/use-form-blocker.tsx
 msgid "Stay"
 msgstr "Likti"
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Still waiting for {provider}… {elapsedSeconds}s"
+msgstr "Vis dar laukiu {provider}… {elapsedSeconds}s"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Stop generation"
 msgstr "Sustabdyti generavimą"
 
@@ -3224,6 +4351,18 @@ msgstr "Stipriosios pusės"
 #: src/components/input/rich-input.tsx
 msgid "Strike"
 msgstr "Perbraukti"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Strong fit"
+msgstr "Stiprus atitikimas"
+
+#: src/features/resume/stylesheet/toolbar.tsx
+msgid "Stylesheet editor"
+msgstr "Stilių lapų redaktorius"
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Stylesheet has fatal errors"
+msgstr "Stiliaus lape yra kritinių klaidų"
 
 #: src/routes/_home/-sections/footer.tsx
 msgid "Subreddit"
@@ -3250,6 +4389,10 @@ msgstr "Palaikyti „Reactive Resume“"
 msgid "Support the app by doing what you can!"
 msgstr "Palaikykite programėlę darydami tai, ką galite!"
 
+#: src/libs/resume/ats.ts
+msgid "Swap the start and end dates."
+msgstr "Sukeiskite pradžios ir pabaigos datas."
+
 #: src/libs/locale.ts
 msgid "Swedish"
 msgstr "Švedų"
@@ -3262,11 +4405,22 @@ msgstr "Perjungti į tamsią temą"
 msgid "Switch to light theme"
 msgstr "Perjungti į šviesią temą"
 
-#: src/components/input/rich-input.tsx
+#. placeholder {0}: templates[template].name
+#: src/dialogs/resume/template/gallery.tsx
+msgid "Switched to the {0} template."
+msgstr "Perjungta į šabloną {0}."
+
+#: src/features/resume/builder/draft.ts
+msgid "Synced changes made in another tab."
+msgstr "Sinchronizuoti pakeitimai, atlikti kitame skirtuke."
+
+#: src/routes/dashboard/applications/index.tsx
 msgid "Table"
 msgstr "Lentelė"
 
 #: src/dialogs/resume/index.tsx
+#: src/features/applications/components/application-form-sheet.tsx
+#: src/features/applications/components/table-view.tsx
 msgid "Tags"
 msgstr "Žymos"
 
@@ -3274,9 +4428,17 @@ msgstr "Žymos"
 msgid "Tags can be used to categorize your resume by keywords."
 msgstr "Žymomis galite grupuoti savo gyvenimo aprašymą pagal raktinius žodžius."
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Tailor my resume"
+msgstr "Pritaikyti mano gyvenimo aprašymą"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Tailor this resume to a product manager job description and emphasize roadmap ownership, stakeholder communication, and measurable launch outcomes."
 msgstr "Pritaikykite šį gyvenimo aprašymą prie produkto vadovo pareigybės aprašymo ir pabrėžkite veiksmų plano atsakomybę, suinteresuotųjų šalių bendravimą ir išmatuojamus paleidimo rezultatus."
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Tailoring failed."
+msgstr "Pritaikyti nepavyko."
 
 #: src/libs/locale.ts
 msgid "Tamil"
@@ -3302,13 +4464,21 @@ msgstr "Šablonai"
 msgid "Test"
 msgstr "Testas"
 
-#: src/features/settings/integrations/components/ai-section.tsx
-msgid "Tested"
-msgstr "Išbandyta"
-
 #: src/routes/_home/-sections/testimonials.tsx
 msgid "Testimonials"
 msgstr "Atsiliepimai"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Testing…"
+msgstr "Testavimas…"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Testing… {elapsedSeconds}s"
+msgstr "Testavimas… {elapsedSeconds}s"
+
+#: src/components/input/rich-input.tsx
+msgid "Text alignment"
+msgstr "Teksto lygiavimas"
 
 #: src/components/input/rich-input.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
@@ -3319,14 +4489,13 @@ msgstr "Teksto spalva"
 msgid "Thai"
 msgstr "Tajų"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/_home/-sections/sponsors.tsx
+msgid "Thank you to our sponsors"
+msgstr "Dėkojame mūsų rėmėjams"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "The agent needs your input."
 msgstr "Agentui reikia jūsų indėlio."
-
-#. Error description when AI returns invalid resume analysis format
-#: src/routes/builder/$resumeId/-sidebar/right/sections/resume-analysis.tsx
-msgid "The AI returned an invalid analysis format. Please try again."
-msgstr "AI grąžino negaliojantį analizės formatą. Bandykite dar kartą."
 
 #: src/features/settings/pages/api-keys.tsx
 msgid "The API key has been deleted successfully."
@@ -3346,9 +4515,17 @@ msgstr "Tokios komandos nėra."
 msgid "The imported file could not be parsed into a valid resume."
 msgstr "Importuoto failo nepavyko išanalizuoti į tinkamą atnaujinimą."
 
+#: src/components/layout/not-found-screen.tsx
+msgid "The page you're looking for may have been moved or no longer exists."
+msgstr "Puslapis, kurio ieškote, galėjo būti perkeltas arba jo nebėra."
+
 #: src/features/auth/pages/resume-password.tsx
 msgid "The password you entered is incorrect"
 msgstr "Neteisingas slaptažodis"
+
+#: src/features/resume/preview/preview.browser.tsx
+msgid "The resume preview could not be updated. The last valid preview is still shown."
+msgstr "Nepavyko atnaujinti gyvenimo aprašymo peržiūros. Vis dar rodoma paskutinė galiojanti peržiūra."
 
 #: src/features/auth/pages/resume-password.tsx
 msgid "The resume you are trying to access is password protected"
@@ -3358,7 +4535,7 @@ msgstr "Gyvenimo aprašymas, kurį bandote atidaryti, yra apsaugotas slaptažod�
 msgid "The URL you entered is not valid."
 msgstr "Neteisingas įvestas URL."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/resume-pane.tsx
 msgid "The working resume was deleted. This thread is read-only."
 msgstr "Darbo gyvenimo aprašymas buvo ištrintas. Ši tema skirta tik skaitymui."
 
@@ -3373,35 +4550,43 @@ msgstr "Tema"
 msgid "Then, enter the 6 digit code that the app provides to continue."
 msgstr "Tada įveskite programos sugeneruotą 6 skaitmenų kodą, kad tęstumėte."
 
-#: src/routes/builder/$resumeId/-components/dock.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
+#: src/features/resume/export/use-resume-export.ts
 msgid "There was a problem while generating the DOCX, please try again."
 msgstr "Generuojant DOCX iškilo problema, pabandykite dar kartą."
 
-#: src/features/resume/public/public-resume.tsx
-#: src/routes/agent/$threadId.tsx
-#: src/routes/builder/$resumeId/-components/dock.tsx
-#: src/routes/builder/$resumeId/-sidebar/right/sections/export.tsx
+#: src/features/resume/export/use-resume-export.ts
+#: src/routes/agent/-components/resume-pane.tsx
 msgid "There was a problem while generating the PDF, please try again."
 msgstr "Generuojant PDF failą kilo problemų, bandykite dar kartą."
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/resume/export/use-resume-export.ts
+msgid "There was a problem while preparing your resume for printing, please try again."
+msgstr "Ruošiant jūsų gyvenimo aprašymą spausdinimui kilo problemų, bandykite dar kartą."
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
+msgid "These checks run as you type and never leave your browser. They ask whether a machine can read your resume, not whether it reads well."
+msgstr "Šie patikrinimai vykdomi jums įvedant tekstą ir niekada neišeina iš naršyklės. "
+
+#: src/libs/resume/ats.ts
+msgid "These dates will not be read correctly."
+msgstr "Šios datos nebus perskaitytos teisingai."
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Thinking"
 msgstr "Mąstymas"
 
 #: src/routes/builder/$resumeId/-components/header.tsx
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
+#: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "This action cannot be undone."
 msgstr "Šio veiksmo anuliuoti neįmanoma."
 
-#: src/features/settings/pages/danger-zone.tsx
+#: src/features/settings/pages/account.tsx
 msgid "This action cannot be undone. All your data will be permanently deleted."
 msgstr "Šio veiksmo anuliuoti neįmanoma. Visi jūsų duomenys bus negrįžtamai ištrinti."
 
-#: src/routes/agent/$threadId.tsx
-msgid "This action cannot be undone. Conversation messages and uploaded attachments will be removed. The working resume draft remains in your dashboard and can be deleted separately."
-msgstr "Šio veiksmo negalima atšaukti. Pokalbio pranešimai ir įkelti priedai bus pašalinti. Darbinio gyvenimo aprašymo juodraštis liks jūsų prietaisų skydelyje ir gali būti ištrintas atskirai."
+#: src/routes/agent/-components/agent-chat.tsx
+msgid "This action cannot be undone. Conversation messages and uploaded attachments will be removed. The working resume remains in your dashboard and can be deleted separately."
+msgstr "Šio veiksmo negalima atšaukti. Pokalbių pranešimai ir įkelti priedai bus pašalinti. Darbinis gyvenimo aprašymas liks jūsų prietaisų skydelyje ir gali būti ištrintas atskirai."
 
 #: src/routes/agent/-components/thread-sidebar.tsx
 msgid "This action cannot be undone. Messages and thread attachments will be removed."
@@ -3411,39 +4596,107 @@ msgstr "Šio veiksmo negalima atšaukti. Žinutės ir gijų priedai bus pašalin
 msgid "This agent thread could not be opened."
 msgstr "Šios agento gijos atidaryti nepavyko."
 
+#: src/routes/builder/$resumeId/-components/ai-assistant.tsx
+msgid "This assistant could not be opened."
+msgstr "Šio asistento atidaryti nepavyko."
+
+#: src/libs/resume/ats.ts
+msgid "This date will not be read correctly."
+msgstr "Ši data nebus perskaityta teisingai."
+
+#: src/libs/resume/ats.ts
+msgid "This email address will not be recognized."
+msgstr "Šis el. pašto adresas nebus atpažintas."
+
+#: src/libs/resume/ats.ts
+msgid "This entry has no dates."
+msgstr "Šis įrašas neturi datų."
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "This entry will be permanently deleted. This can't be undone."
+msgstr "Šis įrašas bus visam laikui ištrintas. To negalima atšaukti."
+
 #: src/dialogs/resume/import.tsx
-msgid "This feature requires a tested AI provider. Please add one in the settings."
-msgstr "Šiai funkcijai reikalingas patikrintas dirbtinio intelekto teikėjas. Pridėkite jį nustatymuose."
+msgid "This feature requires a connected AI provider. Please set one up in the settings."
+msgstr "Šiai funkcijai reikalingas prijungtas dirbtinio intelekto teikėjas. Nustatykite jį nustatymuose."
+
+#: src/libs/resume/ats.ts
+msgid "This heading is not one parsers look for."
+msgstr "Ši antraštė nėra ta, kurios analizatoriai ieško."
 
 #: src/dialogs/resume/index.tsx
 msgid "This is a URL-friendly name for your resume."
 msgstr "Tai URL draugiškas jūsų gyvenimo aprašymo pavadinimas."
 
+#: src/libs/resume/ats.ts
+msgid "This link is missing its protocol."
+msgstr "Šiai nuorodai trūksta protokolo."
+
 #: src/dialogs/resume/import.tsx
 msgid "This may take a few minutes, depending on the response of the AI provider. Please do not close the window or refresh the page."
 msgstr "Tai gali užtrukti kelias minutes, priklausomai nuo DI tiekėjo atsako. Neuždarykite lango ir neatnaujinkite puslapio."
+
+#: src/libs/resume/ats.ts
+msgid "This period ends before it starts."
+msgstr "Šis laikotarpis baigiasi anksčiau nei jis prasideda."
+
+#: src/libs/resume/ats.ts
+msgid "This period starts in the future."
+msgstr "Šis laikotarpis prasideda ateityje."
+
+#: src/routes/builder/$resumeId/-sidebar/left/index.tsx
+msgid "This resume is locked"
+msgstr "Šis gyvenimo aprašymas užrakintas"
 
 #: src/features/resume/builder/draft.ts
 msgid "This resume is locked and cannot be updated."
 msgstr "Šis gyvenimo aprašymas užrakintas ir negali būti atnaujintas."
 
+#: src/features/resume/builder/draft.ts
+msgid "This resume was updated by an AI agent."
+msgstr "Šį gyvenimo aprašymą atnaujino dirbtinio intelekto agentas."
+
+#: src/features/resume/builder/draft.ts
+msgid "This resume's sharing settings changed elsewhere."
+msgstr "Šio gyvenimo aprašymo bendrinimo nustatymai pakeisti kitur."
+
+#: src/libs/resume/ats.ts
+msgid "This role has no description."
+msgstr "Šis vaidmuo neturi aprašymo."
+
+#: src/libs/resume/ats.ts
+msgid "This section has content but never appears."
+msgstr "Šioje skiltyje yra turinio, bet ji niekada nerodoma."
+
 #: src/routes/builder/$resumeId/-sidebar/right/sections/notes.tsx
 msgid "This section is reserved for your personal notes specific to this resume. The content here remains private and is not shared with anyone else."
 msgstr "Šis skyrius skirtas jūsų asmeninėms pastaboms, susijusioms su šiuo gyvenimo aprašymu. Čia pateiktas turinys lieka privatus ir niekam kitam neteikiamas."
+
+#: src/libs/resume/ats.ts
+msgid "This section is split across columns."
+msgstr "Šis skyrius yra padalintas į stulpelius."
+
+#: src/libs/resume/ats.ts
+msgid "This section renders as an empty heading."
+msgstr "Šis skyrius pateikiamas kaip tuščia antraštė."
+
+#: src/libs/resume/ats.ts
+msgid "This section sits in the sidebar."
+msgstr "Ši dalis yra šoninėje juostoje."
 
 #: src/features/auth/pages/register.tsx
 msgid "This step is optional, but recommended."
 msgstr "Šis žingsnis neprivalomas, bet rekomenduojamas."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "This thread is archived. New messages cannot be sent."
 msgstr "Ši tema yra archyvuota. Naujų pranešimų siųsti negalima."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "This thread is read-only"
 msgstr "Ši tema skirta tik skaitymui"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "This thread is read-only because the working resume or AI provider is unavailable."
 msgstr "Ši tema skirta tik skaitymui, nes darbinis gyvenimo aprašymas arba dirbtinio intelekto teikėjas nepasiekiamas."
 
@@ -3459,31 +4712,37 @@ msgstr "Jei planuojate turėti kelis slaptažodžius, tai padės vėliau juos nu
 msgid "This will remove all items from this section."
 msgstr "Taip iš šio skyriaus bus pašalinti visi elementai."
 
+#: src/routes/agent/-components/agent-chat.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
-#: src/routes/agent/$threadId.tsx
 msgid "Thread actions"
 msgstr "Gijos veiksmai"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Thread archived."
 msgstr "Gija archyvuota."
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Thread deleted."
 msgstr "Gija ištrinta."
 
+#: src/features/command-palette/pages/navigation.tsx
+#: src/features/command-palette/pages/resumes.tsx
 #: src/routes/agent/-components/thread-sidebar.tsx
 #: src/routes/agent/$threadId.tsx
 msgid "Threads"
 msgstr "Siūlai"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Tighten the skills section so it supports the target role instead of reading like a keyword dump."
 msgstr "Susiaurinkite įgūdžių skyrių, kad jis atitiktų tikslinį vaidmenį, o ne būtų skaitomas kaip raktinių žodžių sąvadas."
 
 #: src/routes/_home/-sections/hero.tsx
 msgid "Timelapse demonstration of building a resume with Reactive Resume"
 msgstr "Timelapse demonstracija, kaip kuriamas gyvenimo aprašymas naudojant „Reactive Resume“"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Timeline"
+msgstr "Laiko juosta"
 
 #: src/dialogs/api-key/create.tsx
 msgid "Tip: Give your API key a name, corresponding to the purpose of the key, to help you identify it later."
@@ -3500,9 +4759,18 @@ msgstr "Patarimas: gyvenimo aprašymą galite pavadinti pagal pareigas, į kuria
 msgid "Title"
 msgstr "Pavadinimas"
 
-#: src/features/settings/pages/danger-zone.tsx
+#: src/features/settings/pages/account.tsx
 msgid "To delete your account, you need to enter the confirmation text and click the button below."
 msgstr "Norėdami ištrinti paskyrą, įveskite patvirtinimo tekstą ir spustelėkite žemiau esantį mygtuką."
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "Together.ai"
+msgstr "Kartu.ai"
+
+#: src/routes/builder/$resumeId/-sidebar/left/shared/section-base.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/shared/section-base.tsx
+msgid "Toggle {sectionTitle} section"
+msgstr "Perjungti {sectionTitle} skyrių"
 
 #. Screen-reader label for opening or closing the left sidebar in resume builder
 #: src/routes/builder/$resumeId/-components/header.tsx
@@ -3513,7 +4781,7 @@ msgstr "Perjungti kairę šoninę juostą"
 msgid "Toggle page stacking"
 msgstr "Perjungti puslapių krūvojimą"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Toggle resume preview"
 msgstr "Perjungti gyvenimo aprašymo peržiūrą"
 
@@ -3522,9 +4790,17 @@ msgstr "Perjungti gyvenimo aprašymo peržiūrą"
 msgid "Toggle right sidebar"
 msgstr "Dešiniosios šoninės juostos perjungimas"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Toggle threads"
 msgstr "Perjungti gijas"
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Track a job you're applying to and link the resume you sent."
+msgstr "Sekite darbą, į kurį kandidatuojate, ir susiekite išsiųstą gyvenimo aprašymą."
+
+#: src/routes/dashboard/applications/index.tsx
+msgid "Track your first application"
+msgstr "Sekite savo pirmą paraišką"
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
 msgid "Track your resume's views and downloads"
@@ -3534,6 +4810,10 @@ msgstr "Stebėkite savo gyvenimo aprašymo peržiūras ir atsisiuntimus"
 #: src/routes/builder/$resumeId/-sidebar/right/sections/information.tsx
 msgid "Translations"
 msgstr "Vertimai"
+
+#: src/components/layout/error-screen.tsx
+msgid "Try again"
+msgstr "Bandykite dar kartą"
 
 #: src/libs/locale.ts
 msgid "Turkish"
@@ -3602,7 +4882,7 @@ msgstr "Dviejų veiksnių autentifikavimas QR kodas"
 msgid "Type"
 msgstr "Tipas"
 
-#: src/features/settings/pages/danger-zone.tsx
+#: src/features/settings/pages/account.tsx
 msgid "Type \"{CONFIRMATION_TEXT}\" to confirm"
 msgstr "Įveskite „{CONFIRMATION_TEXT}“, kad patvirtintumėte"
 
@@ -3620,9 +4900,23 @@ msgstr "Tipografija"
 msgid "Ukrainian"
 msgstr "Ukrainiečių"
 
+#: src/features/applications/components/application-actions-menu.tsx
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Unarchive"
+msgstr "Išarchyvuoti"
+
 #: src/components/input/rich-input.tsx
 msgid "Underline"
 msgstr "Pabraukti"
+
+#: src/dialogs/resume/template/gallery.tsx
+#: src/routes/builder/$resumeId/-components/dock.tsx
+msgid "Undo"
+msgstr "Atšaukti"
+
+#: src/features/resume/stylesheet/toolbar.tsx
+msgid "Undo stylesheet edit"
+msgstr "Atšaukti stiliaus lapo redagavimą"
 
 #: src/routes/_home/-sections/features.tsx
 msgid "Unlimited Resumes"
@@ -3646,21 +4940,12 @@ msgstr "Atrakinti"
 msgid "Unnamed passkey"
 msgstr "Neįvardytas prieigos raktas"
 
-#: src/features/settings/integrations/components/ai-section.tsx
-msgid "Untested"
-msgstr "Neišbandyta"
-
 #: src/features/settings/pages/profile.tsx
 msgid "Unverified"
 msgstr "Nepatikrintas"
 
-#. Resume card context menu action to edit resume metadata
-#. Resume card dropdown action to edit resume metadata
-#: src/routes/builder/$resumeId/-components/header.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/sections/custom.tsx
 #: src/routes/builder/$resumeId/-sidebar/left/shared/section-item.tsx
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
 msgid "Update"
 msgstr "Atnaujinti"
 
@@ -3730,13 +5015,25 @@ msgstr "Atnaujinti esamą savanorišką veiklą"
 msgid "Update Password"
 msgstr "Atnaujinti slaptažodį"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Update project bullets to show leadership, constraints, tradeoffs, and measurable outcomes."
 msgstr "Atnaujinkite projekto sąrašus, kad būtų parodyta lyderystė, apribojimai, kompromisai ir išmatuojami rezultatai."
 
 #: src/dialogs/resume/index.tsx
 msgid "Update Resume"
 msgstr "Atnaujinti gyvenimo aprašymą"
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Update the calendar date for this timeline entry."
+msgstr "Atnaujinkite šio laiko juostos įrašo kalendoriaus datą."
+
+#: src/features/applications/components/application-form-sheet.tsx
+msgid "Update this application's details."
+msgstr "Atnaujinkite šios paraiškos informaciją."
+
+#: src/features/applications/components/application-detail-sheet.tsx
+msgid "Update this timeline note."
+msgstr "Atnaujinkite šią laiko juostos pastabą."
 
 #: src/dialogs/auth/change-password.tsx
 msgid "Update your password"
@@ -3750,7 +5047,11 @@ msgstr "Atnaujinamas jūsų slaptažodis..."
 msgid "Updating your resume..."
 msgstr "Atnaujinamas jūsų gyvenimo aprašymas..."
 
-#: src/routes/agent/$threadId.tsx
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Upload .csv"
+msgstr "Įkelti .csv"
+
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Upload attachments"
 msgstr "Įkelti priedus"
 
@@ -3762,6 +5063,10 @@ msgstr "Įkelti nuotrauką"
 msgid "Uploading picture…"
 msgstr "Įkeliama nuotrauka…"
 
+#: src/features/applications/components/file-attachment-field.tsx
+msgid "Uploading…"
+msgstr "Įkeliama…"
+
 #. Form field label for the generated public resume link in sharing settings
 #: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
@@ -3772,9 +5077,34 @@ msgstr "URL"
 msgid "Use"
 msgstr "Naudojimas"
 
+#: src/libs/resume/ats.ts
+msgid "Use a line height of at least 1.15 so lines are not merged together."
+msgstr "Naudokite bent 1,15 linijos aukštį, kad eilutės nebūtų sujungtos."
+
+#: src/libs/resume/ats.ts
+msgid "Use a plain address such as name@example.com, with no surrounding text."
+msgstr "Naudokite paprastą adresą, pvz., vardas@example.com, be aplinkinio teksto."
+
+#: src/libs/resume/ats.ts
+msgid "Use a recognized form such as \"Jan 2020 - Mar 2022\" or \"2020 - 2022\"."
+msgstr "Naudokite pripažintą formą, pvz., \"2020 m. sausis – 2022 m. kovas\" arba \"2020 m. - 2022 m.\"."
+
+#: src/libs/resume/ats.ts
+msgid "Use a recognized form such as \"March 2022\" or \"2022\"."
+msgstr "Naudokite pripažintą formą, pvz., \"2022 m. kovo mėn.\" arba \"2022 m.\"."
+
+#: src/libs/resume/ats.ts
+msgid "Use a size of at least 9pt so re-rendered copies stay accurate."
+msgstr "Naudokite bent 9 pt dydį, kad pakartotinai pateiktos kopijos išliktų tikslios."
+
 #: src/components/input/color-picker.tsx
+#: src/routes/builder/$resumeId/-sidebar/right/sections/design.tsx
 msgid "Use color {color}"
 msgstr "Naudokite spalvą {color}"
+
+#: src/features/applications/components/import-applications-sheet.tsx
+msgid "Use sample"
+msgstr "Naudoti pavyzdį"
 
 #. Label for username input on registration form
 #: src/dialogs/resume/sections/profile.tsx
@@ -3791,9 +5121,21 @@ msgstr "Vartotojai"
 msgid "Uzbek"
 msgstr "Uzbekų"
 
+#: src/features/resume/stylesheet/status.tsx
+msgid "Valid"
+msgstr "Tinkamas"
+
 #: src/components/input/rich-input.tsx
 msgid "Valid URLs must start with http:// or https://."
 msgstr "Teisingi URL turi prasidėti http:// arba https://."
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Valid with errors"
+msgstr "Tinkamas su klaidomis"
+
+#: src/features/resume/stylesheet/status.tsx
+msgid "Valid with warnings"
+msgstr "Tinkamas su įspėjimais"
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Vercel AI Gateway"
@@ -3805,16 +5147,15 @@ msgstr "Patikrinta"
 
 #. Primary action button to submit 2FA code
 #. Primary action button to submit backup code
-#: src/features/auth/pages/verify-2fa-backup.tsx
 #: src/features/auth/pages/verify-2fa.tsx
 msgid "Verify"
 msgstr "Patvirtinti"
 
-#: src/features/auth/pages/verify-2fa-backup.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Verify with a Backup Code"
 msgstr "Patvirtinti atsarginiu kodu"
 
-#: src/features/auth/pages/verify-2fa-backup.tsx
+#: src/features/auth/pages/verify-2fa.tsx
 msgid "Verifying backup code..."
 msgstr "Tikrinamas atsarginis kodas..."
 
@@ -3834,6 +5175,10 @@ msgstr "Tikrinamas slaptažodis..."
 msgid "Verifying your email is required when resetting your password."
 msgstr "Slaptažodžio atkūrimui būtina patvirtinti el. paštą."
 
+#: src/routes/builder/$resumeId/-components/version-history.tsx
+msgid "Version history"
+msgstr "Versijų istorija"
+
 #: src/libs/locale.ts
 msgid "Vietnamese"
 msgstr "Vietnamiečių"
@@ -3848,6 +5193,26 @@ msgstr "Peržiūros"
 msgid "Volunteer"
 msgstr "Savanorystė"
 
+#: src/routes/builder/$resumeId/-sidebar/right/sections/statistics.tsx
+msgid "vs previous 30 days"
+msgstr "palyginti su ankstesnėmis 30 dienų"
+
+#: src/routes/agent/-components/agent-chat.tsx
+msgid "Waiting for the agent…"
+msgstr "Laukiama agento…"
+
+#: src/routes/builder/$resumeId/-sidebar/right/sections/ats-check.tsx
+msgid "Warning"
+msgstr "Įspėjimas"
+
+#: src/dialogs/resume/import.tsx
+msgid "We couldn't detect the format automatically — please choose it above."
+msgstr "Nepavyko automatiškai aptikti formato – pasirinkite jį aukščiau."
+
+#: src/components/layout/not-found-screen.tsx
+msgid "We couldn't find that page"
+msgstr "Nepavyko rasti to puslapio"
+
 #: src/dialogs/resume/sections/award.tsx
 #: src/dialogs/resume/sections/certification.tsx
 #: src/dialogs/resume/sections/education.tsx
@@ -3861,7 +5226,7 @@ msgstr "Savanorystė"
 msgid "Website"
 msgstr "Tinklalapis"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "What do you want to do?"
 msgstr "Ką norite daryti?"
 
@@ -3878,22 +5243,41 @@ msgid "What's new in the latest version?"
 msgstr "Kas naujo naujausioje versijoje?"
 
 #: src/routes/builder/$resumeId/-components/header.tsx
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
+#: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "When locked, the resume cannot be updated or deleted."
 msgstr "Užrakinus gyvenimo aprašymas negali būti atnaujintas ar ištrintas."
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Where applications come from"
+msgstr "Iš kur ateina paraiškos"
+
+#: src/features/applications/components/insights-view.tsx
+msgid "Where your applications went"
+msgstr "Kur nukeliavo jūsų paraiškos"
 
 #: src/features/settings/integrations/components/ai-section.tsx
 msgid "Work OpenAI"
 msgstr "Darbas OpenAI"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/agent-chat.tsx
 msgid "Working…"
 msgstr "Dirba…"
+
+#: src/features/applications/components/application-ai-copilot.tsx
+msgid "Worth a shot"
+msgstr "Verta pabandyti"
+
+#: src/libs/resume/ats.ts
+msgid "Write the full address, including https://."
+msgstr "Parašykite visą adresą, įskaitant https://."
 
 #: src/routes/_home/-sections/footer.tsx
 msgid "X (Twitter)"
 msgstr "X (Twitter)"
+
+#: src/features/settings/integrations/components/ai-section.tsx
+msgid "xAI Grok"
+msgstr "xAI Grokas"
 
 #: src/routes/_home/-sections/faq.tsx
 msgid "Yes, Reactive Resume is available in multiple languages. You can choose your preferred language in the settings page, or using the language switcher in the top right corner. If you don't see your language, or you would like to improve the existing translations, you can <0>contribute to the translations on Crowdin<1> (opens in new tab)</1></0>."
@@ -3919,12 +5303,16 @@ msgstr "Gyvenimo aprašymu galite dalintis per unikalų viešą URL, apsaugoti j
 msgid "You have unsaved changes that will be lost."
 msgstr "Turite neišsaugotų pakeitimų, kurie bus prarasti."
 
+#: src/dialogs/resume/import.tsx
+msgid "You'll be taken to the Integrations page. The file you selected won't be imported."
+msgstr "Būsite nukreipti į integravimo puslapį. "
+
 #: src/features/auth/pages/forgot-password.tsx
 #: src/features/auth/pages/register.tsx
 msgid "You've got mail!"
 msgstr "Gavote laišką!"
 
-#: src/features/settings/pages/danger-zone.tsx
+#: src/features/settings/pages/account.tsx
 msgid "Your account has been deleted successfully."
 msgstr "Jūsų paskyra sėkmingai ištrinta."
 
@@ -3932,9 +5320,17 @@ msgstr "Jūsų paskyra sėkmingai ištrinta."
 msgid "Your API key has been copied to the clipboard."
 msgstr "Jūsų API raktas nukopijuotas į iškarpinę."
 
+#: src/libs/resume/ats.ts
+msgid "Your body text is very small."
+msgstr "Jūsų tekstas labai mažas."
+
 #: src/routes/builder/$resumeId/-components/preview-page.tsx
 msgid "Your changes are saved automatically."
 msgstr "Jūsų pakeitimai išsaugomi automatiškai."
+
+#: src/features/settings/pages/account.tsx
+msgid "Your data has been exported successfully."
+msgstr "Jūsų duomenys sėkmingai eksportuoti."
 
 #: src/routes/_home/-sections/features.tsx
 msgid "Your data is secure, and never shared or sold to anyone."
@@ -3947,6 +5343,18 @@ msgstr "Jūsų duomenys saugiai laikomi ir niekada nebendrinami su trečiosiomis
 #: src/features/resume/builder/draft.ts
 msgid "Your latest changes could not be saved."
 msgstr "Nepavyko išsaugoti naujausių pakeitimų."
+
+#: src/features/resume/stylesheet/legacy-banner.tsx
+msgid "Your legacy styles remain active until you explicitly activate this Semantic CSS draft."
+msgstr "Jūsų seni stiliai liks aktyvūs, kol aiškiai neaktyvuosite šio semantinio CSS juodraščio."
+
+#: src/libs/resume/ats.ts
+msgid "Your lines are packed very tightly."
+msgstr "Jūsų eilutės supakuotos labai sandariai."
+
+#: src/libs/resume/ats.ts
+msgid "Your page margins are very narrow."
+msgstr "Jūsų puslapio paraštės labai siauros."
 
 #: src/features/auth/pages/reset-password.tsx
 msgid "Your password has been reset successfully. You can now sign in with your new password."
@@ -3965,8 +5373,7 @@ msgid "Your resume has been created successfully."
 msgstr "Jūsų gyvenimo aprašymas sėkmingai sukurtas."
 
 #: src/routes/builder/$resumeId/-components/header.tsx
-#: src/routes/dashboard/resumes/-components/menus/context-menu.tsx
-#: src/routes/dashboard/resumes/-components/menus/dropdown-menu.tsx
+#: src/routes/dashboard/resumes/-components/menus/use-resume-menu-actions.ts
 msgid "Your resume has been deleted successfully."
 msgstr "Jūsų gyvenimo aprašymas sėkmingai ištrintas."
 
@@ -3978,9 +5385,37 @@ msgstr "Jūsų gyvenimo aprašymas sėkmingai padvigubintas."
 msgid "Your resume has been imported successfully."
 msgstr "Jūsų gyvenimo aprašymas sėkmingai importuotas."
 
+#: src/routes/builder/$resumeId/-components/version-history.tsx
+msgid "Your resume has been restored to the selected version."
+msgstr "Jūsų gyvenimo aprašymas atkurtas į pasirinktą versiją."
+
 #: src/dialogs/resume/index.tsx
 msgid "Your resume has been updated successfully."
 msgstr "Jūsų gyvenimo aprašymas sėkmingai atnaujintas."
+
+#: src/libs/resume/ats.ts
+msgid "Your resume has no email address."
+msgstr "Jūsų gyvenimo aprašyme nėra el. pašto adreso."
+
+#: src/libs/resume/ats.ts
+msgid "Your resume has no location."
+msgstr "Jūsų gyvenimo aprašyme nėra vietos."
+
+#: src/libs/resume/ats.ts
+msgid "Your resume has no name."
+msgstr "Jūsų gyvenimo aprašymas neturi pavadinimo."
+
+#: src/libs/resume/ats.ts
+msgid "Your resume has no phone number."
+msgstr "Jūsų gyvenimo aprašyme nėra telefono numerio."
+
+#: src/libs/resume/ats.ts
+msgid "Your resume includes a photo."
+msgstr "Jūsų gyvenimo aprašyme yra nuotrauka."
+
+#: src/libs/resume/ats.ts
+msgid "Your resume shows no work experience."
+msgstr "Jūsų gyvenimo aprašyme nėra darbo patirties."
 
 #: src/routes/builder/$resumeId/-sidebar/right/sections/sharing.tsx
 msgid "Your resume's public link is currently protected by a password. Share the password only with people you trust."
@@ -3990,11 +5425,16 @@ msgstr "Jūsų gyvenimo aprašymo vieša nuoroda šiuo metu apsaugota slaptažod
 msgid "Your support ensures the project remains free and accessible for everyone, now and in the future."
 msgstr "Jūsų palaikymas užtikrina, kad projektas išliktų nemokamas ir prieinamas visiems – dabar ir ateityje."
 
+#: src/routes/builder/$resumeId/-sidebar/left/sections/picture.tsx
+msgid "Zoom"
+msgstr "Mastelio keitimas"
+
 #: src/routes/builder/$resumeId/-components/dock.tsx
 msgid "Zoom in"
 msgstr "Priartinti"
 
-#: src/routes/agent/$threadId.tsx
+#: src/routes/agent/-components/resume-pane.tsx
+#: src/routes/builder/$resumeId/-components/dock.tsx
 msgid "Zoom level"
 msgstr "Mastelio keitimo lygis"
 

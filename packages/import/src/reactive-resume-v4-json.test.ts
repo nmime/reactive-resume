@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ReactiveResumeV4JSONImporter } from "./reactive-resume-v4-json";
+import { parseReactiveResumeV4JSON } from "./reactive-resume-v4-json";
 
 // Minimal v4 resume JSON to use as base in all tests.
 // V4 layout is Array<Array<string[]>>: [ [mainColumn, sidebarColumn] ]
@@ -124,11 +124,9 @@ function makeV4Base(overrides: Record<string, unknown> = {}) {
 	};
 }
 
-const importer = new ReactiveResumeV4JSONImporter();
-
 // ─── Bug #2726-A: Custom section items without a name ("description-only") ───
 
-describe("ReactiveResumeV4JSONImporter – custom section description-only items", () => {
+describe("parseReactiveResumeV4JSON – custom section description-only items", () => {
 	it("puts description in the body (not the title) when item has no name", () => {
 		const v4 = makeV4Base({
 			custom: {
@@ -150,7 +148,7 @@ describe("ReactiveResumeV4JSONImporter – custom section description-only items
 			},
 		});
 
-		const result = importer.parse(JSON.stringify(v4));
+		const result = parseReactiveResumeV4JSON(JSON.stringify(v4));
 		const section = result.customSections[0];
 		expect(section).toBeDefined();
 
@@ -184,7 +182,7 @@ describe("ReactiveResumeV4JSONImporter – custom section description-only items
 			},
 		});
 
-		const result = importer.parse(JSON.stringify(v4));
+		const result = parseReactiveResumeV4JSON(JSON.stringify(v4));
 		const section = result.customSections[0];
 		const item = section?.items[0] as { company: string; position: string; description: string };
 
@@ -214,7 +212,7 @@ describe("ReactiveResumeV4JSONImporter – custom section description-only items
 			},
 		});
 
-		const result = importer.parse(JSON.stringify(v4));
+		const result = parseReactiveResumeV4JSON(JSON.stringify(v4));
 		const item = result.customSections[0]?.items[0] as { description: string };
 		// summary takes priority over description
 		expect(item.description).toBe("<p>Rich HTML content</p>");
@@ -241,7 +239,7 @@ describe("ReactiveResumeV4JSONImporter – custom section description-only items
 			},
 		});
 
-		const result = importer.parse(JSON.stringify(v4));
+		const result = parseReactiveResumeV4JSON(JSON.stringify(v4));
 		const item = result.customSections[0]?.items[0] as { company: string; position: string; description: string };
 		expect(item.company).toBe("#1");
 		expect(item.position).toBe("");
@@ -268,7 +266,7 @@ describe("ReactiveResumeV4JSONImporter – custom section description-only items
 			},
 		});
 
-		const result = importer.parse(JSON.stringify(v4));
+		const result = parseReactiveResumeV4JSON(JSON.stringify(v4));
 		const item = result.customSections[0]?.items[0] as { hidden: boolean };
 		// Should default to visible (hidden=false), consistent with all other sections
 		expect(item.hidden).toBe(false);
@@ -291,7 +289,7 @@ describe("ReactiveResumeV4JSONImporter – custom section description-only items
 			},
 		});
 
-		const result = importer.parse(JSON.stringify(v4));
+		const result = parseReactiveResumeV4JSON(JSON.stringify(v4));
 		const section = result.customSections[0];
 		// Both items must migrate — hidden items must NOT be dropped
 		expect(section?.items).toHaveLength(2);
@@ -304,7 +302,7 @@ describe("ReactiveResumeV4JSONImporter – custom section description-only items
 
 // ─── Bug #2726-B: Skill / Language levels incorrectly clamped to max ──────────
 
-describe("ReactiveResumeV4JSONImporter – skill level scaling (v4: 0-10 → v5: 0-5)", () => {
+describe("parseReactiveResumeV4JSON – skill level scaling (v4: 0-10 → v5: 0-5)", () => {
 	function makeWithSkills(items: Array<{ id: string; visible: boolean; name: string; level: number }>) {
 		return makeV4Base({
 			skills: {
@@ -319,54 +317,56 @@ describe("ReactiveResumeV4JSONImporter – skill level scaling (v4: 0-10 → v5:
 	}
 
 	it("scales level 10 → 5", () => {
-		const result = importer.parse(
+		const result = parseReactiveResumeV4JSON(
 			JSON.stringify(makeWithSkills([{ id: "s1", visible: true, name: "TypeScript", level: 10 }])),
 		);
 		expect(result.sections.skills.items[0]?.level).toBe(5);
 	});
 
 	it("scales level 8 → 4 (not 5)", () => {
-		const result = importer.parse(
+		const result = parseReactiveResumeV4JSON(
 			JSON.stringify(makeWithSkills([{ id: "s2", visible: true, name: "React", level: 8 }])),
 		);
 		expect(result.sections.skills.items[0]?.level).toBe(4);
 	});
 
 	it("scales level 6 → 3 (not 5)", () => {
-		const result = importer.parse(
+		const result = parseReactiveResumeV4JSON(
 			JSON.stringify(makeWithSkills([{ id: "s3", visible: true, name: "GraphQL", level: 6 }])),
 		);
 		expect(result.sections.skills.items[0]?.level).toBe(3);
 	});
 
 	it("scales level 5 → 3 (rounds 2.5 up)", () => {
-		const result = importer.parse(
+		const result = parseReactiveResumeV4JSON(
 			JSON.stringify(makeWithSkills([{ id: "s4", visible: true, name: "Node", level: 5 }])),
 		);
 		expect(result.sections.skills.items[0]?.level).toBe(3);
 	});
 
 	it("keeps level 0 → 0 (hides the visual indicator)", () => {
-		const result = importer.parse(
+		const result = parseReactiveResumeV4JSON(
 			JSON.stringify(makeWithSkills([{ id: "s5", visible: true, name: "Rust", level: 0 }])),
 		);
 		expect(result.sections.skills.items[0]?.level).toBe(0);
 	});
 
 	it("clamps negative level to 0", () => {
-		const result = importer.parse(JSON.stringify(makeWithSkills([{ id: "s6", visible: true, name: "Go", level: -3 }])));
+		const result = parseReactiveResumeV4JSON(
+			JSON.stringify(makeWithSkills([{ id: "s6", visible: true, name: "Go", level: -3 }])),
+		);
 		expect(result.sections.skills.items[0]?.level).toBe(0);
 	});
 
 	it("clamps level above 10 to 5", () => {
-		const result = importer.parse(
+		const result = parseReactiveResumeV4JSON(
 			JSON.stringify(makeWithSkills([{ id: "s7", visible: true, name: "C++", level: 15 }])),
 		);
 		expect(result.sections.skills.items[0]?.level).toBe(5);
 	});
 });
 
-describe("ReactiveResumeV4JSONImporter – language level scaling (v4: 0-10 → v5: 0-5)", () => {
+describe("parseReactiveResumeV4JSON – language level scaling (v4: 0-10 → v5: 0-5)", () => {
 	function makeWithLanguages(items: Array<{ id: string; visible: boolean; name: string; level: number }>) {
 		return makeV4Base({
 			languages: {
@@ -381,16 +381,46 @@ describe("ReactiveResumeV4JSONImporter – language level scaling (v4: 0-10 → 
 	}
 
 	it("scales level 10 → 5", () => {
-		const result = importer.parse(
+		const result = parseReactiveResumeV4JSON(
 			JSON.stringify(makeWithLanguages([{ id: "l1", visible: true, name: "Spanish", level: 10 }])),
 		);
 		expect(result.sections.languages.items[0]?.level).toBe(5);
 	});
 
 	it("scales level 6 → 3 (not 5)", () => {
-		const result = importer.parse(
+		const result = parseReactiveResumeV4JSON(
 			JSON.stringify(makeWithLanguages([{ id: "l2", visible: true, name: "French", level: 6 }])),
 		);
 		expect(result.sections.languages.items[0]?.level).toBe(3);
+	});
+});
+
+// ─── Guard: non-v4 JSON must fail with a readable error, not a raw TypeError ───
+
+describe("parseReactiveResumeV4JSON – rejects non-v4 input gracefully", () => {
+	it("throws a readable error (not a TypeError) for an empty object", () => {
+		expect(() => parseReactiveResumeV4JSON("{}")).toThrow(/v4/i);
+	});
+
+	it("throws for a JSON Resume shaped file (basics but no sections/metadata)", () => {
+		expect(() => parseReactiveResumeV4JSON(JSON.stringify({ basics: { name: "Jane" } }))).toThrow(/v4/i);
+	});
+
+	it("throws for a top-level JSON array", () => {
+		expect(() => parseReactiveResumeV4JSON("[]")).toThrow(/v4/i);
+	});
+
+	it("throws for a current-format export whose metadata.layout is not a v4 array", () => {
+		const currentFormat = {
+			basics: { name: "Jane" },
+			sections: {},
+			metadata: { layout: { sidebarWidth: 35, pages: [] } },
+		};
+		expect(() => parseReactiveResumeV4JSON(JSON.stringify(currentFormat))).toThrow(/v4/i);
+	});
+
+	it("throws when basics, sections, or metadata are arrays rather than objects", () => {
+		const arrayBranches = JSON.stringify({ basics: [], sections: [], metadata: [] });
+		expect(() => parseReactiveResumeV4JSON(arrayBranches)).toThrow(/v4/i);
 	});
 });

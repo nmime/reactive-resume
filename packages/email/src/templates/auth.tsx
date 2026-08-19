@@ -1,3 +1,4 @@
+import * as React from "react";
 import {
 	Body,
 	Button,
@@ -15,6 +16,9 @@ import {
 	Tailwind,
 	Text,
 } from "react-email";
+
+// ponytail: server dev consumes this source through tsx, which emits React.createElement here.
+void React;
 
 const appName = "Reactive Resume";
 const logoUrl = "https://rxresu.me/icon/dark.svg";

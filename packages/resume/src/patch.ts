@@ -1,7 +1,8 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import jsonpatch, { type JsonPatchError, type Operation } from "fast-json-patch";
+import type { JsonPatchError, Operation } from "fast-json-patch";
+import jsonpatch from "fast-json-patch";
 import z from "zod";
-import { resumeDataSchema } from "@reactive-resume/schema/resume/data";
+import { parseResumeData } from "@reactive-resume/schema/resume/data";
 
 /**
  * A Zod schema that models JSON Patch (RFC 6902) operations as a discriminated union on `op`.
@@ -18,10 +19,6 @@ export const jsonPatchOperationSchema = z.discriminatedUnion("op", [
 ]);
 
 export type JsonPatchOperation = z.infer<typeof jsonPatchOperationSchema>;
-
-export function createResumePatches(previous: ResumeData, next: ResumeData): JsonPatchOperation[] {
-	return z.array(jsonPatchOperationSchema).parse(jsonpatch.compare(previous, next));
-}
 
 /**
  * A structured error thrown when a JSON Patch operation fails.
@@ -120,9 +117,11 @@ export function applyResumePatches(data: ResumeData, operations: Operation[]): R
 		throw error;
 	}
 
-	// Validate the result still conforms to ResumeData.
-	const parsed = resumeDataSchema.safeParse(patched);
-	if (!parsed.success) throw new Error(`Patch produced invalid resume data: ${parsed.error.message}`);
-
-	return parsed.data;
+	try {
+		return parseResumeData(patched);
+	} catch (error) {
+		throw new Error(`Patch produced invalid resume data: ${error instanceof Error ? error.message : String(error)}`, {
+			cause: error,
+		});
+	}
 }

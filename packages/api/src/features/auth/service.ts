@@ -24,17 +24,54 @@ const providers = {
 export const authService = {
 	providers,
 
-	deleteAccount: async (input: { userId: string }): Promise<void> => {
-		if (!input.userId || input.userId.length === 0) return;
+	// GDPR-style export of everything the user owns. Selects explicit columns so
+	// secrets (password hashes, tokens, api keys) never leak into the export.
+	exportData: async (input: { userId: string }) => {
+		const [userRecord] = await db
+			.select({
+				id: schema.user.id,
+				name: schema.user.name,
+				email: schema.user.email,
+				username: schema.user.username,
+				displayUsername: schema.user.displayUsername,
+				image: schema.user.image,
+				emailVerified: schema.user.emailVerified,
+				createdAt: schema.user.createdAt,
+				updatedAt: schema.user.updatedAt,
+			})
+			.from(schema.user)
+			.where(eq(schema.user.id, input.userId));
 
+		if (!userRecord) throw new ORPCError("NOT_FOUND");
+
+		const resumes = await db
+			.select({
+				id: schema.resume.id,
+				name: schema.resume.name,
+				slug: schema.resume.slug,
+				tags: schema.resume.tags,
+				data: schema.resume.data,
+				isPublic: schema.resume.isPublic,
+				isLocked: schema.resume.isLocked,
+				createdAt: schema.resume.createdAt,
+				updatedAt: schema.resume.updatedAt,
+			})
+			.from(schema.resume)
+			.where(eq(schema.resume.userId, input.userId));
+
+		return { exportedAt: new Date().toISOString(), user: userRecord, resumes };
+	},
+
+	deleteAccount: async (input: { userId: string }): Promise<void> => {
 		const storageService = getStorageService();
 
 		// Delete all user files in one call (pictures, screenshots, pdfs)
 		// The storage service delete method supports recursive deletion via prefix
 		try {
 			await storageService.delete(`uploads/${input.userId}`);
-		} catch {
-			// Ignore error and proceed with deleting user
+		} catch (err) {
+			// Log orphaned-file failures (GDPR erasure signal) but proceed with deleting the user.
+			console.error("Failed to delete storage for user %s:", input.userId, err);
 		}
 
 		try {

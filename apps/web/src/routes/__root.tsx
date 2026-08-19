@@ -5,16 +5,19 @@ import type { Locale } from "@reactive-resume/utils/locale";
 import type { QueryClient } from "@tanstack/react-query";
 import type { orpc } from "@/libs/orpc/client";
 import type { Theme } from "@/libs/theme";
+import { DirectionProvider } from "@base-ui/react/direction-provider";
 import { i18n } from "@lingui/core";
 import { I18nProvider } from "@lingui/react";
 import { IconContext } from "@phosphor-icons/react";
+import { TanStackDevtools } from "@tanstack/react-devtools";
 import { HotkeysProvider } from "@tanstack/react-hotkeys";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { createRootRouteWithContext, HeadContent, Outlet } from "@tanstack/react-router";
+import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
+import { createRootRouteWithContext, HeadContent, Outlet, useRouterState } from "@tanstack/react-router";
+import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { domAnimation, LazyMotion, MotionConfig } from "motion/react";
-import { useEffect, useMemo } from "react";
-import { DirectionProvider } from "@reactive-resume/ui/components/direction";
-import { Toaster } from "@reactive-resume/ui/components/sonner";
+import { useEffect } from "react";
+import { Toaster } from "@reactive-resume/ui/components/toast";
 import { TooltipProvider } from "@reactive-resume/ui/components/tooltip";
 import { BreakpointIndicator } from "@/components/layout/breakpoint-indicator";
 import { DonationToast } from "@/components/ui/donation-toast";
@@ -40,8 +43,10 @@ type RouterContext = {
 const appName = "Reactive Resume";
 const tagline = "A free and open-source resume builder";
 const title = `${appName} — ${tagline}`;
+// Keep under ~120 characters so Google's mobile SERP snippet is not truncated at 3 lines.
 const description =
-	"Reactive Resume is a free and open-source resume builder that simplifies the process of creating, updating, and sharing your resume.";
+	"Free, open-source resume builder. Create, update, and share a professional resume in minutes — no ads, no paywall.";
+const iconContextValue: IconProps = { size: 16, weight: "regular" };
 
 export const Route = createRootRouteWithContext<RouterContext>()({
 	component: RootComponent,
@@ -69,12 +74,13 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 				{ name: "apple-mobile-web-app-capable", content: "yes" },
 				{ name: "apple-mobile-web-app-title", content: "Reactive Resume" },
 				{ name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
-				// Twitter Tags
-				{ property: "twitter:image", content: `${appUrl}/opengraph/banner.jpg` },
-				{ property: "twitter:card", content: "summary_large_image" },
-				{ property: "twitter:title", content: title },
-				{ property: "twitter:description", content: description },
+				// Twitter Tags — X only reads these as `name`, not `property`
+				{ name: "twitter:image", content: `${appUrl}/opengraph/banner.jpg` },
+				{ name: "twitter:card", content: "summary_large_image" },
+				{ name: "twitter:title", content: title },
+				{ name: "twitter:description", content: description },
 				// OpenGraph Tags
+				{ property: "og:type", content: "website" },
 				{ property: "og:image", content: `${appUrl}/opengraph/banner.jpg` },
 				{ property: "og:site_name", content: appName },
 				{ property: "og:title", content: title },
@@ -101,7 +107,8 @@ function RootComponent() {
 	const { theme, locale, queryClient } = Route.useRouteContext();
 	const dir = isRTL(locale) ? "rtl" : "ltr";
 
-	const iconContextValue = useMemo<IconProps>(() => ({ size: 16, weight: "regular" }), []);
+	// Suppress the app-wide donation toast inside the builder so it doesn't cover the right-sidebar controls.
+	const isBuilder = useRouterState({ select: (s) => s.location.pathname.startsWith("/builder") });
 
 	useEffect(() => {
 		document.documentElement.lang = locale;
@@ -126,12 +133,27 @@ function RootComponent() {
 													<PromptDialogProvider>
 														<Outlet />
 
-														<DonationToast />
+														{!isBuilder && <DonationToast />}
 														<DialogManager />
 														<CommandPalette />
-														<Toaster richColors position="bottom-right" />
+														<Toaster />
 
 														{import.meta.env.DEV && <BreakpointIndicator />}
+														{import.meta.env.DEV && (
+															<TanStackDevtools
+																config={{ position: "bottom-left" }}
+																plugins={[
+																	{
+																		name: "TanStack Query",
+																		render: <ReactQueryDevtoolsPanel />,
+																	},
+																	{
+																		name: "TanStack Router",
+																		render: <TanStackRouterDevtoolsPanel />,
+																	},
+																]}
+															/>
+														)}
 													</PromptDialogProvider>
 												</ConfirmDialogProvider>
 											</TooltipProvider>

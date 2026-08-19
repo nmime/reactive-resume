@@ -139,6 +139,8 @@ export const twoFactor = pg.pgTable(
 		secret: pg.text("secret").notNull(),
 		backupCodes: pg.text("backup_codes").notNull(),
 		verified: pg.boolean("verified").notNull().default(true),
+		failedVerificationCount: pg.integer("failed_verification_count").default(0),
+		lockedUntil: pg.timestamp("locked_until", { withTimezone: true }),
 		createdAt: pg.timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 		updatedAt: pg
 			.timestamp("updated_at", { withTimezone: true })

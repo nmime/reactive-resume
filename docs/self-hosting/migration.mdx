@@ -1,6 +1,6 @@
 ---
 title: "Migrating from v4 to v5"
-description: "A step-by-step guide to migrate your Reactive Resume instance from v4 to v5, including manual and automated migration options."
+description: "Step-by-step guide to migrate a self-hosted Reactive Resume instance from v4 to v5, covering database schema changes, manual and automated options."
 ---
 
 ## Overview
@@ -90,14 +90,20 @@ To run the migration scripts, you need the following installed on your host mach
     Alternatively, you can use `dotenv`, `direnv`, or export the variables manually.
   </Card>
   <Card title="Reactive Resume Source Code">
-    Clone the Reactive Resume repository to access the migration scripts:
+    Clone the Reactive Resume repository and check out the last tag that includes the migration scripts:
     ```bash
     git clone https://github.com/amruthpillai/reactive-resume.git
     cd reactive-resume
+    git checkout tags/v5.0.20
     pnpm install
     ```
   </Card>
 </CardGroup>
+
+<Info>
+  The v4 migration scripts live in the `v5.0.20` tag. Use that checkout only to run the migration scripts against your
+  v4 and v5 databases; keep your actual v5 deployment on the latest version.
+</Info>
 
 ### Environment Setup
 

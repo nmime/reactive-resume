@@ -22,7 +22,6 @@ interface InlineStyle {
 }
 
 type InlineChild = TextRun | ExternalHyperlink;
-type NumberingOptions = { reference: string; level: number; instance?: number };
 
 /** Module-level link color, set per htmlToParagraphs invocation. */
 let currentLinkColor = "0563C1";
@@ -123,18 +122,7 @@ function collectInlineChildren(node: Node, style: InlineStyle): InlineChild[] {
 	return children;
 }
 
-function getNumberingOptions(reference: string, level: number, instance?: number): NumberingOptions {
-	return instance === undefined ? { reference, level } : { reference, level, instance };
-}
-
-function processBlockElement(
-	el: HTMLElement,
-	style: InlineStyle,
-	paragraphs: Paragraph[],
-	listLevel?: number,
-	numberingRef?: string,
-	listIndex?: number,
-): void {
+function processBlockElement(el: HTMLElement, style: InlineStyle, paragraphs: Paragraph[], listLevel?: number): void {
 	const tag = el.tagName;
 	const mergedStyle = mergeStyle(style, tag, el);
 
@@ -149,20 +137,13 @@ function processBlockElement(
 	if (tag === "P" || tag === "DIV") {
 		const inlineChildren = collectInlineChildren(el, mergedStyle);
 		if (inlineChildren.length > 0) {
-			paragraphs.push(
-				new Paragraph({
-					children: inlineChildren,
-					...(listLevel != null && numberingRef
-						? { numbering: getNumberingOptions(numberingRef, listLevel, listIndex) }
-						: {}),
-				}),
-			);
+			paragraphs.push(new Paragraph({ children: inlineChildren }));
 		}
 		return;
 	}
 
 	if (tag === "UL" || tag === "OL") {
-		const isOrdered = tag === "OL";
+		// ponytail: ordered-list numbering (numberingRef path) was never reachable; always uses bullet
 		const level = listLevel != null ? listLevel + 1 : 0;
 
 		for (const li of el.children) {
@@ -177,30 +158,16 @@ function processBlockElement(
 					if (liChild.nodeType === Node.TEXT_NODE) {
 						const text = (liChild.textContent ?? "").trim();
 						if (text) {
-							paragraphs.push(
-								new Paragraph({
-									children: [new TextRun({ text, ...mergedStyle })],
-									...(isOrdered && numberingRef
-										? { numbering: getNumberingOptions(numberingRef, level, listIndex) }
-										: { bullet: { level } }),
-								}),
-							);
+							paragraphs.push(new Paragraph({ children: [new TextRun({ text, ...mergedStyle })], bullet: { level } }));
 						}
 					} else if (liChild.nodeType === Node.ELEMENT_NODE) {
-						processBlockElement(liChild as HTMLElement, mergedStyle, paragraphs, level, numberingRef, listIndex);
+						processBlockElement(liChild as HTMLElement, mergedStyle, paragraphs, level);
 					}
 				}
 			} else {
 				const inlineChildren = collectInlineChildren(li, mergedStyle);
 				if (inlineChildren.length > 0) {
-					paragraphs.push(
-						new Paragraph({
-							children: inlineChildren,
-							...(isOrdered && numberingRef
-								? { numbering: getNumberingOptions(numberingRef, level, listIndex) }
-								: { bullet: { level } }),
-						}),
-					);
+					paragraphs.push(new Paragraph({ children: inlineChildren, bullet: { level } }));
 				}
 			}
 		}

@@ -13,76 +13,91 @@ type Resume = RouterOutput["resume"]["list"][number];
 
 type ListViewProps = {
 	resumes: Resume[];
+	hasResumes: boolean;
 };
 
 type ResumeListItemProps = {
 	resume: Resume;
 };
 
-export function ListView({ resumes }: ListViewProps) {
+export function ListView({ resumes, hasResumes }: ListViewProps) {
 	const { openDialog } = useDialogStore();
 
-	const handleCreateResume = () => {
-		openDialog("resume.create", undefined);
-	};
+	if (resumes.length === 0 && hasResumes) {
+		return (
+			<p className="py-8 text-center text-muted-foreground text-sm">
+				<Trans>No resumes match your search.</Trans>
+			</p>
+		);
+	}
 
-	const handleImportResume = () => {
-		openDialog("resume.import", undefined);
-	};
+	if (resumes.length === 0) {
+		const handleCreateResume = () => {
+			openDialog("resume.create", undefined);
+		};
+
+		const handleImportResume = () => {
+			openDialog("resume.import", undefined);
+		};
+
+		return (
+			<div className="flex flex-col gap-y-1">
+				<m.div
+					className="will-change-[transform,opacity]"
+					initial={{ opacity: 0, y: -20 }}
+					animate={{ opacity: 1, y: 0 }}
+					exit={{ opacity: 0, y: -20 }}
+					transition={{ duration: 0.2, ease: "easeOut" }}
+				>
+					<Button
+						size="lg"
+						variant="ghost"
+						className="h-12 w-full justify-start gap-x-4 text-start"
+						onClick={handleCreateResume}
+					>
+						<PlusIcon />
+						<div className="min-w-0 flex-1 truncate">
+							<Trans>Create a new resume</Trans>
+						</div>
+
+						<p className="hidden text-xs opacity-60 sm:block">
+							<Trans>Start building your resume from scratch</Trans>
+						</p>
+					</Button>
+				</m.div>
+
+				<m.div
+					className="will-change-[transform,opacity]"
+					initial={{ opacity: 0, y: -20 }}
+					animate={{ opacity: 1, y: 0 }}
+					exit={{ opacity: 0, y: -20 }}
+					transition={{ duration: 0.2, delay: 0.03, ease: "easeOut" }}
+				>
+					<Button
+						size="lg"
+						variant="ghost"
+						className="h-12 w-full justify-start gap-x-4 text-start"
+						onClick={handleImportResume}
+					>
+						<DownloadSimpleIcon />
+
+						<div className="min-w-0 flex-1 truncate">
+							<Trans>Import an existing resume</Trans>
+						</div>
+
+						<p className="hidden text-xs opacity-60 sm:block">
+							<Trans>Continue where you left off</Trans>
+						</p>
+					</Button>
+				</m.div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="flex flex-col gap-y-1">
-			<m.div
-				className="will-change-[transform,opacity]"
-				initial={{ opacity: 0, y: -20 }}
-				animate={{ opacity: 1, y: 0 }}
-				exit={{ opacity: 0, y: -20 }}
-				transition={{ duration: 0.2, ease: "easeOut" }}
-			>
-				<Button
-					size="lg"
-					variant="ghost"
-					className="h-12 w-full justify-start gap-x-4 text-start"
-					onClick={handleCreateResume}
-				>
-					<PlusIcon />
-					<div className="min-w-80 truncate">
-						<Trans>Create a new resume</Trans>
-					</div>
-
-					<p className="text-xs opacity-60">
-						<Trans>Start building your resume from scratch</Trans>
-					</p>
-				</Button>
-			</m.div>
-
-			<m.div
-				className="will-change-[transform,opacity]"
-				initial={{ opacity: 0, y: -20 }}
-				animate={{ opacity: 1, y: 0 }}
-				exit={{ opacity: 0, y: -20 }}
-				transition={{ duration: 0.2, delay: 0.03, ease: "easeOut" }}
-			>
-				<Button
-					size="lg"
-					variant="ghost"
-					className="h-12 w-full justify-start gap-x-4 text-start"
-					onClick={handleImportResume}
-				>
-					<DownloadSimpleIcon />
-
-					<div className="min-w-80 truncate">
-						<Trans>Import an existing resume</Trans>
-					</div>
-
-					<p className="text-xs opacity-60">
-						<Trans>Continue where you left off</Trans>
-					</p>
-				</Button>
-			</m.div>
-
 			<AnimatePresence initial={false} mode="popLayout">
-				{resumes?.map((resume, index) => (
+				{resumes.map((resume, index) => (
 					<m.div
 						layout
 						key={resume.id}
@@ -90,7 +105,7 @@ export function ListView({ resumes }: ListViewProps) {
 						initial={{ opacity: 0, y: -20 }}
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: -20 }}
-						transition={{ duration: 0.18, delay: Math.min(0.12, (index + 2) * 0.02), ease: "easeOut" }}
+						transition={{ duration: 0.18, delay: Math.min(0.12, index * 0.02), ease: "easeOut" }}
 					>
 						<ResumeListItem resume={resume} />
 					</m.div>
@@ -117,9 +132,9 @@ function ResumeListItem({ resume }: ResumeListItemProps) {
 				render={
 					<Link to="/builder/$resumeId" params={{ resumeId: resume.id }}>
 						<div className="size-3" />
-						<div className="min-w-80 truncate">{resume.name}</div>
+						<div className="min-w-0 flex-1 truncate">{resume.name}</div>
 
-						<p className="text-xs opacity-60">
+						<p className="hidden text-xs opacity-60 sm:block">
 							<Trans>Last updated on {updatedAt}</Trans>
 						</p>
 					</Link>

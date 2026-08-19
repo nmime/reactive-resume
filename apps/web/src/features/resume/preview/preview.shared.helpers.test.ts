@@ -6,36 +6,7 @@ import {
 	getPreviewCanvasScale,
 	getResumePreviewGapValue,
 	getScaledPreviewPageSize,
-	normalizeResumePreviewProps,
-} from "./preview.shared";
-
-describe("normalizeResumePreviewProps", () => {
-	it("applies the documented defaults when fields are omitted", () => {
-		const result = normalizeResumePreviewProps({});
-		expect(result).toMatchObject({
-			pageGap: 16,
-			pageLayout: "horizontal",
-			pageScale: 1,
-			showPageNumbers: false,
-		});
-	});
-
-	it("preserves supplied values and forwards extra props (className, data)", () => {
-		const result = normalizeResumePreviewProps({
-			className: "preview-class",
-			pageGap: 16,
-			pageLayout: "vertical",
-			pageScale: 1.5,
-			showPageNumbers: true,
-		});
-
-		expect(result.className).toBe("preview-class");
-		expect(result.pageGap).toBe(16);
-		expect(result.pageLayout).toBe("vertical");
-		expect(result.pageScale).toBe(1.5);
-		expect(result.showPageNumbers).toBe(true);
-	});
-});
+} from "./preview.shared.utils";
 
 describe("getScaledPreviewPageSize", () => {
 	it("multiplies both dimensions by the scale", () => {

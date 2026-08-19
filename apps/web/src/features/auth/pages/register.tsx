@@ -3,13 +3,13 @@ import { Trans } from "@lingui/react/macro";
 import { ArrowRightIcon, EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { toast } from "sonner";
 import { useToggle } from "usehooks-ts";
 import z from "zod";
 import { Alert, AlertDescription, AlertTitle } from "@reactive-resume/ui/components/alert";
 import { Button } from "@reactive-resume/ui/components/button";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Input } from "@reactive-resume/ui/components/input";
+import { toast } from "@reactive-resume/ui/components/toast";
 import { authClient } from "@/libs/auth/client";
 import { useAppForm } from "@/libs/tanstack-form";
 import { SocialAuth } from "../components/social-auth";
@@ -41,7 +41,7 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 		defaultValues: { name: "", username: "", email: "", password: "" },
 		validators: { onSubmit: formSchema },
 		onSubmit: async ({ value }) => {
-			const toastId = toast.loading(t`Signing up...`);
+			const toastId = toast.add({ type: "loading", description: t`Signing up...` });
 
 			const { error } = await authClient.signUp.email({
 				name: value.name,
@@ -53,19 +53,21 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 			});
 
 			if (error) {
-				toast.error(
-					error.message ||
+				toast.add({
+					type: "error",
+					description:
+						error.message ||
 						t({
 							comment: "Fallback toast when account registration fails without a server error message",
 							message: "Failed to create your account. Please try again.",
 						}),
-					{ id: toastId },
-				);
+					id: toastId,
+				});
 				return;
 			}
 
 			setSubmitted(true);
-			toast.dismiss(toastId);
+			toast.close(toastId);
 		},
 	});
 
@@ -242,7 +244,7 @@ export function RegisterPage({ disableEmailAuth }: Props) {
 				</form>
 			)}
 
-			<SocialAuth requestSignUp />
+			<SocialAuth />
 		</>
 	);
 }

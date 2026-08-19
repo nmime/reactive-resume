@@ -3,13 +3,13 @@ import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { CheckIcon, WarningIcon } from "@phosphor-icons/react";
 import { useStore } from "@tanstack/react-form";
-import { useRouter } from "@tanstack/react-router";
+import { useRouteContext, useRouter } from "@tanstack/react-router";
 import { AnimatePresence, m } from "motion/react";
-import { toast } from "sonner";
 import z from "zod";
 import { Button } from "@reactive-resume/ui/components/button";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Input } from "@reactive-resume/ui/components/input";
+import { toast } from "@reactive-resume/ui/components/toast";
 import { authClient } from "@/libs/auth/client";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { useAppForm } from "@/libs/tanstack-form";
@@ -33,6 +33,8 @@ type Props = {
 
 export function ProfileSettingsPage({ session }: Props) {
 	const router = useRouter();
+	const context = useRouteContext({ strict: false });
+	const smtpEnabled = context.flags?.smtpEnabled ?? false;
 
 	const form = useAppForm({
 		defaultValues: {
@@ -49,19 +51,20 @@ export function ProfileSettingsPage({ session }: Props) {
 			});
 
 			if (error) {
-				toast.error(
-					getReadableErrorMessage(
+				toast.add({
+					type: "error",
+					description: getReadableErrorMessage(
 						error,
 						t({
 							comment: "Fallback toast when updating profile details fails",
 							message: "Failed to update your profile. Please try again.",
 						}),
 					),
-				);
+				});
 				return;
 			}
 
-			toast.success(t`Your profile has been updated successfully.`);
+			toast.add({ type: "success", description: t`Your profile has been updated successfully.` });
 			form.reset({ name: value.name, username: value.username, email: session.user.email });
 			void router.invalidate();
 
@@ -72,21 +75,23 @@ export function ProfileSettingsPage({ session }: Props) {
 				});
 
 				if (error) {
-					toast.error(
-						getReadableErrorMessage(
+					toast.add({
+						type: "error",
+						description: getReadableErrorMessage(
 							error,
 							t({
 								comment: "Fallback toast when requesting email change confirmation fails",
 								message: "Failed to request email change. Please try again.",
 							}),
 						),
-					);
+					});
 					return;
 				}
 
-				toast.success(
-					t`A confirmation link has been sent to your current email address. Please check your inbox to confirm the change.`,
-				);
+				toast.add({
+					type: "success",
+					description: t`A confirmation link has been sent to your current email address. Please check your inbox to confirm the change.`,
+				});
 				form.reset({ name: value.name, username: value.username, email: session.user.email });
 				void router.invalidate();
 			}
@@ -100,7 +105,7 @@ export function ProfileSettingsPage({ session }: Props) {
 	const isDirty = useStore(form.store, (s) => s.isDirty);
 
 	const handleResendVerificationEmail = async () => {
-		const toastId = toast.loading(t`Resending verification email...`);
+		const toastId = toast.add({ type: "loading", description: t`Resending verification email...` });
 
 		const { error } = await authClient.sendVerificationEmail({
 			email: session.user.email,
@@ -108,29 +113,31 @@ export function ProfileSettingsPage({ session }: Props) {
 		});
 
 		if (error) {
-			toast.error(
-				getReadableErrorMessage(
+			toast.add({
+				type: "error",
+				description: getReadableErrorMessage(
 					error,
 					t({
 						comment: "Fallback toast when resending account verification email fails",
 						message: "Failed to resend verification email. Please try again.",
 					}),
 				),
-				{ id: toastId },
-			);
+				id: toastId,
+			});
 			return;
 		}
 
-		toast.success(
-			t`A new verification link has been sent to your email address. Please check your inbox to verify your account.`,
-			{ id: toastId },
-		);
+		toast.add({
+			type: "success",
+			description: t`A new verification link has been sent to your email address. Please check your inbox to verify your account.`,
+			id: toastId,
+		});
 		void router.invalidate();
 	};
 
 	return (
 		<m.form
-			initial={{ opacity: 0, y: -20 }}
+			initial={{ y: -20 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.25, ease: "easeOut" }}
 			className="grid max-w-xl gap-6 will-change-[transform,opacity]"
@@ -226,7 +233,7 @@ export function ProfileSettingsPage({ session }: Props) {
 								<CheckIcon />
 								<Trans>Verified</Trans>
 							</p>
-						) : (
+						) : smtpEnabled ? (
 							<p className="flex items-center gap-x-1.5 text-amber-600 text-xs">
 								<WarningIcon className="size-3.5" />
 								<Trans>Unverified</Trans>
@@ -238,6 +245,10 @@ export function ProfileSettingsPage({ session }: Props) {
 								>
 									<Trans>Resend verification email</Trans>
 								</Button>
+							</p>
+						) : (
+							<p className="text-muted-foreground text-xs">
+								<Trans>Email delivery isn't configured on this instance, so verification is disabled.</Trans>
 							</p>
 						)}
 					</FormItem>

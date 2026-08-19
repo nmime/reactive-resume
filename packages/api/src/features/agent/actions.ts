@@ -1,6 +1,6 @@
 import z from "zod";
 import { protectedProcedure } from "../../context";
-import { isAgentEnvironmentUnavailable, throwUnavailable } from "./routing";
+import { mapAgentEnvironmentError } from "./routing";
 import { agentService } from "./service";
 
 export const actionsRouter = {
@@ -13,12 +13,6 @@ export const actionsRouter = {
 			summary: "Restore agent action snapshot",
 		})
 		.input(z.object({ id: z.string() }))
-		.handler(async ({ context, input }) => {
-			try {
-				return await agentService.actions.revert({ id: input.id, userId: context.user.id });
-			} catch (error) {
-				if (isAgentEnvironmentUnavailable(error)) throwUnavailable();
-				throw error;
-			}
-		}),
+		.use(mapAgentEnvironmentError)
+		.handler(({ context, input }) => agentService.actions.revert({ id: input.id, userId: context.user.id })),
 };

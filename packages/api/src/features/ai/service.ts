@@ -2,12 +2,32 @@ import type { AIProvider } from "@reactive-resume/ai/types";
 import type { ResumeAnalysis } from "@reactive-resume/schema/resume/analysis";
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
 import type { ModelMessage, UIMessage } from "ai";
+import { inflateRawSync } from "node:zlib";
 import { createAnthropic } from "@ai-sdk/anthropic";
+import { createCerebras } from "@ai-sdk/cerebras";
+import { createCohere } from "@ai-sdk/cohere";
+import { createDeepSeek } from "@ai-sdk/deepseek";
+import { createFireworks } from "@ai-sdk/fireworks";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createGroq } from "@ai-sdk/groq";
+import { createMistral } from "@ai-sdk/mistral";
 import { createOpenAI } from "@ai-sdk/openai";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
+import { createPerplexity } from "@ai-sdk/perplexity";
+import { createTogetherAI } from "@ai-sdk/togetherai";
+import { createXai } from "@ai-sdk/xai";
 import { streamToEventIterator } from "@orpc/server";
-import { convertToModelMessages, createGateway, generateText, Output, stepCountIs, streamText, tool } from "ai";
+import {
+	APICallError,
+	convertToModelMessages,
+	createGateway,
+	generateText,
+	LoadAPIKeyError,
+	NoSuchModelError,
+	stepCountIs,
+	streamText,
+	tool,
+} from "ai";
 import { createOllama } from "ollama-ai-provider-v2";
 import { match } from "ts-pattern";
 import { z } from "zod";
@@ -26,9 +46,9 @@ import {
 	resumePatchProposalToolInputSchema,
 	resumePatchProposalToolOutputSchema,
 } from "@reactive-resume/ai/tools/patch-proposal";
-import { aiProviderSchema } from "@reactive-resume/ai/types";
+import { AI_PROVIDER_DEFAULT_BASE_URLS, AI_PROVIDER_DISPLAY_NAMES, aiProviderSchema } from "@reactive-resume/ai/types";
 import { applyResumePatches } from "@reactive-resume/resume/patch";
-import { resumeAnalysisOutputSchema, resumeAnalysisSchema } from "@reactive-resume/schema/resume/analysis";
+import { resumeAnalysisSchema } from "@reactive-resume/schema/resume/analysis";
 import { supportsProviderNativeWebSearch } from "./capabilities";
 import { createOmniRouteCompatibleFetch, isOmniRouteBaseUrl } from "./omniroute-compat";
 import { resolveAiBaseUrl } from "./url-policy";
@@ -73,6 +93,15 @@ type GetModelInput = {
 
 const MAX_AI_FILE_BYTES = 10 * 1024 * 1024; // 10MB
 const MAX_AI_FILE_BASE64_CHARS = Math.ceil((MAX_AI_FILE_BYTES * 4) / 3) + 4;
+const TEST_CONNECTION_MAX_OUTPUT_TOKENS = 128;
+// Long enough for a cold local model to load, short enough that the UI does not look frozen.
+const TEST_CONNECTION_TIMEOUT_MS = 30_000;
+const DOCX_DOCUMENT_XML_PATH = "word/document.xml";
+const ZIP_LOCAL_FILE_HEADER_SIGNATURE = 0x04034b50;
+const ZIP_CENTRAL_DIRECTORY_SIGNATURE = 0x02014b50;
+const ZIP_END_OF_CENTRAL_DIRECTORY_SIGNATURE = 0x06054b50;
+const ZIP_STORED_METHOD = 0;
+const ZIP_DEFLATED_METHOD = 8;
 
 export function getModel(input: GetModelInput) {
 	const { provider, model, apiKey } = input;
@@ -88,6 +117,15 @@ export function getModel(input: GetModelInput) {
 		.with("gemini", () => createGoogleGenerativeAI({ apiKey, baseURL }).languageModel(model))
 		.with("vercel-ai-gateway", () => createGateway({ apiKey, baseURL }).languageModel(model))
 		.with("openrouter", () => createOpenAICompatible({ name: "openrouter", apiKey, baseURL }).languageModel(model))
+		.with("mistral", () => createMistral({ apiKey, baseURL }).languageModel(model))
+		.with("cohere", () => createCohere({ apiKey, baseURL }).languageModel(model))
+		.with("xai", () => createXai({ apiKey, baseURL }).languageModel(model))
+		.with("groq", () => createGroq({ apiKey, baseURL }).languageModel(model))
+		.with("deepseek", () => createDeepSeek({ apiKey, baseURL }).languageModel(model))
+		.with("togetherai", () => createTogetherAI({ apiKey, baseURL }).languageModel(model))
+		.with("fireworks", () => createFireworks({ apiKey, baseURL }).languageModel(model))
+		.with("cerebras", () => createCerebras({ apiKey, baseURL }).languageModel(model))
+		.with("perplexity", () => createPerplexity({ apiKey, baseURL }).languageModel(model))
 		.with("openai-compatible", () =>
 			createOpenAICompatible({ name: "openai-compatible", apiKey, baseURL }).languageModel(model),
 		)
@@ -123,16 +161,135 @@ export const fileInputSchema = z.object({
 
 type TestConnectionInput = z.infer<typeof aiCredentialsSchema>;
 
-export async function testConnection(input: TestConnectionInput): Promise<boolean> {
-	const RESPONSE_OK = "1";
+type TestConnectionResult = { ok: true } | { ok: false; message: string };
 
-	const result = await generateText({
-		model: getModel(input),
-		output: Output.choice({ options: [RESPONSE_OK] }),
-		messages: [{ role: "user", content: `Respond only with JSON Object: { "result": "${RESPONSE_OK}" }` }],
+const NETWORK_ERROR_CODES = new Set([
+	"ECONNREFUSED",
+	"ECONNRESET",
+	"EAI_AGAIN",
+	"ENOTFOUND",
+	"ETIMEDOUT",
+	"UND_ERR_CONNECT_TIMEOUT",
+	"UND_ERR_SOCKET",
+]);
+
+// Provider SDKs wrap the useful error (a socket failure, an abort) inside a generic one, so the
+// signal we need is usually a few `cause` hops down rather than on the error we are handed.
+function findInCauseChain<T>(error: unknown, pick: (candidate: unknown) => T | undefined): T | undefined {
+	let current = error;
+
+	for (let depth = 0; depth < 8 && current !== null && current !== undefined; depth++) {
+		const picked = pick(current);
+		if (picked !== undefined) return picked;
+		current = (current as { cause?: unknown }).cause;
+	}
+
+	return undefined;
+}
+
+function isTimeout(error: unknown): boolean {
+	return (
+		findInCauseChain(error, (candidate) =>
+			candidate instanceof Error && (candidate.name === "TimeoutError" || candidate.name === "AbortError")
+				? true
+				: undefined,
+		) ?? false
+	);
+}
+
+function findNetworkErrorCode(error: unknown): string | undefined {
+	return findInCauseChain(error, (candidate) => {
+		const code = (candidate as { code?: unknown }).code;
+
+		return typeof code === "string" && NETWORK_ERROR_CODES.has(code) ? code : undefined;
 	});
+}
 
-	return result.output === RESPONSE_OK;
+// The key is never part of a response body, but a provider echoing the request would leak it into
+// the message we persist, so scrub it from anything we did not write ourselves. The schema allows
+// keys as short as one character, and a mangled message costs less than a leaked credential, so
+// every non-empty key is redacted. The guard only keeps `replaceAll` from splicing "***" between
+// every character of the message.
+function redactApiKey(message: string, apiKey: string): string {
+	if (!apiKey) return message;
+
+	return message.replaceAll(apiKey, "***");
+}
+
+function describeTestConnectionFailure(input: TestConnectionInput, error: unknown): string {
+	const provider = AI_PROVIDER_DISPLAY_NAMES[input.provider];
+	const endpoint = input.baseURL.trim() || AI_PROVIDER_DEFAULT_BASE_URLS[input.provider];
+
+	if (isTimeout(error)) {
+		return `${provider} did not respond within ${TEST_CONNECTION_TIMEOUT_MS / 1000} seconds. The service may be unreachable, or the model may be too slow to load.`;
+	}
+
+	if (findNetworkErrorCode(error)) {
+		return endpoint
+			? `Could not reach ${endpoint}. Check that the base URL is correct and the service is running.`
+			: `${provider} could not be reached. Check that the base URL is correct and the service is running.`;
+	}
+
+	if (LoadAPIKeyError.isInstance(error)) return `${provider} was configured without an API key.`;
+	if (NoSuchModelError.isInstance(error)) return `${provider} has no model named "${input.model}".`;
+
+	if (APICallError.isInstance(error)) {
+		const status = error.statusCode;
+
+		if (status === 401 || status === 403) return `${provider} rejected the API key.`;
+		if (status === 404) return `${provider} has no model named "${input.model}", or the base URL is wrong.`;
+		if (status === 429) return `${provider} rate-limited the test. Wait a moment and try again.`;
+		if (status !== undefined && status >= 500) {
+			return `${provider} reported a server error (${status}). This is a problem on the provider's side.`;
+		}
+
+		return `${provider} rejected the test request${status === undefined ? "" : ` (${status})`}: ${redactApiKey(error.message, input.apiKey)}`;
+	}
+
+	if (error instanceof Error && error.message) {
+		return `${provider} could not be tested: ${redactApiKey(error.message, input.apiKey)}`;
+	}
+
+	return `${provider} could not be tested, and reported no reason.`;
+}
+
+export async function testConnection(input: TestConnectionInput): Promise<TestConnectionResult> {
+	const RESPONSE_OK = "1";
+	const provider = AI_PROVIDER_DISPLAY_NAMES[input.provider];
+
+	// Resolved outside the try so the base-URL policy error still reaches the router, which turns it
+	// into an invalid-configuration response rather than a provider failure.
+	const model = getModel(input);
+
+	let result: Awaited<ReturnType<typeof generateText>>;
+
+	try {
+		result = await generateText({
+			model,
+			maxOutputTokens: TEST_CONNECTION_MAX_OUTPUT_TOKENS,
+			temperature: 0,
+			// A connection test must not silently multiply its own wait by retrying behind the user.
+			maxRetries: 0,
+			abortSignal: AbortSignal.timeout(TEST_CONNECTION_TIMEOUT_MS),
+			messages: [{ role: "user", content: `Respond only with the single character: ${RESPONSE_OK}` }],
+		});
+	} catch (error) {
+		return { ok: false, message: describeTestConnectionFailure(input, error) };
+	}
+
+	if (result.text.trim() === RESPONSE_OK) return { ok: true };
+
+	if (result.finishReason === "length") {
+		return {
+			ok: false,
+			message: `${provider} is reachable, but the model returned too much text during the test. Try a model that follows short instructions.`,
+		};
+	}
+
+	return {
+		ok: false,
+		message: `${provider} is reachable, but the model replied with unexpected output instead of a simple confirmation.`,
+	};
 }
 
 type ParsePdfInput = z.infer<typeof aiCredentialsSchema> & {
@@ -140,23 +297,17 @@ type ParsePdfInput = z.infer<typeof aiCredentialsSchema> & {
 };
 
 type BuildResumeParsingMessagesInput = {
-	systemPrompt: string;
 	userPrompt: string;
 	file: z.infer<typeof fileInputSchema>;
 	mediaType: string;
 };
 
-function buildResumeParsingMessages({
-	systemPrompt,
-	userPrompt,
-	file,
-	mediaType,
-}: BuildResumeParsingMessagesInput): ModelMessage[] {
+function buildResumeParsingSystemPrompt(systemPrompt: string): string {
+	return `${systemPrompt}\n\nIMPORTANT: You must return ONLY raw valid JSON. Do not return markdown, do not return explanations. Just the JSON object. Use the following JSON as a template and fill in the extracted values. For arrays, you MUST use the exact key names shown in the template (e.g. use 'description' instead of 'summary', 'website' instead of 'url'):\n\n${JSON.stringify(aiExtractionTemplate, null, 2)}`;
+}
+
+function buildResumeParsingMessages({ userPrompt, file, mediaType }: BuildResumeParsingMessagesInput): ModelMessage[] {
 	return [
-		{
-			role: "system",
-			content: `${systemPrompt}\n\nIMPORTANT: You must return ONLY raw valid JSON. Do not return markdown, do not return explanations. Just the JSON object. Use the following JSON as a template and fill in the extracted values. For arrays, you MUST use the exact key names shown in the template (e.g. use 'description' instead of 'summary', 'website' instead of 'url'):\n\n${JSON.stringify(aiExtractionTemplate, null, 2)}`,
-		},
 		{
 			role: "user",
 			content: [
@@ -167,13 +318,27 @@ function buildResumeParsingMessages({
 	];
 }
 
+function buildResumeParsingTextMessages({ userPrompt, text }: { userPrompt: string; text: string }): ModelMessage[] {
+	return [
+		{
+			role: "user",
+			content: [
+				{
+					type: "text",
+					text: `${userPrompt}\n\nThe Microsoft Word file has been converted to plain text below.\n\n${text}`,
+				},
+			],
+		},
+	];
+}
+
 async function parsePdf(input: ParsePdfInput): Promise<ResumeData> {
 	const model = getModel(input);
 
 	const result = await generateText({
 		model,
+		system: buildResumeParsingSystemPrompt(pdfParserSystemPrompt),
 		messages: buildResumeParsingMessages({
-			systemPrompt: pdfParserSystemPrompt,
 			userPrompt: pdfParserUserPrompt,
 			file: input.file,
 			mediaType: "application/pdf",
@@ -188,17 +353,117 @@ type ParseDocxInput = z.infer<typeof aiCredentialsSchema> & {
 	mediaType: "application/msword" | "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 };
 
+function assertZipRange(buffer: Buffer, offset: number, length: number) {
+	if (offset < 0 || length < 0 || offset + length > buffer.length) throw new Error("Invalid DOCX archive.");
+}
+
+function findEndOfCentralDirectory(buffer: Buffer): number {
+	const minOffset = Math.max(0, buffer.length - 0xffff - 22);
+
+	for (let offset = buffer.length - 22; offset >= minOffset; offset--) {
+		if (buffer.readUInt32LE(offset) === ZIP_END_OF_CENTRAL_DIRECTORY_SIGNATURE) return offset;
+	}
+
+	throw new Error("Invalid DOCX archive.");
+}
+
+function readZipEntry(buffer: Buffer, entryName: string): Buffer {
+	const eocdOffset = findEndOfCentralDirectory(buffer);
+	assertZipRange(buffer, eocdOffset, 22);
+
+	const centralDirectorySize = buffer.readUInt32LE(eocdOffset + 12);
+	const centralDirectoryOffset = buffer.readUInt32LE(eocdOffset + 16);
+	assertZipRange(buffer, centralDirectoryOffset, centralDirectorySize);
+
+	let offset = centralDirectoryOffset;
+	const endOffset = centralDirectoryOffset + centralDirectorySize;
+
+	while (offset < endOffset) {
+		assertZipRange(buffer, offset, 46);
+		if (buffer.readUInt32LE(offset) !== ZIP_CENTRAL_DIRECTORY_SIGNATURE) throw new Error("Invalid DOCX archive.");
+
+		const compressionMethod = buffer.readUInt16LE(offset + 10);
+		const compressedSize = buffer.readUInt32LE(offset + 20);
+		const fileNameLength = buffer.readUInt16LE(offset + 28);
+		const extraFieldLength = buffer.readUInt16LE(offset + 30);
+		const commentLength = buffer.readUInt16LE(offset + 32);
+		const localHeaderOffset = buffer.readUInt32LE(offset + 42);
+		const fileNameOffset = offset + 46;
+		assertZipRange(buffer, fileNameOffset, fileNameLength);
+
+		const fileName = buffer.toString("utf8", fileNameOffset, fileNameOffset + fileNameLength);
+
+		if (fileName === entryName) {
+			assertZipRange(buffer, localHeaderOffset, 30);
+			if (buffer.readUInt32LE(localHeaderOffset) !== ZIP_LOCAL_FILE_HEADER_SIGNATURE) {
+				throw new Error("Invalid DOCX archive.");
+			}
+
+			const localFileNameLength = buffer.readUInt16LE(localHeaderOffset + 26);
+			const localExtraFieldLength = buffer.readUInt16LE(localHeaderOffset + 28);
+			const dataOffset = localHeaderOffset + 30 + localFileNameLength + localExtraFieldLength;
+			assertZipRange(buffer, dataOffset, compressedSize);
+
+			const compressed = buffer.subarray(dataOffset, dataOffset + compressedSize);
+			if (compressionMethod === ZIP_STORED_METHOD) return compressed;
+			if (compressionMethod === ZIP_DEFLATED_METHOD) return inflateRawSync(compressed);
+
+			throw new Error("Unsupported DOCX archive compression.");
+		}
+
+		offset = fileNameOffset + fileNameLength + extraFieldLength + commentLength;
+	}
+
+	throw new Error("DOCX document content not found.");
+}
+
+function decodeXmlEntities(value: string): string {
+	return value.replace(/&(#x[\da-f]+|#\d+|amp|lt|gt|quot|apos);/gi, (entity, token: string) => {
+		if (token === "amp") return "&";
+		if (token === "lt") return "<";
+		if (token === "gt") return ">";
+		if (token === "quot") return '"';
+		if (token === "apos") return "'";
+		if (token.toLowerCase().startsWith("#x")) return String.fromCodePoint(Number.parseInt(token.slice(2), 16));
+		if (token.startsWith("#")) return String.fromCodePoint(Number.parseInt(token.slice(1), 10));
+		return entity;
+	});
+}
+
+function extractDocxText(file: z.infer<typeof fileInputSchema>): string {
+	const documentXml = readZipEntry(Buffer.from(file.data, "base64"), DOCX_DOCUMENT_XML_PATH).toString("utf8");
+	// ponytail: minimal OOXML body-text extraction; add a DOCX parser dependency if tracked changes matter.
+	const text = decodeXmlEntities(
+		documentXml
+			.replace(/<w:tab\b[^>]*\/>/g, "\t")
+			.replace(/<w:br\b[^>]*\/>/g, "\n")
+			.replace(/<\/w:p>/g, "\n")
+			.replace(/<[^>]+>/g, ""),
+	)
+		.replace(/\r/g, "")
+		.replace(/[ \t]+\n/g, "\n")
+		.replace(/\n{3,}/g, "\n\n")
+		.trim();
+
+	if (!text) throw new Error("DOCX document content is empty.");
+	return text;
+}
+
 async function parseDocx(input: ParseDocxInput): Promise<ResumeData> {
 	const model = getModel(input);
+	const messages =
+		input.mediaType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+			? buildResumeParsingTextMessages({ userPrompt: docxParserUserPrompt, text: extractDocxText(input.file) })
+			: buildResumeParsingMessages({
+					userPrompt: docxParserUserPrompt,
+					file: input.file,
+					mediaType: input.mediaType,
+				});
 
 	const result = await generateText({
 		model,
-		messages: buildResumeParsingMessages({
-			systemPrompt: docxParserSystemPrompt,
-			userPrompt: docxParserUserPrompt,
-			file: input.file,
-			mediaType: input.mediaType,
-		}),
+		system: buildResumeParsingSystemPrompt(docxParserSystemPrompt),
+		messages,
 	}).catch((error: unknown) => logAndRethrow("Failed to generate the text with the model", error));
 
 	return parseAndValidateResumeJson(result.text);
@@ -228,7 +493,7 @@ async function chat(input: ChatInput) {
 					"Return one or more cohesive resume change proposals. Each proposal must include a title, optional summary, and valid JSON Patch operations against the current resume data. The tool validates but does not apply changes.",
 				inputSchema: resumePatchProposalToolInputSchema,
 				outputSchema: resumePatchProposalToolOutputSchema,
-				execute: async (toolInput) => {
+				execute: (toolInput) => {
 					const proposals = normalizeResumePatchProposals(toolInput, input.resumeUpdatedAt);
 
 					for (const proposal of proposals) {
@@ -249,32 +514,43 @@ type AnalyzeResumeInput = z.infer<typeof aiCredentialsSchema> & {
 	resumeData: ResumeData;
 };
 
-function buildAnalyzeResumeSystemPrompt(resumeData: ResumeData): string {
-	return `${analyzeResumeSystemPromptTemplate}\n\n## Resume Data\n\n${JSON.stringify(resumeData, null, 2)}`;
+function buildAnalyzeResumeSystemPrompt(resumeData: ResumeData, now = new Date()): string {
+	const currentDate = now.toISOString().slice(0, 10);
+	return `${analyzeResumeSystemPromptTemplate}\n\n## Analysis Context\n\nCurrent date: ${currentDate} (UTC). Treat dates on or before this date as not future-dated. Flag a date as future-dated only when it is after the current date.\n\n## Resume Data\n\n${JSON.stringify(resumeData, null, 2)}`;
 }
 
+/** Sends resume data to the AI provider and returns a structured analysis, parsing raw JSON from the response text. */
 async function analyzeResume(input: AnalyzeResumeInput): Promise<ResumeAnalysis> {
 	const model = getModel(input);
 	const systemPrompt = buildAnalyzeResumeSystemPrompt(input.resumeData);
 
 	const result = await generateText({
 		model,
-		output: Output.object({ schema: resumeAnalysisOutputSchema }),
+		system: systemPrompt,
 		messages: [
-			{ role: "system", content: systemPrompt },
 			{
 				role: "user",
 				content:
-					"Analyze this resume and return a structured report with scorecard, overall score, strengths, and actionable suggestions.",
+					"Analyze this resume and return a structured report with scorecard, overall score, strengths, and actionable suggestions. Return ONLY raw JSON, no markdown fences or explanations.",
 			},
 		],
 	});
 
-	if (result.output == null) {
+	const text = result.text;
+	const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+	const candidate = fenceMatch?.[1] ?? text;
+
+	const firstBrace = candidate.indexOf("{");
+	const lastBrace = candidate.lastIndexOf("}");
+
+	if (firstBrace === -1 || lastBrace === -1 || lastBrace < firstBrace) {
 		throw new Error("AI returned no structured analysis output.");
 	}
 
-	return resumeAnalysisSchema.parse(result.output);
+	const jsonString = candidate.substring(firstBrace, lastBrace + 1);
+	const parsed = JSON.parse(jsonString);
+
+	return resumeAnalysisSchema.parse(parsed);
 }
 
 export const aiService = {

@@ -15,7 +15,6 @@ import {
 	TrashSimpleIcon,
 } from "@phosphor-icons/react";
 import { AnimatePresence, Reorder } from "motion/react";
-import { match } from "ts-pattern";
 import { Badge } from "@reactive-resume/ui/components/badge";
 import {
 	DropdownMenu,
@@ -33,89 +32,97 @@ import {
 import { stripHtml } from "@reactive-resume/utils/string";
 import { cn } from "@reactive-resume/utils/style";
 import { useDialogStore } from "@/dialogs/store";
-import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useConfirm } from "@/hooks/use-confirm";
 import { getSectionTitle } from "@/libs/resume/section";
 import { SectionBase } from "../shared/section-base";
 import { SectionAddItemButton, SectionItem } from "../shared/section-item";
 
+// ponytail: data maps replace ts-pattern exhaustive matchers — same coverage, no runtime dependency
+const TITLE_FIELD: Partial<Record<CustomSectionType, string>> = {
+	profiles: "network",
+	experience: "company",
+	education: "school",
+	projects: "name",
+	skills: "name",
+	languages: "language",
+	interests: "name",
+	awards: "title",
+	certifications: "title",
+	publications: "title",
+	volunteer: "organization",
+	references: "name",
+};
+
+const SUBTITLE_FIELD: Partial<Record<CustomSectionType, string>> = {
+	profiles: "username",
+	experience: "position",
+	education: "degree",
+	projects: "period",
+	skills: "proficiency",
+	languages: "fluency",
+	awards: "awarder",
+	certifications: "issuer",
+	publications: "publisher",
+	volunteer: "period",
+};
+
+function truncateHtml(html: string, max = 50): string {
+	const stripped = stripHtml(html);
+	return stripped.length > max ? `${stripped.slice(0, max)}...` : stripped;
+}
+
 function getItemTitle(type: CustomSectionType, item: CustomSectionItemType): string {
-	return match(type)
-		.with("summary", () => {
-			if ("content" in item) {
-				const stripped = stripHtml(item.content);
-				return stripped.length > 50
-					? `${stripped.slice(0, 50)}...`
-					: stripped ||
-							t({
-								comment: "Fallback title for a custom summary item in resume builder when content is empty",
-								message: "Summary",
-							});
-			}
-			return t({
-				comment: "Fallback title for a custom summary item in resume builder when content is unavailable",
-				message: "Summary",
-			});
-		})
-		.with("profiles", () => ("network" in item ? item.network : ""))
-		.with("experience", () => ("company" in item ? item.company : ""))
-		.with("education", () => ("school" in item ? item.school : ""))
-		.with("projects", () => ("name" in item ? item.name : ""))
-		.with("skills", () => ("name" in item ? item.name : ""))
-		.with("languages", () => ("language" in item ? item.language : ""))
-		.with("interests", () => ("name" in item ? item.name : ""))
-		.with("awards", () => ("title" in item ? item.title : ""))
-		.with("certifications", () => ("title" in item ? item.title : ""))
-		.with("publications", () => ("title" in item ? item.title : ""))
-		.with("volunteer", () => ("organization" in item ? item.organization : ""))
-		.with("references", () => ("name" in item ? item.name : ""))
-		.with("cover-letter", () => {
-			if ("recipient" in item) {
-				const stripped = stripHtml(item.recipient);
-				return stripped.length > 50
-					? `${stripped.slice(0, 50)}...`
-					: stripped ||
-							t({
-								comment: "Fallback title for a custom cover letter item in resume builder when recipient is empty",
-								message: "Cover Letter",
-							});
-			}
-			return t({
-				comment: "Fallback title for a custom cover letter item in resume builder when recipient is unavailable",
-				message: "Cover Letter",
-			});
-		})
-		.exhaustive();
+	if (type === "summary") {
+		if ("content" in item) {
+			return (
+				truncateHtml(item.content) ||
+				t({
+					comment: "Fallback title for a custom summary item in resume builder when content is empty",
+					message: "Summary",
+				})
+			);
+		}
+		return t({
+			comment: "Fallback title for a custom summary item in resume builder when content is unavailable",
+			message: "Summary",
+		});
+	}
+	if (type === "cover-letter") {
+		if ("recipient" in item) {
+			return (
+				truncateHtml(item.recipient) ||
+				t({
+					comment: "Fallback title for a custom cover letter item in resume builder when recipient is empty",
+					message: "Cover Letter",
+				})
+			);
+		}
+		return t({
+			comment: "Fallback title for a custom cover letter item in resume builder when recipient is unavailable",
+			message: "Cover Letter",
+		});
+	}
+	const field = TITLE_FIELD[type];
+	return field && field in item ? String((item as Record<string, unknown>)[field]) : "";
 }
 
 function getItemSubtitle(type: CustomSectionType, item: CustomSectionItemType): string | undefined {
-	return match(type)
-		.with("summary", () => undefined)
-		.with("profiles", () => ("username" in item ? item.username : undefined))
-		.with("experience", () => ("position" in item ? item.position : undefined))
-		.with("education", () => ("degree" in item ? item.degree : undefined))
-		.with("projects", () => ("period" in item ? item.period : undefined))
-		.with("skills", () => ("proficiency" in item ? item.proficiency : undefined))
-		.with("languages", () => ("fluency" in item ? item.fluency : undefined))
-		.with("interests", () => undefined)
-		.with("awards", () => ("awarder" in item ? item.awarder : undefined))
-		.with("certifications", () => ("issuer" in item ? item.issuer : undefined))
-		.with("publications", () => ("publisher" in item ? item.publisher : undefined))
-		.with("volunteer", () => ("period" in item ? item.period : undefined))
-		.with("references", () => undefined)
-		.with("cover-letter", () => {
-			if ("content" in item) {
-				const stripped = stripHtml(item.content);
-				return stripped.length > 50 ? `${stripped.slice(0, 50)}...` : stripped || undefined;
-			}
-			return undefined;
-		})
-		.exhaustive();
+	if (type === "cover-letter") {
+		if ("content" in item) {
+			const result = truncateHtml(item.content);
+			return result || undefined;
+		}
+		return undefined;
+	}
+	const field = SUBTITLE_FIELD[type];
+	if (!field || !(field in item)) return undefined;
+	const value = (item as Record<string, unknown>)[field];
+	return typeof value === "string" ? value || undefined : undefined;
 }
 
 export function CustomSectionBuilder() {
-	const resume = useCurrentResume();
-	const customSections = resume.data.customSections;
+	const customSections = useCurrentBuilderResumeSelector((resume) => resume.data.customSections);
 
 	return (
 		<SectionBase type="custom" className={cn("space-y-4", customSections.length === 0 && "border-dashed")}>
@@ -266,7 +273,7 @@ function CustomSectionDropdownMenu({ section }: CustomSectionDropdownMenuProps) 
 
 	return (
 		<DropdownMenu>
-			<DropdownMenuTrigger>
+			<DropdownMenuTrigger aria-label={t`Section options`}>
 				<DotsThreeVerticalIcon />
 			</DropdownMenuTrigger>
 

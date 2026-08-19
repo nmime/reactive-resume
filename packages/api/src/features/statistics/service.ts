@@ -1,10 +1,6 @@
-import fs from "node:fs/promises";
-import { dirname, join } from "node:path";
 import { count } from "drizzle-orm";
 import { db } from "@reactive-resume/db/client";
 import * as schema from "@reactive-resume/db/schema";
-import { env } from "@reactive-resume/env/server";
-import { getLocalDataDirectory } from "@reactive-resume/utils/monorepo.node";
 
 const CACHE_DURATION_MS = 6 * 60 * 60 * 1000; // 6 hours
 const GITHUB_API_URL = "https://api.github.com/repos/amruthpillai/reactive-resume";
@@ -17,38 +13,20 @@ const LAST_KNOWN = {
 	stars: 34_073,
 } as const;
 
-const getCachePath = (key: string) => join(getLocalDataDirectory(env.LOCAL_STORAGE_PATH), "statistics", `${key}.txt`);
+// ponytail: file-based disk cache replaced with module-level memo; LAST_KNOWN fallbacks cover restarts
+const memCache = new Map<string, { value: number; cachedAt: number }>();
 
-const readCache = async (key: string): Promise<number | null> => {
-	try {
-		const filePath = getCachePath(key);
-		const [stats, contents] = await Promise.all([fs.stat(filePath), fs.readFile(filePath, "utf-8")]);
+/** Clear all cached statistics. Exposed for test isolation only. */
+export const clearStatisticsCache = () => memCache.clear();
 
-		if (stats.mtimeMs < Date.now() - CACHE_DURATION_MS) return null;
-
-		const value = Number.parseInt(contents, 10);
-		return Number.isFinite(value) && value >= 0 ? value : null;
-	} catch {
-		return null;
-	}
+const getCached = (key: string): number | null => {
+	const entry = memCache.get(key);
+	if (!entry || Date.now() - entry.cachedAt >= CACHE_DURATION_MS) return null;
+	return entry.value;
 };
 
-const writeCache = async (key: string, value: number) => {
-	try {
-		const filePath = getCachePath(key);
-		await fs.mkdir(dirname(filePath), { recursive: true });
-
-		const contents = String(value);
-		try {
-			if ((await fs.readFile(filePath, "utf-8")) === contents) return;
-		} catch {
-			// Cache file does not exist yet.
-		}
-
-		await fs.writeFile(filePath, contents, "utf-8");
-	} catch {
-		// Ignore errors, cache is not critical
-	}
+const setCached = (key: string, value: number) => {
+	memCache.set(key, { value, cachedAt: Date.now() });
 };
 
 const getCachedCount = async (
@@ -56,13 +34,13 @@ const getCachedCount = async (
 	lastKnown: number,
 	fetcher: () => Promise<number | null>,
 ): Promise<number> => {
-	const cached = await readCache(key);
+	const cached = getCached(key);
 	if (cached !== null) return cached;
 
 	try {
 		const value = await fetcher();
 		if (value !== null) {
-			await writeCache(key, value);
+			setCached(key, value);
 			return value;
 		}
 	} catch {

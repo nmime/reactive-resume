@@ -113,6 +113,7 @@ vi.mock("../storage/service", () => ({
 vi.mock("./resume", () => ({
 	buildAgentDraftResumeName: vi.fn(),
 	buildUniqueAgentDraftSlug: vi.fn(),
+	normalizeAgentResumePatchOperations: vi.fn((_data, operations) => operations),
 }));
 vi.mock("./runs", () => ({
 	claimActiveAgentRun: claimActiveAgentRunMock,
@@ -1034,6 +1035,90 @@ describe("agentService.messages.send", () => {
 
 		// Ensure we never tried to claim a run or persist anything for an archived thread.
 		expect(aiProvidersServiceMock.getRunnableById).not.toHaveBeenCalled();
+	});
+});
+
+describe("agentService.messages.stop", () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+	});
+
+	// Regression: stop() must abort the run with an AbortError. A bare-string abort reason is not
+	// recognized by the AI SDK as a cancellation, so its rejection escapes the background stream
+	// pump and crashes the whole process with ERR_UNHANDLED_REJECTION.
+	it("aborts the active run with an AbortError the AI SDK recognizes as a cancellation", async () => {
+		const activeThread = buildActiveThread();
+		const persistedMessage = {
+			id: "message-1",
+			userId: "user-1",
+			threadId: "thread-1",
+			role: "user",
+			status: "completed",
+			sequence: 0,
+			uiMessage: { id: "ui-message-1", role: "user", parts: [{ type: "text", text: "hi" }] },
+		};
+
+		dbMock.select
+			// send(): getThread, next sequence, message count, thread messages
+			.mockImplementationOnce(() => selectLimitResult([activeThread]))
+			.mockImplementationOnce(() => selectWhereResult([{ maxSequence: -1 }]))
+			.mockImplementationOnce(() => selectWhereResult([{ total: 1 }]))
+			.mockImplementationOnce(() => selectOrderByResult([persistedMessage]))
+			// stop(): getThread now reports the active run registered by send() (generateId() -> "test-id")
+			.mockImplementationOnce(() =>
+				selectLimitResult([buildActiveThread({ activeRunId: "test-id", activeStreamId: "test-id" })]),
+			);
+
+		dbMock.insert.mockReturnValue({
+			values: vi.fn(() => ({ returning: vi.fn(async () => [persistedMessage]) })),
+		});
+		dbMock.update.mockReturnValue({ set: vi.fn(() => ({ where: vi.fn(async () => undefined) })) });
+
+		claimActiveAgentRunMock.mockResolvedValue(true);
+		clearActiveAgentRunIfCurrentMock.mockResolvedValue(undefined);
+		aiProvidersServiceMock.getRunnableById.mockResolvedValue({
+			id: "provider-1",
+			provider: "openai",
+			model: "gpt-5",
+			apiKey: "secret",
+			baseURL: null,
+		});
+		aiProvidersServiceMock.markUsed.mockResolvedValue(undefined);
+
+		const [{ convertToModelMessages, ToolLoopAgent }, { agentStreamLifecycle }, { streamToEventIterator }] =
+			await Promise.all([import("ai"), import("./streams"), import("@orpc/server")]);
+		vi.mocked(convertToModelMessages).mockResolvedValue([{ role: "user", content: [{ type: "text", text: "hi" }] }]);
+
+		let capturedSignal: AbortSignal | undefined;
+		class MockToolLoopAgent {
+			stream = vi.fn(({ abortSignal }: { abortSignal: AbortSignal }) => {
+				capturedSignal = abortSignal;
+				return { toUIMessageStream: vi.fn(() => new ReadableStream()) };
+			});
+		}
+		vi.mocked(ToolLoopAgent).mockImplementation(MockToolLoopAgent as never);
+		vi.mocked(agentStreamLifecycle.create).mockResolvedValue(new ReadableStream());
+		vi.mocked(streamToEventIterator).mockReturnValue("iterator" as never);
+
+		const { agentService } = await import("./service");
+
+		await agentService.messages.send({
+			threadId: "thread-1",
+			userId: "user-1",
+			// biome-ignore lint/suspicious/noExplicitAny: minimal fixture for unit test
+			message: { id: "ui-message-1", role: "user", parts: [{ type: "text", text: "hi" }] } as any,
+		});
+
+		expect(capturedSignal).toBeDefined();
+		expect(capturedSignal?.aborted).toBe(false);
+
+		await agentService.messages.stop({ userId: "user-1", threadId: "thread-1" });
+
+		expect(capturedSignal?.aborted).toBe(true);
+		const reason = capturedSignal?.reason as Error;
+		expect(reason).toBeInstanceOf(Error);
+		expect(reason.name).toBe("AbortError");
+		expect(reason.message).toBe("USER_STOPPED");
 	});
 });
 

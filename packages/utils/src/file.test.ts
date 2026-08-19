@@ -2,7 +2,7 @@
  * @vitest-environment happy-dom
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { downloadFromUrl, downloadWithAnchor, generateFilename } from "./file";
+import { downloadWithAnchor, generateFilename } from "./file";
 
 describe("generateFilename", () => {
 	it("slugifies the prefix without extension", () => {
@@ -86,47 +86,5 @@ describe("downloadWithAnchor", () => {
 		expect(revokeObjectURLSpy).not.toHaveBeenCalled();
 		vi.advanceTimersByTime(1);
 		expect(revokeObjectURLSpy).toHaveBeenCalledWith("blob:mock-url");
-	});
-});
-
-describe("downloadFromUrl", () => {
-	let originalFetch: typeof global.fetch;
-	let createObjectURLSpy: ReturnType<typeof vi.fn<typeof URL.createObjectURL>>;
-	let revokeObjectURLSpy: ReturnType<typeof vi.fn<typeof URL.revokeObjectURL>>;
-	let originalCreate: typeof URL.createObjectURL;
-	let originalRevoke: typeof URL.revokeObjectURL;
-
-	beforeEach(() => {
-		originalFetch = global.fetch;
-		originalCreate = URL.createObjectURL;
-		originalRevoke = URL.revokeObjectURL;
-		createObjectURLSpy = vi.fn<typeof URL.createObjectURL>(() => "blob:mock-url");
-		revokeObjectURLSpy = vi.fn<typeof URL.revokeObjectURL>();
-		URL.createObjectURL = createObjectURLSpy;
-		URL.revokeObjectURL = revokeObjectURLSpy;
-	});
-
-	afterEach(() => {
-		global.fetch = originalFetch;
-		URL.createObjectURL = originalCreate;
-		URL.revokeObjectURL = originalRevoke;
-	});
-
-	it("fetches the URL and downloads the resulting blob", async () => {
-		const mockBlob = new Blob(["data"], { type: "application/pdf" });
-		global.fetch = vi.fn(() =>
-			Promise.resolve(new Response(mockBlob, { status: 200 })),
-		) as unknown as typeof global.fetch;
-		vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
-
-		await downloadFromUrl("https://example.com/file.pdf", "file.pdf");
-
-		expect(global.fetch).toHaveBeenCalledWith("https://example.com/file.pdf");
-		expect(createObjectURLSpy).toHaveBeenCalled();
-	});
-
-	it("propagates fetch errors", async () => {
-		global.fetch = vi.fn(() => Promise.reject(new Error("network down"))) as unknown as typeof global.fetch;
-		await expect(downloadFromUrl("https://example.com", "x.pdf")).rejects.toThrow("network down");
 	});
 });

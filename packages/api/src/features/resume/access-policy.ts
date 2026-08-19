@@ -53,10 +53,9 @@ export function redactResumeForViewer<T extends { name: string; data: ResumeData
 	viewerIsOwner: boolean,
 ): T {
 	if (viewerIsOwner) return resume;
-
 	return {
 		...resume,
-		name: "",
+		name: "Resume",
 		data: {
 			...resume.data,
 			metadata: {

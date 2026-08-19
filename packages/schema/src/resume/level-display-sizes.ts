@@ -1,10 +1,10 @@
-export type ResolveLevelDisplaySizesOptions = {
+type ResolveLevelDisplaySizesOptions = {
 	bodyFontSize: number;
 	iconFontSize?: number | undefined;
 	levelFontSize?: number | undefined;
 };
 
-export type LevelDisplaySizes = {
+type LevelDisplaySizes = {
 	decorationSize: number;
 	levelIconExplicitSize?: number | undefined;
 };

@@ -2,7 +2,8 @@ import type { ResumePreviewProps } from "./preview.shared";
 import { lazy, Suspense } from "react";
 import { useIsClient } from "usehooks-ts";
 import { useResumeData } from "../builder/draft";
-import { getResumePreviewPageCount, normalizeResumePreviewProps, ResumePreviewLoader } from "./preview.shared";
+import { ResumePreviewLoader } from "./preview.shared";
+import { getResumePreviewPageCount } from "./preview.shared.utils";
 
 const ResumePreviewClient = lazy(() =>
 	import("./preview.browser").then((module) => ({ default: module.ResumePreviewClient })),
@@ -10,25 +11,33 @@ const ResumePreviewClient = lazy(() =>
 
 export type { ResumePreviewProps };
 
-export function ResumePreview(props: ResumePreviewProps) {
+// ponytail: normalizeResumePreviewProps removed — defaults inlined here, single call site
+export function ResumePreview({
+	pageGap = 16,
+	pageLayout = "horizontal",
+	pageScale = 1,
+	showPageNumbers = false,
+	...rest
+}: ResumePreviewProps) {
 	const isClient = useIsClient();
-	const resolvedProps = normalizeResumePreviewProps(props);
 	const builderResumeData = useResumeData();
-	const resumeData = resolvedProps.data ?? builderResumeData;
+	const resumeData = rest.data ?? builderResumeData;
 	const pageCount = getResumePreviewPageCount(resumeData);
 
 	if (!isClient) return null;
+
+	const resolvedProps = { ...rest, pageGap, pageLayout, pageScale, showPageNumbers };
 
 	return (
 		<Suspense
 			fallback={
 				<ResumePreviewLoader
 					pageCount={pageCount}
-					pageClassName={resolvedProps.pageClassName}
-					pageGap={resolvedProps.pageGap}
-					pageLayout={resolvedProps.pageLayout}
-					pageScale={resolvedProps.pageScale}
-					showPageNumbers={resolvedProps.showPageNumbers}
+					pageClassName={rest.pageClassName}
+					pageGap={pageGap}
+					pageLayout={pageLayout}
+					pageScale={pageScale}
+					showPageNumbers={showPageNumbers}
 				/>
 			}
 		>

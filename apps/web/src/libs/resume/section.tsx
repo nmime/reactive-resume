@@ -25,6 +25,7 @@ import {
 	PaletteIcon,
 	PhoneIcon,
 	ReadCvLogoIcon,
+	SealCheckIcon,
 	ShareFatIcon,
 	StarIcon,
 	TextTIcon,
@@ -52,6 +53,7 @@ export type RightSidebarSection =
 	| "notes"
 	| "sharing"
 	| "statistics"
+	| "ats"
 	| "analysis"
 	| "export"
 	| "information";
@@ -80,13 +82,14 @@ export const leftSidebarSections: LeftSidebarSection[] = [
 export const rightSidebarSections: RightSidebarSection[] = [
 	"template",
 	"layout",
+	"sharing",
+	"statistics",
 	"typography",
 	"design",
 	"styles",
 	"page",
 	"notes",
-	"sharing",
-	"statistics",
+	"ats",
 	"analysis",
 	"export",
 	"information",
@@ -126,6 +129,7 @@ export const getSectionTitle = (type: SidebarSection | CustomOnlyType): string =
 			.with("notes", () => t`Notes`)
 			.with("sharing", () => t`Sharing`)
 			.with("statistics", () => t`Statistics`)
+			.with("ats", () => t`ATS Check`)
 			.with("analysis", () => t`Resume Analysis`)
 			.with("export", () => t`Export`)
 			.with("information", () => t`Information`)
@@ -170,6 +174,7 @@ export const getSectionIcon = (type: SidebarSection | CustomOnlyType, props?: Ic
 			.with("notes", () => <NotepadIcon {...iconProps} />)
 			.with("sharing", () => <ShareFatIcon {...iconProps} />)
 			.with("statistics", () => <ChartLineIcon {...iconProps} />)
+			.with("ats", () => <SealCheckIcon {...iconProps} />)
 			.with("analysis", () => <BrainIcon {...iconProps} />)
 			.with("export", () => <DownloadIcon {...iconProps} />)
 			.with("information", () => <InfoIcon {...iconProps} />)

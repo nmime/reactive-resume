@@ -44,7 +44,9 @@ export const createVitestProjectConfig = ({
 			include: ["src/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
 			exclude: ["node_modules", "dist", ".output", "coverage", "reports"],
 			pool: "threads",
-			isolate: false,
+			// Isolation stays on: without it, test files in a worker share one module registry, so a
+			// `vi.mock` in one file leaks into another and whichever file imported a module first wins.
+			// That made every suite mocking `@reactive-resume/env/server` order-dependent and flaky.
 			passWithNoTests: true,
 			coverage: {
 				provider: "v8",

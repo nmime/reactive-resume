@@ -15,7 +15,7 @@ import { getAgentModel } from "../ai/service";
 import { aiProvidersService } from "../ai-providers/service";
 import { resumeService } from "../resume/service";
 import { getStorageService, inferContentType } from "../storage/service";
-import { buildAgentDraftResumeName, buildUniqueAgentDraftSlug } from "./resume";
+import { buildAgentDraftResumeName, buildUniqueAgentDraftSlug, normalizeAgentResumePatchOperations } from "./resume";
 import { claimActiveAgentRun, clearActiveAgentRunIfCurrent } from "./runs";
 import { agentStreamLifecycle } from "./streams";
 import { buildAgentInstructions, buildAgentTools } from "./tools";
@@ -40,6 +40,12 @@ const ROLLED_BACK_MESSAGE = "This patch was rolled back when the resume was rest
 
 const activeRunControllers = new Map<string, AbortController>();
 const canceledRunsWithPersistedPartial = new Set<string>();
+
+// Abort reasons MUST be an AbortError: the AI SDK only treats `err.name === "AbortError"`
+// (via isAbortError) as a cancellation. A bare-string reason is treated as a genuine stream
+// error whose rejection escapes the background (resumable-stream) pump and takes down the whole
+// process with ERR_UNHANDLED_REJECTION. The label is preserved as the DOMException message.
+const abortReason = (label: string) => new DOMException(label, "AbortError");
 
 type AgentThreadRecord = typeof schema.agentThread.$inferSelect;
 type AgentMessageRecord = typeof schema.agentMessage.$inferSelect;
@@ -310,17 +316,6 @@ export function buildAttachmentModelParts(input: AttachmentModelInput[]): Array<
 	});
 }
 
-function appendUserModelParts(message: ModelMessage, parts: Array<TextPart | ImagePart | FilePart>): ModelMessage {
-	if (parts.length === 0 || message.role !== "user") return message;
-
-	const content =
-		typeof message.content === "string" ? [{ type: "text" as const, text: message.content }] : message.content;
-	return {
-		...message,
-		content: [...content, ...parts],
-	};
-}
-
 function uniqueAttachmentIds(ids: unknown) {
 	if (ids === undefined) return [];
 	if (!Array.isArray(ids)) {
@@ -343,20 +338,11 @@ function uniqueAttachmentIds(ids: unknown) {
 		throw new ORPCError("BAD_REQUEST", { message: "Attachment IDs must be unique." });
 	}
 
-	if (unique.size > MAX_ATTACHMENTS_PER_MESSAGE) {
-		throw new ORPCError("BAD_REQUEST", { message: "Too many attachments for one message." });
-	}
-
-	return Array.from(unique);
-}
-
-function normalizeAttachmentIds(ids: unknown) {
-	const unique = uniqueAttachmentIds(ids);
-	return unique;
+	return [...unique];
 }
 
 async function getUnlinkedMessageAttachments(input: { ids: unknown; threadId: string; userId: string }) {
-	const ids = normalizeAttachmentIds(input.ids);
+	const ids = uniqueAttachmentIds(input.ids);
 	if (ids.length === 0) return [];
 
 	const attachments = await db
@@ -417,9 +403,9 @@ async function linkAttachmentsToMessage(input: {
 	}
 }
 
-async function readAttachmentModelInputs(attachments: AgentAttachmentRecord[]): Promise<AttachmentModelInput[]> {
+function readAttachmentModelInputs(attachments: AgentAttachmentRecord[]): Promise<AttachmentModelInput[]> {
 	const storage = getStorageService();
-	const inputs = await Promise.all(
+	return Promise.all(
 		attachments.map(async (attachment) => {
 			const stored = await storage.read(attachment.storageKey);
 			if (!stored) {
@@ -429,8 +415,6 @@ async function readAttachmentModelInputs(attachments: AgentAttachmentRecord[]): 
 			return { attachment, data: stored.data };
 		}),
 	);
-
-	return inputs;
 }
 
 function attachModelPartsToLatestUserMessage(
@@ -438,20 +422,13 @@ function attachModelPartsToLatestUserMessage(
 	parts: Array<TextPart | ImagePart | FilePart>,
 ): ModelMessage[] {
 	if (parts.length === 0) return messages;
-
-	let index = -1;
-	for (let messageIndex = messages.length - 1; messageIndex >= 0; messageIndex--) {
-		if (messages[messageIndex]?.role === "user") {
-			index = messageIndex;
-			break;
-		}
-	}
-
+	const index = messages.findLastIndex((m) => m.role === "user");
 	if (index === -1) return messages;
-
-	return messages.map((message, messageIndex) =>
-		messageIndex === index ? appendUserModelParts(message, parts) : message,
-	);
+	// biome-ignore lint/style/noNonNullAssertion: index is valid; findLastIndex returned != -1
+	const msg = messages[index]!;
+	if (msg.role !== "user") return messages; // ponytail: redundant at runtime; keeps TS narrowed to user-message content type
+	const content = typeof msg.content === "string" ? [{ type: "text" as const, text: msg.content }] : msg.content;
+	return messages.with(index, { ...msg, content: [...content, ...parts] });
 }
 
 async function getExistingResumeSlugs(userId: string) {
@@ -661,7 +638,7 @@ function buildThreadTitle(message: UIMessage, fallback: string) {
 	return text.length > 60 ? `${text.slice(0, 57)}...` : text;
 }
 
-async function listThreadMessages(input: { threadId: string; userId: string }) {
+function listThreadMessages(input: { threadId: string; userId: string }) {
 	return db
 		.select()
 		.from(schema.agentMessage)
@@ -717,12 +694,13 @@ async function applyResumePatch(input: {
 }) {
 	const before = await resumeService.getById({ id: input.resumeId, userId: input.userId });
 	const snapshotData = cloneResumeData(before.data);
+	const operations = normalizeAgentResumePatchOperations(before.data, input.operations);
 
 	const { action, patched } = await db.transaction(async (tx) => {
 		const patched = await resumeService.patchInTransaction(tx, {
 			id: input.resumeId,
 			userId: input.userId,
-			operations: input.operations,
+			operations,
 		});
 
 		const [action] = await tx
@@ -735,7 +713,7 @@ async function applyResumePatch(input: {
 				status: "applied",
 				title: input.title,
 				...(input.summary !== undefined ? { summary: input.summary } : {}),
-				operations: input.operations,
+				operations,
 				snapshotData,
 				baseUpdatedAt: before.updatedAt,
 				appliedUpdatedAt: patched.updatedAt,
@@ -787,10 +765,14 @@ function createAgent(input: {
 					patchRoot: "data",
 					patchPathExamples: {
 						visibleName: "/basics/name",
+						standardExperienceDescription: "/sections/experience/items/0/description",
+						customSectionDescription: "/customSections/0/items/0/description",
 					},
 					patchNotes: [
 						"apply_resume_patch paths are rooted at the `data` object below.",
 						"Do not prefix paths with `/data`.",
+						"Built-in sections live under `/sections/<sectionId>`, for example `/sections/experience/items/0/description`.",
+						"Custom sections live under `/customSections/<index>`, even when their `type` is `experience`, `education`, or another built-in section type.",
 						"The resume file/title `name` metadata is read-only for apply_resume_patch.",
 					],
 					data: resume.data,
@@ -818,31 +800,54 @@ function createAgent(input: {
 	});
 }
 
+const threadSummarySelection = {
+	id: schema.agentThread.id,
+	userId: schema.agentThread.userId,
+	aiProviderId: schema.agentThread.aiProviderId,
+	sourceResumeId: schema.agentThread.sourceResumeId,
+	workingResumeId: schema.agentThread.workingResumeId,
+	title: schema.agentThread.title,
+	status: schema.agentThread.status,
+	activeRunId: schema.agentThread.activeRunId,
+	activeStreamId: schema.agentThread.activeStreamId,
+	activeRunStartedAt: schema.agentThread.activeRunStartedAt,
+	lastMessageAt: schema.agentThread.lastMessageAt,
+	archivedAt: schema.agentThread.archivedAt,
+	deletedAt: schema.agentThread.deletedAt,
+	createdAt: schema.agentThread.createdAt,
+	updatedAt: schema.agentThread.updatedAt,
+	resumeName: schema.resume.name,
+	providerLabel: schema.aiProvider.label,
+};
+
+// ponytail: shared select used at first-look and at race-fallback in getOrCreateForResume
+async function findActiveThreadForResume(input: { userId: string; resumeId: string }) {
+	const [thread] = await db
+		.select(threadSummarySelection)
+		.from(schema.agentThread)
+		.leftJoin(schema.resume, eq(schema.agentThread.workingResumeId, schema.resume.id))
+		.leftJoin(schema.aiProvider, eq(schema.agentThread.aiProviderId, schema.aiProvider.id))
+		.where(
+			and(
+				eq(schema.agentThread.userId, input.userId),
+				eq(schema.agentThread.workingResumeId, input.resumeId),
+				eq(schema.agentThread.sourceResumeId, input.resumeId),
+				eq(schema.agentThread.status, "active"),
+				isNull(schema.agentThread.deletedAt),
+			),
+		)
+		.orderBy(desc(schema.agentThread.lastMessageAt))
+		.limit(1);
+	return thread;
+}
+
 export const agentService = {
 	threads: {
 		list: async (input: { userId: string }) => {
 			assertAgentEnvironment();
 
 			const rows = await db
-				.select({
-					id: schema.agentThread.id,
-					userId: schema.agentThread.userId,
-					aiProviderId: schema.agentThread.aiProviderId,
-					sourceResumeId: schema.agentThread.sourceResumeId,
-					workingResumeId: schema.agentThread.workingResumeId,
-					title: schema.agentThread.title,
-					status: schema.agentThread.status,
-					activeRunId: schema.agentThread.activeRunId,
-					activeStreamId: schema.agentThread.activeStreamId,
-					activeRunStartedAt: schema.agentThread.activeRunStartedAt,
-					lastMessageAt: schema.agentThread.lastMessageAt,
-					archivedAt: schema.agentThread.archivedAt,
-					deletedAt: schema.agentThread.deletedAt,
-					createdAt: schema.agentThread.createdAt,
-					updatedAt: schema.agentThread.updatedAt,
-					resumeName: schema.resume.name,
-					providerLabel: schema.aiProvider.label,
-				})
+				.select(threadSummarySelection)
 				.from(schema.agentThread)
 				.leftJoin(schema.resume, eq(schema.agentThread.workingResumeId, schema.resume.id))
 				.leftJoin(schema.aiProvider, eq(schema.agentThread.aiProviderId, schema.aiProvider.id))
@@ -882,6 +887,46 @@ export const agentService = {
 			});
 		},
 
+		// In-resume assistant threads edit the open resume directly (working === source === resumeId), so the
+		// builder's resume-update subscription applies the agent's patches live. Reuses the latest active thread
+		// for that resume rather than accumulating a new thread on every panel open.
+		getOrCreateForResume: async (input: { userId: string; resumeId: string; aiProviderId?: string }) => {
+			assertAgentEnvironment();
+
+			const existing = await findActiveThreadForResume(input);
+			if (existing) return toThreadSummary(existing);
+
+			const selectedProvider = input.aiProviderId
+				? await aiProvidersService.getRunnableById({ id: input.aiProviderId, userId: input.userId })
+				: await aiProvidersService.getDefaultRunnable({ userId: input.userId });
+
+			if (!selectedProvider) throw new ORPCError("BAD_REQUEST", { message: "No tested AI provider is available." });
+
+			// Confirms the caller owns the resume (throws otherwise) and provides its name for the summary.
+			const resume = await resumeService.getById({ id: input.resumeId, userId: input.userId });
+
+			const [thread] = await db
+				.insert(schema.agentThread)
+				.values({
+					userId: input.userId,
+					aiProviderId: selectedProvider.id,
+					sourceResumeId: input.resumeId,
+					workingResumeId: input.resumeId,
+					title: "Resume assistant",
+				})
+				.onConflictDoNothing()
+				.returning();
+
+			// A concurrent call won the unique partial index race; return its thread instead.
+			if (!thread) {
+				const raced = await findActiveThreadForResume(input);
+				if (!raced) throw new Error("AGENT_THREAD_CREATE_FAILED");
+				return toThreadSummary(raced);
+			}
+
+			return toThreadSummary({ ...thread, resumeName: resume.name, providerLabel: selectedProvider.label });
+		},
+
 		get: async (input: { id: string; userId: string }) => {
 			assertAgentEnvironment();
 
@@ -909,7 +954,12 @@ export const agentService = {
 				actions: actions.map(toAction),
 				attachments: attachments.map(toAttachment),
 				resume,
-				isReadOnly: thread.status === "archived" || !thread.workingResumeId || !thread.aiProviderId || !resume,
+				isReadOnly:
+					thread.status === "archived" ||
+					!thread.workingResumeId ||
+					!thread.aiProviderId ||
+					!resume ||
+					!!resume.isLocked,
 			};
 		},
 
@@ -921,7 +971,7 @@ export const agentService = {
 			const activeStreamId = thread.activeStreamId;
 
 			if (activeRunId) {
-				activeRunControllers.get(activeRunId)?.abort("USER_ARCHIVED");
+				activeRunControllers.get(activeRunId)?.abort(abortReason("USER_ARCHIVED"));
 				activeRunControllers.delete(activeRunId);
 				try {
 					await clearActiveAgentRunIfCurrent({
@@ -1151,7 +1201,7 @@ export const agentService = {
 				persistError = error;
 			} finally {
 				if (activeRunId) {
-					activeRunControllers.get(activeRunId)?.abort("USER_STOPPED");
+					activeRunControllers.get(activeRunId)?.abort(abortReason("USER_STOPPED"));
 					activeRunControllers.delete(activeRunId);
 					try {
 						await clearActiveAgentRunIfCurrent({
@@ -1182,24 +1232,19 @@ export const agentService = {
 			assertAgentEnvironment();
 			await getThread({ id: input.threadId, userId: input.userId });
 
-			const [[aggregate], [attachmentCount]] = await Promise.all([
-				db
-					.select({ totalBytes: sql<number>`coalesce(sum(${schema.agentAttachment.size}), 0)` })
-					.from(schema.agentAttachment)
-					.where(
-						and(eq(schema.agentAttachment.threadId, input.threadId), eq(schema.agentAttachment.userId, input.userId)),
-					),
-				db
-					.select({ total: count() })
-					.from(schema.agentAttachment)
-					.where(
-						and(eq(schema.agentAttachment.threadId, input.threadId), eq(schema.agentAttachment.userId, input.userId)),
-					),
-			]);
+			const [stats] = await db
+				.select({
+					totalBytes: sql<number>`coalesce(sum(${schema.agentAttachment.size}), 0)`,
+					total: count(),
+				})
+				.from(schema.agentAttachment)
+				.where(
+					and(eq(schema.agentAttachment.threadId, input.threadId), eq(schema.agentAttachment.userId, input.userId)),
+				);
 
-			if ((attachmentCount?.total ?? 0) >= MAX_ATTACHMENTS_PER_MESSAGE) throw new ORPCError("BAD_REQUEST");
+			if ((stats?.total ?? 0) >= MAX_ATTACHMENTS_PER_MESSAGE) throw new ORPCError("BAD_REQUEST");
 			if (input.data.byteLength > MAX_ATTACHMENT_BYTES) throw new ORPCError("BAD_REQUEST");
-			if ((aggregate?.totalBytes ?? 0) + input.data.byteLength > MAX_THREAD_ATTACHMENT_BYTES) {
+			if ((stats?.totalBytes ?? 0) + input.data.byteLength > MAX_THREAD_ATTACHMENT_BYTES) {
 				throw new ORPCError("BAD_REQUEST");
 			}
 

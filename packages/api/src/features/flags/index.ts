@@ -1,1 +1,1 @@
-export type { FeatureFlags } from "./service";
+export type { FeatureFlags } from "./router";

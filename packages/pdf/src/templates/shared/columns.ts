@@ -16,7 +16,7 @@ type SectionTimelineInput = {
 	columns: unknown;
 };
 
-export type SectionItemsLayout = {
+type SectionItemsLayout = {
 	columns: number;
 	containerStyle: Style;
 	rowStyle: Style | undefined;

@@ -26,19 +26,36 @@ import { createGithubProfileMapper, createProfileMapper } from "./oauth-profile"
 import { getTrustedOrigins } from "./trusted-origins";
 
 const authBaseUrl = env.APP_URL;
-const isRateLimitEnabled = process.env.NODE_ENV === "production";
+const isRateLimitEnabled = process.env.NODE_ENV === "production" && !env.FLAG_DISABLE_API_RATE_LIMIT;
 
-function getOAuthAudiences(): string[] {
-	const base = authBaseUrl.replace(/\/$/, "");
+// JWKS must be reachable from inside the Node runtime. `authBaseUrl` is the
+// publicly-visible URL — under Docker port-mapping or behind a reverse proxy
+// it does not loop back to the app process. Override with `BETTER_AUTH_INTERNAL_URL`
+// for split deployments or custom servers that bind to a port not exposed via `PORT`.
+function resolveInternalBaseUrl(): string {
+	const configured = process.env.BETTER_AUTH_INTERNAL_URL?.trim();
+	if (configured) {
+		return configured.replace(/\/+$/, "");
+	}
 
-	return [base, `${base}/`, `${base}/mcp`, `${base}/mcp/`];
+	const port = process.env.NODE_ENV === "production" ? (process.env.PORT ?? "3000") : String(env.SERVER_PORT);
+
+	return `http://127.0.0.1:${port}`;
 }
 
-const OAUTH_AUDIENCES = getOAuthAudiences();
+const internalBaseUrl = resolveInternalBaseUrl();
 
-export async function verifyOAuthToken(token: string): Promise<JWTPayload> {
-	return await verifyAccessToken(token, {
-		jwksUrl: `${authBaseUrl}/api/auth/jwks`,
+const oauthAudienceBase = authBaseUrl.replace(/\/$/, "");
+const OAUTH_AUDIENCES = [
+	oauthAudienceBase,
+	`${oauthAudienceBase}/`,
+	`${oauthAudienceBase}/mcp`,
+	`${oauthAudienceBase}/mcp/`,
+];
+
+export function verifyOAuthToken(token: string): Promise<JWTPayload> {
+	return verifyAccessToken(token, {
+		jwksUrl: `${internalBaseUrl}/api/auth/jwks`,
 		verifyOptions: {
 			issuer: `${authBaseUrl}/api/auth`,
 			audience: OAUTH_AUDIENCES,
@@ -105,6 +122,7 @@ const getAuthConfig = () => {
 		},
 
 		hooks: {
+			// biome-ignore lint/suspicious/useAwait: Better Auth requires middleware callbacks to return a Promise.
 			before: createAuthMiddleware(async (ctx) => {
 				if (!ctx.path.includes("/oauth2/register")) return;
 
@@ -196,7 +214,6 @@ const getAuthConfig = () => {
 			google: {
 				enabled: !!env.GOOGLE_CLIENT_ID && !!env.GOOGLE_CLIENT_SECRET,
 				disableSignUp: env.FLAG_DISABLE_SIGNUPS,
-				disableImplicitSignUp: true,
 				clientId: env.GOOGLE_CLIENT_ID ?? "",
 				clientSecret: env.GOOGLE_CLIENT_SECRET ?? "",
 				mapProfileToUser: createProfileMapper({
@@ -209,7 +226,6 @@ const getAuthConfig = () => {
 			github: {
 				enabled: !!env.GITHUB_CLIENT_ID && !!env.GITHUB_CLIENT_SECRET,
 				disableSignUp: env.FLAG_DISABLE_SIGNUPS,
-				disableImplicitSignUp: true,
 				clientId: env.GITHUB_CLIENT_ID ?? "",
 				clientSecret: env.GITHUB_CLIENT_SECRET ?? "",
 				mapProfileToUser: createGithubProfileMapper(),
@@ -218,7 +234,6 @@ const getAuthConfig = () => {
 			linkedin: {
 				enabled: !!env.LINKEDIN_CLIENT_ID && !!env.LINKEDIN_CLIENT_SECRET,
 				disableSignUp: env.FLAG_DISABLE_SIGNUPS,
-				disableImplicitSignUp: true,
 				clientId: env.LINKEDIN_CLIENT_ID ?? "",
 				clientSecret: env.LINKEDIN_CLIENT_SECRET ?? "",
 				mapProfileToUser: createProfileMapper({

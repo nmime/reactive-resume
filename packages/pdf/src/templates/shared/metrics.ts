@@ -2,7 +2,7 @@ import type { ResumeData } from "@reactive-resume/schema/resume/data";
 
 type PageMetricsInput = Pick<ResumeData["metadata"]["page"], "gapX" | "gapY" | "marginX" | "marginY">;
 
-export type TemplateMetrics = {
+type TemplateMetrics = {
 	page: {
 		paddingHorizontal: number;
 		paddingVertical: number;

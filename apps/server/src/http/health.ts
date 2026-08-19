@@ -1,4 +1,5 @@
 import { sql } from "drizzle-orm";
+import { withTimeout } from "es-toolkit";
 import { getStorageService } from "@reactive-resume/api/features/storage";
 import { db } from "@reactive-resume/db/client";
 
@@ -11,30 +12,12 @@ type CheckResult = {
 	[key: string]: unknown;
 };
 
-function getErrorMessage(error: unknown): string {
-	if (error instanceof Error) return error.message;
-	return "Unknown error";
-}
-
-async function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
-	let timeoutId: NodeJS.Timeout | undefined;
-
-	const timeout = new Promise<never>((_, reject) => {
-		timeoutId = setTimeout(() => reject(new Error(`Timed out after ${timeoutMs}ms`)), timeoutMs);
-	});
-
-	try {
-		return await Promise.race([promise, timeout]);
-	} finally {
-		if (timeoutId) clearTimeout(timeoutId);
-	}
-}
-
+// ponytail: es-toolkit withTimeout takes a fn, not a promise — call site passes check (not check())
 async function runCheck(check: () => Promise<object>): Promise<CheckResult> {
 	const startedAt = performance.now();
 
 	try {
-		const data = await withTimeout(check(), HEALTHCHECK_TIMEOUT_MS);
+		const data = await withTimeout(check, HEALTHCHECK_TIMEOUT_MS);
 		const latencyMs = Math.round(performance.now() - startedAt);
 		const result = data as { status?: string };
 		if (result.status === "unhealthy") return { ...(data as object), status: "unhealthy", latencyMs };
@@ -42,35 +25,19 @@ async function runCheck(check: () => Promise<object>): Promise<CheckResult> {
 	} catch (error) {
 		return {
 			status: "unhealthy",
-			error: getErrorMessage(error),
+			error: error instanceof Error ? error.message : "Unknown error",
 			latencyMs: Math.round(performance.now() - startedAt),
 		};
 	}
 }
 
+// ponytail: inner try/catches removed; runCheck's outer catch handles all errors
 async function checkDatabase() {
-	try {
-		await db.execute(sql`SELECT 1`);
-		return { status: "healthy" };
-	} catch (error) {
-		return {
-			status: "unhealthy",
-			error: error instanceof Error ? error.message : "Unknown error",
-		};
-	}
+	await db.execute(sql`SELECT 1`);
+	return { status: "healthy" };
 }
 
-async function checkStorage() {
-	try {
-		const storageService = getStorageService();
-		return await storageService.healthcheck();
-	} catch (error) {
-		return {
-			status: "unhealthy",
-			error: error instanceof Error ? error.message : "Unknown error",
-		};
-	}
-}
+const checkStorage = () => getStorageService().healthcheck();
 
 export async function handleHealth() {
 	const [database, storage] = await Promise.all([runCheck(checkDatabase), runCheck(checkStorage)]);

@@ -1,13 +1,30 @@
+import type { Area } from "react-easy-crop";
 import type z from "zod";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
-import { EyeIcon, EyeSlashIcon, TrashSimpleIcon, UploadSimpleIcon } from "@phosphor-icons/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
-import { toast } from "sonner";
+import {
+	EyeIcon,
+	EyeSlashIcon,
+	MagnifyingGlassMinusIcon,
+	MagnifyingGlassPlusIcon,
+	TrashSimpleIcon,
+	UploadSimpleIcon,
+} from "@phosphor-icons/react";
+import { useMutation } from "@tanstack/react-query";
+import { useRef, useState } from "react";
+import Cropper from "react-easy-crop";
 import { pictureSchema } from "@reactive-resume/schema/resume/data";
+import { defaultResumeData } from "@reactive-resume/schema/resume/default";
 import { Button } from "@reactive-resume/ui/components/button";
 import { ButtonGroup } from "@reactive-resume/ui/components/button-group";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@reactive-resume/ui/components/dialog";
 import { FormControl, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Input } from "@reactive-resume/ui/components/input";
 import {
@@ -16,8 +33,11 @@ import {
 	InputGroupInput,
 	InputGroupText,
 } from "@reactive-resume/ui/components/input-group";
+import { Slider } from "@reactive-resume/ui/components/slider";
+import { toast } from "@reactive-resume/ui/components/toast";
+import "react-easy-crop/react-easy-crop.css";
 import { ColorPicker } from "@/components/input/color-picker";
-import { useCurrentResume, useUpdateResumeData } from "@/features/resume/builder/draft";
+import { useCurrentBuilderResumeSelector, useUpdateResumeData } from "@/features/resume/builder/draft";
 import { useSyncFormValues } from "@/hooks/use-sync-form-values";
 import { getReadableErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
@@ -37,7 +57,6 @@ type PicturePreviewControlsProps = {
 	form: PictureSettingsForm;
 	normalizedPictureUrl: string;
 	picture: PictureValues;
-	pictureSrc: string;
 	onAutoSave: () => void;
 	onDeletePicture: () => void;
 	onSelectPicture: () => void;
@@ -49,7 +68,6 @@ function PicturePreviewControls({
 	form,
 	normalizedPictureUrl,
 	picture,
-	pictureSrc,
 	onAutoSave,
 	onDeletePicture,
 	onSelectPicture,
@@ -72,10 +90,10 @@ function PicturePreviewControls({
 				aria-label={picture.url ? t`Delete picture` : t`Upload picture`}
 				className="group/picture relative size-18 cursor-pointer overflow-hidden rounded-md bg-secondary transition-colors hover:bg-secondary/50"
 			>
-				{(pictureSrc || normalizedPictureUrl) && (
+				{normalizedPictureUrl && (
 					<img
 						alt=""
-						src={pictureSrc || normalizedPictureUrl}
+						src={normalizedPictureUrl}
 						className="fade-in relative z-10 size-full animate-in rounded-md object-cover transition-opacity group-hover/picture:opacity-20"
 					/>
 				)}
@@ -109,6 +127,7 @@ function PicturePreviewControls({
 							<Button
 								size="icon"
 								variant="ghost"
+								aria-label={picture.hidden ? t`Show picture` : t`Hide picture`}
 								onClick={() => {
 									form.setFieldValue("hidden", !picture.hidden);
 									onAutoSave();
@@ -362,15 +381,42 @@ function normalizePictureUrl(url: string, origin: string): string {
 	}
 }
 
-async function createPicturePreviewUrl(url: string, signal: AbortSignal) {
-	const response = await fetch(url, { signal });
+async function getCroppedImageBlob(imageSrc: string, pixelCrop: Area): Promise<Blob> {
+	const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+		const element = new Image();
+		element.addEventListener("load", () => {
+			resolve(element);
+		});
+		element.addEventListener("error", () => {
+			reject(new Error("Failed to load image for cropping"));
+		});
+		element.src = imageSrc;
+	});
 
-	if (!response.ok) {
-		throw new Error(`Failed to fetch image: ${response.status}`);
-	}
+	const canvas = document.createElement("canvas");
+	const context = canvas.getContext("2d");
+	if (!context) throw new Error("Canvas 2D context is not available");
 
-	const blob = await response.blob();
-	return URL.createObjectURL(blob);
+	canvas.width = Math.round(pixelCrop.width);
+	canvas.height = Math.round(pixelCrop.height);
+	context.drawImage(
+		image,
+		pixelCrop.x,
+		pixelCrop.y,
+		pixelCrop.width,
+		pixelCrop.height,
+		0,
+		0,
+		canvas.width,
+		canvas.height,
+	);
+
+	return new Promise<Blob>((resolve, reject) => {
+		canvas.toBlob((blob) => {
+			if (blob) resolve(blob);
+			else reject(new Error("Canvas is empty"));
+		}, "image/png");
+	});
 }
 
 function usePictureSettingsForm(picture: PictureValues, persist: (data: PictureValues) => void) {
@@ -388,20 +434,22 @@ function usePictureSettingsForm(picture: PictureValues, persist: (data: PictureV
 
 type PictureSettingsForm = ReturnType<typeof usePictureSettingsForm>;
 
+type CropState = {
+	file: File;
+	imageSrc: string;
+};
+
 function PictureSectionForm() {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const appOrigin = typeof window === "undefined" ? "" : window.location.origin;
 
-	const resume = useCurrentResume();
-	const picture = resume.data.picture;
+	const [cropState, setCropState] = useState<CropState | null>(null);
+	const [crop, setCrop] = useState({ x: 0, y: 0 });
+	const [zoom, setZoom] = useState(1);
+	const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+
+	const picture = useCurrentBuilderResumeSelector((resume) => resume.data.picture);
 	const normalizedPictureUrl = normalizePictureUrl(picture.url, appOrigin);
-	const picturePreviewQuery = useQuery({
-		queryKey: ["resume-picture-preview", normalizedPictureUrl],
-		queryFn: ({ signal }) => createPicturePreviewUrl(normalizedPictureUrl, signal),
-		enabled: Boolean(normalizedPictureUrl),
-		gcTime: 0,
-	});
-	const pictureSrc = picturePreviewQuery.data ?? normalizedPictureUrl;
 	const updateResumeData = useUpdateResumeData();
 
 	const { mutate: uploadFile } = useMutation(orpc.storage.uploadFile.mutationOptions({ meta: { noInvalidate: true } }));
@@ -437,182 +485,287 @@ function PictureSectionForm() {
 		// If the picture is from the same origin, attempt to delete it
 		if (pictureOrigin === appOrigin) deleteFile({ filename });
 
-		form.setFieldValue("url", "");
-		handleAutoSave();
+		form.reset(defaultResumeData.picture);
+		persist(defaultResumeData.picture);
 	};
 
-	const onUploadPicture = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
-		if (!file) return;
-
-		const toastId = toast.loading(t`Uploading picture…`);
+	const uploadPictureFile = (file: File) => {
+		const toastId = toast.add({ type: "loading", description: t`Uploading picture…` });
 
 		uploadFile(file, {
 			onSuccess: ({ url }) => {
 				form.setFieldValue("url", url);
 				handleAutoSave();
-				toast.dismiss(toastId);
+				toast.close(toastId);
 				if (fileInputRef.current) fileInputRef.current.value = "";
 			},
 			onError: (error) => {
-				toast.error(
-					getReadableErrorMessage(
+				toast.add({
+					type: "error",
+					description: getReadableErrorMessage(
 						error,
 						t({
 							comment: "Fallback toast when uploading profile picture for resume fails",
 							message: "Failed to upload picture. Please try again.",
 						}),
 					),
-					{ id: toastId },
-				);
+					id: toastId,
+				});
 			},
 		});
 	};
 
-	useEffect(() => {
-		const objectUrl = picturePreviewQuery.data;
+	const onUploadPicture = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (!file) return;
 
-		return () => {
-			if (objectUrl) URL.revokeObjectURL(objectUrl);
-		};
-	}, [picturePreviewQuery.data]);
+		// Open the interactive crop step instead of uploading immediately.
+		setCropState({ file, imageSrc: URL.createObjectURL(file) });
+		setCrop({ x: 0, y: 0 });
+		setZoom(1);
+		setCroppedAreaPixels(null);
+	};
+
+	const closeCropDialog = () => {
+		if (cropState) URL.revokeObjectURL(cropState.imageSrc);
+		setCropState(null);
+		if (fileInputRef.current) fileInputRef.current.value = "";
+	};
+
+	const onConfirmCrop = async () => {
+		if (!cropState) return;
+
+		let fileToUpload: File = cropState.file;
+		try {
+			if (croppedAreaPixels) {
+				const blob = await getCroppedImageBlob(cropState.imageSrc, croppedAreaPixels);
+				fileToUpload = new File([blob], cropState.file.name, { type: blob.type });
+			}
+		} catch {
+			// ponytail: canvas crop can fail (tainted image, no context) — fall back to the original file.
+			fileToUpload = cropState.file;
+		}
+
+		uploadPictureFile(fileToUpload);
+		closeCropDialog();
+	};
+
+	const cropAspect = Number(form.state.values.aspectRatio) || 1;
 
 	return (
-		<form
-			className="space-y-4"
-			onSubmit={(event) => {
-				event.preventDefault();
-				event.stopPropagation();
-				void form.handleSubmit();
-			}}
-		>
-			<PicturePreviewControls
-				fileInputRef={fileInputRef}
-				form={form}
-				normalizedPictureUrl={normalizedPictureUrl}
-				picture={picture}
-				pictureSrc={pictureSrc}
-				onAutoSave={handleAutoSave}
-				onDeletePicture={onDeletePicture}
-				onSelectPicture={onSelectPicture}
-				onUploadPicture={onUploadPicture}
-			/>
+		<>
+			<Dialog
+				open={cropState !== null}
+				onOpenChange={(open) => {
+					if (!open) closeCropDialog();
+				}}
+			>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>
+							<Trans>Crop picture</Trans>
+						</DialogTitle>
+						<DialogDescription>
+							<Trans>Drag to reposition and use the slider to zoom before uploading.</Trans>
+						</DialogDescription>
+					</DialogHeader>
 
-			<div className="grid @md:grid-cols-2 grid-cols-1 gap-4">
-				<PictureGeometryFields form={form} onAutoSave={handleAutoSave} />
+					{cropState && (
+						<div className="relative h-64 w-full overflow-hidden rounded-md bg-secondary ring-1 ring-border ring-inset">
+							<Cropper
+								image={cropState.imageSrc}
+								crop={crop}
+								zoom={zoom}
+								aspect={cropAspect}
+								onCropChange={setCrop}
+								onZoomChange={setZoom}
+								onCropComplete={(_, areaPixels) => {
+									setCroppedAreaPixels(areaPixels);
+								}}
+							/>
+						</div>
+					)}
 
-				<div className="flex items-end gap-x-3">
-					<form.Field name="borderColor">
-						{(field) => (
-							<FormItem
-								className="mb-1.5 shrink-0"
-								hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
-							>
-								<FormControl
-									render={
-										<ColorPicker
-											defaultValue={field.state.value}
-											onChange={(color) => {
-												field.handleChange(color);
-												handleAutoSave();
-											}}
-										/>
-									}
-								/>
-							</FormItem>
-						)}
-					</form.Field>
+					<div className="space-y-2.5">
+						<div className="flex items-center justify-between">
+							<FormLabel className="mb-0">
+								<Trans>Zoom</Trans>
+							</FormLabel>
+							<span className="text-muted-foreground text-xs tabular-nums">{zoom.toFixed(1)}×</span>
+						</div>
+						<div className="flex items-center gap-x-3">
+							<MagnifyingGlassMinusIcon className="size-4 shrink-0 text-muted-foreground" />
+							<Slider
+								min={1}
+								max={3}
+								step={0.01}
+								value={[zoom]}
+								aria-label={t`Zoom`}
+								className="flex-1"
+								onValueChange={(value) => {
+									setZoom(Array.isArray(value) ? value[0] : value);
+								}}
+							/>
+							<MagnifyingGlassPlusIcon className="size-4 shrink-0 text-muted-foreground" />
+						</div>
+					</div>
 
-					<form.Field name="borderWidth">
-						{(field) => (
-							<FormItem className="flex-1" hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-								<FormLabel>
-									<Trans>Border Width</Trans>
-								</FormLabel>
-								<InputGroup>
+					<DialogFooter>
+						<Button variant="outline" onClick={closeCropDialog}>
+							<Trans>Cancel</Trans>
+						</Button>
+						<Button
+							onClick={() => {
+								void onConfirmCrop();
+							}}
+						>
+							<Trans>Save & Upload</Trans>
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
+
+			<form
+				className="space-y-4"
+				onSubmit={(event) => {
+					event.preventDefault();
+					event.stopPropagation();
+					void form.handleSubmit();
+				}}
+			>
+				<PicturePreviewControls
+					fileInputRef={fileInputRef}
+					form={form}
+					normalizedPictureUrl={normalizedPictureUrl}
+					picture={picture}
+					onAutoSave={handleAutoSave}
+					onDeletePicture={onDeletePicture}
+					onSelectPicture={onSelectPicture}
+					onUploadPicture={onUploadPicture}
+				/>
+
+				<div className="grid @md:grid-cols-2 grid-cols-1 gap-4">
+					<PictureGeometryFields form={form} onAutoSave={handleAutoSave} />
+
+					<div className="flex items-end gap-x-3">
+						<form.Field name="borderColor">
+							{(field) => (
+								<FormItem
+									className="mb-1.5 shrink-0"
+									hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+								>
 									<FormControl
 										render={
-											<InputGroupInput
-												name={field.name}
-												value={field.state.value}
-												type="number"
-												min={0}
-												step={1}
-												onBlur={field.handleBlur}
-												onChange={(e) => {
-													const value = e.target.value;
-													if (value === "") field.handleChange("" as unknown as number);
-													else field.handleChange(Number(value));
+											<ColorPicker
+												defaultValue={field.state.value}
+												onChange={(color) => {
+													field.handleChange(color);
 													handleAutoSave();
 												}}
 											/>
 										}
 									/>
-									<InputGroupAddon align="inline-end">
-										<InputGroupText>pt</InputGroupText>
-									</InputGroupAddon>
-								</InputGroup>
-							</FormItem>
-						)}
-					</form.Field>
-				</div>
+								</FormItem>
+							)}
+						</form.Field>
 
-				<div className="flex items-end gap-x-3">
-					<form.Field name="shadowColor">
-						{(field) => (
-							<FormItem
-								className="mb-1.5 shrink-0"
-								hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
-							>
-								<FormControl
-									render={
-										<ColorPicker
-											defaultValue={field.state.value}
-											onChange={(color) => {
-												field.handleChange(color);
-												handleAutoSave();
-											}}
+						<form.Field name="borderWidth">
+							{(field) => (
+								<FormItem
+									className="flex-1"
+									hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+								>
+									<FormLabel>
+										<Trans>Border Width</Trans>
+									</FormLabel>
+									<InputGroup>
+										<FormControl
+											render={
+												<InputGroupInput
+													name={field.name}
+													value={field.state.value}
+													type="number"
+													min={0}
+													step={1}
+													onBlur={field.handleBlur}
+													onChange={(e) => {
+														const value = e.target.value;
+														if (value === "") field.handleChange("" as unknown as number);
+														else field.handleChange(Number(value));
+														handleAutoSave();
+													}}
+												/>
+											}
 										/>
-									}
-								/>
-							</FormItem>
-						)}
-					</form.Field>
+										<InputGroupAddon align="inline-end">
+											<InputGroupText>pt</InputGroupText>
+										</InputGroupAddon>
+									</InputGroup>
+								</FormItem>
+							)}
+						</form.Field>
+					</div>
 
-					<form.Field name="shadowWidth">
-						{(field) => (
-							<FormItem className="flex-1" hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-								<FormLabel>
-									<Trans>Shadow Width</Trans>
-								</FormLabel>
-								<InputGroup>
+					<div className="flex items-end gap-x-3">
+						<form.Field name="shadowColor">
+							{(field) => (
+								<FormItem
+									className="mb-1.5 shrink-0"
+									hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+								>
 									<FormControl
 										render={
-											<InputGroupInput
-												name={field.name}
-												value={field.state.value}
-												type="number"
-												min={0}
-												step={0.5}
-												onBlur={field.handleBlur}
-												onChange={(e) => {
-													const value = e.target.value;
-													if (value === "") field.handleChange("" as unknown as number);
-													else field.handleChange(Number(value));
+											<ColorPicker
+												defaultValue={field.state.value}
+												onChange={(color) => {
+													field.handleChange(color);
 													handleAutoSave();
 												}}
 											/>
 										}
 									/>
-									<InputGroupAddon align="inline-end">
-										<InputGroupText>pt</InputGroupText>
-									</InputGroupAddon>
-								</InputGroup>
-							</FormItem>
-						)}
-					</form.Field>
+								</FormItem>
+							)}
+						</form.Field>
+
+						<form.Field name="shadowWidth">
+							{(field) => (
+								<FormItem
+									className="flex-1"
+									hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}
+								>
+									<FormLabel>
+										<Trans>Shadow Width</Trans>
+									</FormLabel>
+									<InputGroup>
+										<FormControl
+											render={
+												<InputGroupInput
+													name={field.name}
+													value={field.state.value}
+													type="number"
+													min={0}
+													step={0.5}
+													onBlur={field.handleBlur}
+													onChange={(e) => {
+														const value = e.target.value;
+														if (value === "") field.handleChange("" as unknown as number);
+														else field.handleChange(Number(value));
+														handleAutoSave();
+													}}
+												/>
+											}
+										/>
+										<InputGroupAddon align="inline-end">
+											<InputGroupText>pt</InputGroupText>
+										</InputGroupAddon>
+									</InputGroup>
+								</FormItem>
+							)}
+						</form.Field>
+					</div>
 				</div>
-			</div>
-		</form>
+			</form>
+		</>
 	);
 }

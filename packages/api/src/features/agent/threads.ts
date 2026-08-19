@@ -1,6 +1,6 @@
 import z from "zod";
 import { protectedProcedure } from "../../context";
-import { isAgentEnvironmentUnavailable, throwUnavailable } from "./routing";
+import { mapAgentEnvironmentError } from "./routing";
 import { agentService } from "./service";
 
 export const threadsRouter = {
@@ -12,14 +12,8 @@ export const threadsRouter = {
 			operationId: "listAgentThreads",
 			summary: "List agent threads",
 		})
-		.handler(async ({ context }) => {
-			try {
-				return await agentService.threads.list({ userId: context.user.id });
-			} catch (error) {
-				if (isAgentEnvironmentUnavailable(error)) throwUnavailable();
-				throw error;
-			}
-		}),
+		.use(mapAgentEnvironmentError)
+		.handler(({ context }) => agentService.threads.list({ userId: context.user.id })),
 
 	create: protectedProcedure
 		.route({
@@ -30,19 +24,33 @@ export const threadsRouter = {
 			summary: "Create agent thread",
 		})
 		.input(z.object({ aiProviderId: z.string().optional(), sourceResumeId: z.string().optional() }))
-		.handler(async ({ context, input }) => {
-			try {
-				return await agentService.threads.create({
-					userId: context.user.id,
-					locale: context.locale,
-					...(input.aiProviderId ? { aiProviderId: input.aiProviderId } : {}),
-					...(input.sourceResumeId ? { sourceResumeId: input.sourceResumeId } : {}),
-				});
-			} catch (error) {
-				if (isAgentEnvironmentUnavailable(error)) throwUnavailable();
-				throw error;
-			}
-		}),
+		.use(mapAgentEnvironmentError)
+		.handler(({ context, input }) =>
+			agentService.threads.create({
+				userId: context.user.id,
+				locale: context.locale,
+				...(input.aiProviderId ? { aiProviderId: input.aiProviderId } : {}),
+				...(input.sourceResumeId ? { sourceResumeId: input.sourceResumeId } : {}),
+			}),
+		),
+
+	getOrCreateForResume: protectedProcedure
+		.route({
+			method: "POST",
+			path: "/agent/threads/for-resume",
+			tags: ["Agent"],
+			operationId: "getOrCreateAgentThreadForResume",
+			summary: "Get or create an in-resume agent thread",
+		})
+		.input(z.object({ resumeId: z.string(), aiProviderId: z.string().optional() }))
+		.use(mapAgentEnvironmentError)
+		.handler(({ context, input }) =>
+			agentService.threads.getOrCreateForResume({
+				userId: context.user.id,
+				resumeId: input.resumeId,
+				...(input.aiProviderId ? { aiProviderId: input.aiProviderId } : {}),
+			}),
+		),
 
 	get: protectedProcedure
 		.route({
@@ -53,14 +61,8 @@ export const threadsRouter = {
 			summary: "Get agent thread",
 		})
 		.input(z.object({ id: z.string() }))
-		.handler(async ({ context, input }) => {
-			try {
-				return await agentService.threads.get({ id: input.id, userId: context.user.id });
-			} catch (error) {
-				if (isAgentEnvironmentUnavailable(error)) throwUnavailable();
-				throw error;
-			}
-		}),
+		.use(mapAgentEnvironmentError)
+		.handler(({ context, input }) => agentService.threads.get({ id: input.id, userId: context.user.id })),
 
 	archive: protectedProcedure
 		.route({
@@ -72,14 +74,8 @@ export const threadsRouter = {
 		})
 		.input(z.object({ id: z.string() }))
 		.output(z.void())
-		.handler(async ({ context, input }) => {
-			try {
-				await agentService.threads.archive({ id: input.id, userId: context.user.id });
-			} catch (error) {
-				if (isAgentEnvironmentUnavailable(error)) throwUnavailable();
-				throw error;
-			}
-		}),
+		.use(mapAgentEnvironmentError)
+		.handler(({ context, input }) => agentService.threads.archive({ id: input.id, userId: context.user.id })),
 
 	delete: protectedProcedure
 		.route({
@@ -91,12 +87,6 @@ export const threadsRouter = {
 		})
 		.input(z.object({ id: z.string() }))
 		.output(z.void())
-		.handler(async ({ context, input }) => {
-			try {
-				await agentService.threads.delete({ id: input.id, userId: context.user.id });
-			} catch (error) {
-				if (isAgentEnvironmentUnavailable(error)) throwUnavailable();
-				throw error;
-			}
-		}),
+		.use(mapAgentEnvironmentError)
+		.handler(({ context, input }) => agentService.threads.delete({ id: input.id, userId: context.user.id })),
 };

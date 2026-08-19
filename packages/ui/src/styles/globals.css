@@ -69,7 +69,7 @@
 	--popover: oklch(0.205 0 0);
 	--primary-foreground: oklch(0.205 0 0);
 	--primary: oklch(0.922 0 0);
-	--ring: oklch(0.556 0 0);
+	--ring: oklch(0.75 0 0);
 	--secondary-foreground: oklch(0.985 0 0);
 	--secondary: oklch(0.269 0 0);
 	--sidebar-accent-foreground: oklch(0.985 0 0);
@@ -78,12 +78,17 @@
 	--sidebar-foreground: oklch(0.985 0 0);
 	--sidebar-primary-foreground: oklch(0.985 0 0);
 	--sidebar-primary: oklch(0.488 0.243 264.376);
-	--sidebar-ring: oklch(0.556 0 0);
+	--sidebar-ring: oklch(0.75 0 0);
 	--sidebar: oklch(0.205 0 0);
 }
 
 @theme inline {
 	--font-sans: var(--font-body);
+
+	/* Strong easing curves — built-in CSS easings are too weak for UI motion. */
+	--ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+	--ease-in-out-strong: cubic-bezier(0.77, 0, 0.175, 1);
+	--ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);

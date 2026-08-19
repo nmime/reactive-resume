@@ -1,5 +1,6 @@
+import type { SendMailOptions, Transporter } from "nodemailer";
 import type { ReactElement } from "react";
-import nodemailer, { type SendMailOptions, type Transporter } from "nodemailer";
+import nodemailer from "nodemailer";
 import { render } from "react-email";
 import { env } from "@reactive-resume/env/server";
 
@@ -12,17 +13,14 @@ type SendEmailOptions = {
 	from?: string;
 };
 
-const isSmtpEnabled = () => {
-	return !!env.SMTP_HOST && !!env.SMTP_USER && !!env.SMTP_PASS && !!env.SMTP_FROM;
-};
+const isSmtpEnabled = () => !!env.SMTP_HOST && !!env.SMTP_USER && !!env.SMTP_PASS && !!env.SMTP_FROM;
 
 let cachedTransport: Transporter | undefined;
 
 const getTransport = () => {
 	if (!isSmtpEnabled()) return;
-	if (cachedTransport) return cachedTransport;
 
-	cachedTransport = nodemailer.createTransport({
+	cachedTransport ??= nodemailer.createTransport({
 		host: env.SMTP_HOST,
 		port: env.SMTP_PORT,
 		secure: env.SMTP_SECURE,

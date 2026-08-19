@@ -1,6 +1,7 @@
 import type { ResumeData } from "@reactive-resume/schema/resume/data";
-import { flattenError, ZodError } from "zod";
+import { ZodError } from "zod";
 import { resumeDataSchema, sectionTypeSchema } from "@reactive-resume/schema/resume/data";
+import { rethrowAsImportError } from "./error";
 
 const BUILT_IN_LAYOUT_SECTION_IDS = sectionTypeSchema.options.filter((section) => section !== "cover-letter");
 
@@ -62,18 +63,13 @@ function normalizeBuiltInSectionsInLayout(data: ResumeData): ResumeData {
 	};
 }
 
-export class ReactiveResumeJSONImporter {
-	parse(json: string): ResumeData {
-		try {
-			const parsed = resumeDataSchema.parse(JSON.parse(json));
-			return resumeDataSchema.parse(normalizeBuiltInSectionsInLayout(parsed));
-		} catch (error) {
-			if (error instanceof ZodError) {
-				const errors = flattenError(error);
-				throw new Error(JSON.stringify(errors));
-			}
-
-			throw error;
-		}
+// ponytail: stateless single-method class → plain function
+export function parseReactiveResumeJSON(json: string): ResumeData {
+	try {
+		const parsed = resumeDataSchema.parse(JSON.parse(json));
+		return resumeDataSchema.parse(normalizeBuiltInSectionsInLayout(parsed));
+	} catch (error) {
+		if (error instanceof ZodError) rethrowAsImportError(error);
+		throw error;
 	}
 }

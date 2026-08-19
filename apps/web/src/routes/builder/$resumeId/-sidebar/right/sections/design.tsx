@@ -1,4 +1,6 @@
+import type { ReactNode } from "react";
 import type z from "zod";
+import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useStore } from "@tanstack/react-form";
 import { AnimatePresence, m } from "motion/react";
@@ -30,6 +32,25 @@ export function DesignSectionBuilder() {
 
 type ColorValues = z.infer<typeof colorDesignSchema>;
 
+function useColorSectionForm(colors: ColorValues, persist: (data: ColorValues) => void) {
+	const form = useAppForm({
+		defaultValues: colors,
+		validators: { onChange: colorDesignSchema },
+		listeners: {
+			onChange: ({ formApi }) => {
+				persist(formApi.state.values);
+			},
+		},
+		onSubmit: ({ value }) => {
+			persist(value);
+		},
+	});
+	useSyncFormValues(form, colors);
+	return form;
+}
+
+type ColorSectionForm = ReturnType<typeof useColorSectionForm>;
+
 function ColorSectionForm() {
 	const resume = useCurrentResume();
 	const colors = resume.data.metadata.design.colors;
@@ -41,18 +62,7 @@ function ColorSectionForm() {
 		});
 	};
 
-	const form = useAppForm({
-		defaultValues: colors,
-		validators: { onChange: colorDesignSchema },
-		onSubmit: ({ value }) => {
-			persist(value);
-		},
-	});
-	useSyncFormValues(form, colors);
-
-	const handleAutoSave = () => {
-		persist(form.state.values);
-	};
+	const form = useColorSectionForm(colors, persist);
 
 	return (
 		<form
@@ -76,7 +86,6 @@ function ColorSectionForm() {
 								active={color === field.state.value}
 								onSelect={(color) => {
 									field.handleChange(color as string);
-									handleAutoSave();
 								}}
 							/>
 						))}
@@ -84,105 +93,50 @@ function ColorSectionForm() {
 				)}
 			</form.Field>
 
-			<form.Field name="primary">
-				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-						<FormLabel>
-							<Trans>Primary Color</Trans>
-						</FormLabel>
-						<div className="flex items-center gap-3">
-							<ColorPicker
-								value={field.state.value}
-								onChange={(color) => {
-									field.handleChange(color);
-									handleAutoSave();
-								}}
-							/>
-							<FormControl
-								render={
-									<Input
-										name={field.name}
-										value={field.state.value}
-										onBlur={field.handleBlur}
-										onChange={(e) => {
-											field.handleChange(e.target.value);
-											handleAutoSave();
-										}}
-									/>
-								}
-							/>
-						</div>
-						<FormMessage errors={field.state.meta.errors} />
-					</FormItem>
-				)}
-			</form.Field>
-
-			<form.Field name="text">
-				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-						<FormLabel>
-							<Trans>Text Color</Trans>
-						</FormLabel>
-						<div className="flex items-center gap-3">
-							<ColorPicker
-								defaultValue={field.state.value}
-								onChange={(color) => {
-									field.handleChange(color);
-									handleAutoSave();
-								}}
-							/>
-							<FormControl
-								render={
-									<Input
-										name={field.name}
-										value={field.state.value}
-										onBlur={field.handleBlur}
-										onChange={(e) => {
-											field.handleChange(e.target.value);
-											handleAutoSave();
-										}}
-									/>
-								}
-							/>
-						</div>
-						<FormMessage errors={field.state.meta.errors} />
-					</FormItem>
-				)}
-			</form.Field>
-
-			<form.Field name="background">
-				{(field) => (
-					<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
-						<FormLabel>
-							<Trans>Background Color</Trans>
-						</FormLabel>
-						<div className="flex items-center gap-3">
-							<ColorPicker
-								defaultValue={field.state.value}
-								onChange={(color) => {
-									field.handleChange(color);
-									handleAutoSave();
-								}}
-							/>
-							<FormControl
-								render={
-									<Input
-										name={field.name}
-										value={field.state.value}
-										onBlur={field.handleBlur}
-										onChange={(e) => {
-											field.handleChange(e.target.value);
-											handleAutoSave();
-										}}
-									/>
-								}
-							/>
-						</div>
-						<FormMessage errors={field.state.meta.errors} />
-					</FormItem>
-				)}
-			</form.Field>
+			<ColorFormField form={form} name="primary" label={<Trans>Primary Color</Trans>} controlled />
+			<ColorFormField form={form} name="text" label={<Trans>Text Color</Trans>} />
+			<ColorFormField form={form} name="background" label={<Trans>Background Color</Trans>} />
 		</form>
+	);
+}
+
+type ColorFormFieldProps = {
+	form: ColorSectionForm;
+	name: keyof ColorValues;
+	label: ReactNode;
+	controlled?: boolean;
+};
+
+function ColorFormField({ form, name, label, controlled }: ColorFormFieldProps) {
+	return (
+		<form.Field name={name}>
+			{(field) => (
+				<FormItem hasError={field.state.meta.isTouched && field.state.meta.errors.length > 0}>
+					<FormLabel>{label}</FormLabel>
+					<div className="flex items-center gap-3">
+						<ColorPicker
+							{...(controlled ? { value: field.state.value } : { defaultValue: field.state.value })}
+							onChange={(color) => {
+								field.handleChange(color);
+							}}
+						/>
+						<FormControl
+							render={
+								<Input
+									name={field.name}
+									value={field.state.value}
+									onBlur={field.handleBlur}
+									onChange={(e) => {
+										field.handleChange(e.target.value);
+									}}
+								/>
+							}
+						/>
+					</div>
+					<FormMessage errors={field.state.meta.errors} />
+				</FormItem>
+			)}
+		</form.Field>
 	);
 }
 
@@ -221,6 +175,7 @@ function QuickColorCircle({ color, active, onSelect, className, ...props }: Quic
 	return (
 		<button
 			type="button"
+			aria-label={t`Use color ${color}`}
 			onClick={() => onSelect(color)}
 			className={cn(
 				"relative flex size-8 items-center justify-center rounded-md bg-transparent",
@@ -266,15 +221,16 @@ function LevelSectionForm() {
 	const form = useAppForm({
 		defaultValues: levelDesign,
 		validators: { onChange: levelDesignSchema },
+		listeners: {
+			onChange: ({ formApi }) => {
+				persist(formApi.state.values);
+			},
+		},
 		onSubmit: ({ value }) => {
 			persist(value);
 		},
 	});
 	useSyncFormValues(form, levelDesign);
-
-	const handleAutoSave = () => {
-		persist(form.state.values);
-	};
 
 	const previewType = useStore(form.store, (s) => s.values.type);
 	const previewIcon = useStore(form.store, (s) => s.values.icon);
@@ -327,7 +283,6 @@ function LevelSectionForm() {
 										value={field.state.value}
 										onChange={(value) => {
 											field.handleChange(value);
-											handleAutoSave();
 										}}
 									/>
 								}
@@ -349,7 +304,6 @@ function LevelSectionForm() {
 										onValueChange={(value) => {
 											if (!value) return;
 											field.handleChange(value as LevelType);
-											handleAutoSave();
 										}}
 									/>
 								}

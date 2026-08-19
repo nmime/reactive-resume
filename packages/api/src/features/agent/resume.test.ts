@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildAgentDraftResumeName, buildUniqueAgentDraftSlug } from "./resume";
+import { buildAgentDraftResumeName, buildUniqueAgentDraftSlug, normalizeAgentResumePatchOperations } from "./resume";
 
 describe("agent resume setup helpers", () => {
 	it("names duplicated resumes as AI drafts", () => {
@@ -12,5 +12,27 @@ describe("agent resume setup helpers", () => {
 		expect(buildUniqueAgentDraftSlug("Senior Product Designer", new Set(["senior-product-designer-ai-draft"]))).toBe(
 			"senior-product-designer-ai-draft-2",
 		);
+	});
+});
+
+describe("normalizeAgentResumePatchOperations", () => {
+	it("prefixes shorthand standard section paths without touching custom section paths", () => {
+		const result = normalizeAgentResumePatchOperations(
+			{
+				sections: {
+					experience: {},
+					education: {},
+				},
+			},
+			[
+				{ op: "replace", path: "/experience/items/0/description", value: "Updated" },
+				{ op: "copy", from: "/education/items/0", path: "/customSections/0/items/-" },
+			],
+		);
+
+		expect(result).toEqual([
+			{ op: "replace", path: "/sections/experience/items/0/description", value: "Updated" },
+			{ op: "copy", from: "/sections/education/items/0", path: "/customSections/0/items/-" },
+		]);
 	});
 });

@@ -26,6 +26,8 @@ describe("renderSummary", () => {
 			content: "<p>Hello</p>",
 			hidden: true,
 			columns: 1,
+			keepTogether: false,
+			startOnNewPage: false,
 		};
 		expect(renderSummary(summary, HEX)).toEqual([]);
 	});
@@ -37,6 +39,8 @@ describe("renderSummary", () => {
 			content: "",
 			hidden: false,
 			columns: 1,
+			keepTogether: false,
+			startOnNewPage: false,
 		};
 		expect(renderSummary(summary, HEX)).toEqual([]);
 	});
@@ -48,6 +52,8 @@ describe("renderSummary", () => {
 			content: "<p>Hello world</p>",
 			hidden: false,
 			columns: 1,
+			keepTogether: false,
+			startOnNewPage: false,
 		};
 		const paragraphs = renderSummary(summary, HEX);
 		// One heading + the htmlToParagraphs output for one <p>.
@@ -61,6 +67,8 @@ describe("renderSummary", () => {
 			content: "<p>Hello world</p>",
 			hidden: false,
 			columns: 1,
+			keepTogether: false,
+			startOnNewPage: false,
 		};
 		const paragraphs = renderSummary(summary, HEX);
 		expect(paragraphs.length).toBeGreaterThanOrEqual(1);
@@ -73,6 +81,8 @@ const emptySection = <T extends SectionType>(type: T): ResumeData["sections"][T]
 		icon: getDefaultSectionIconName(type),
 		columns: 1,
 		hidden: false,
+		keepTogether: false,
+		startOnNewPage: false,
 		items: [],
 	}) as ResumeData["sections"][T];
 
@@ -99,6 +109,8 @@ describe("renderCustomSection", () => {
 		icon: getDefaultSectionIconName("summary"),
 		columns: 1,
 		hidden: false,
+		keepTogether: false,
+		startOnNewPage: false,
 		items: [],
 	};
 
@@ -138,6 +150,7 @@ describe("renderCustomSection", () => {
 		const section: CustomSection = {
 			...baseCustom,
 			type: "cover-letter",
+			title: "Cover Letter",
 			items: [
 				{
 					id: "x",
@@ -148,8 +161,7 @@ describe("renderCustomSection", () => {
 			],
 		};
 		const paragraphs = renderCustomSection(section, HEX);
-		// 1 heading + at least two paragraphs (recipient + body)
-		expect(paragraphs.length).toBeGreaterThanOrEqual(3);
+		expect(paragraphs).toHaveLength(2);
 	});
 });
 

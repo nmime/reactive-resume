@@ -1,6 +1,6 @@
 import type { Style } from "@react-pdf/types";
 
-export type RtlStyleHelpers = {
+type RtlStyleHelpers = {
 	rtl: boolean;
 	pageDirection: "ltr" | "rtl";
 	row: "row" | "row-reverse";

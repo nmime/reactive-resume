@@ -1,6 +1,6 @@
 import type { ResumeData, SectionType } from "@reactive-resume/schema/resume/data";
 
-export type SectionTitleResolverInput = {
+type SectionTitleResolverInput = {
 	sectionId: string;
 	locale: string;
 	sectionKind: "summary" | "builtin" | "custom";

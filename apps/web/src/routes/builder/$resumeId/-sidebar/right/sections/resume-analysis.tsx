@@ -3,14 +3,12 @@ import { Trans } from "@lingui/react/macro";
 import { ArrowRightIcon, InfoIcon, LightningIcon, SparkleIcon } from "@phosphor-icons/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
 import { match } from "ts-pattern";
 import { Alert, AlertDescription } from "@reactive-resume/ui/components/alert";
 import { Badge } from "@reactive-resume/ui/components/badge";
 import { Button } from "@reactive-resume/ui/components/button";
+import { toast } from "@reactive-resume/ui/components/toast";
 import { useResume } from "@/features/resume/builder/draft";
-import { getOrpcErrorMessage } from "@/libs/error-message";
 import { orpc } from "@/libs/orpc/client";
 import { SectionBase } from "../shared/section-base";
 
@@ -51,11 +49,10 @@ export function ResumeAnalysisSectionBuilder() {
 	const resume = useResume();
 
 	const resumeId = resume?.id ?? "";
-	const providersQuery = useQuery(orpc.aiProviders.list.queryOptions());
-	const aiEnabled =
-		providersQuery.data?.some((provider) => provider.enabled && provider.testStatus === "success") ?? false;
+	const { data: providers } = useQuery(orpc.aiProviders.list.queryOptions());
+	const aiEnabled = providers?.some((provider) => provider.enabled && provider.testStatus === "success") ?? false;
 
-	const analysisQuery = useQuery({
+	const { data: analysis, isFetched: analysisFetched } = useQuery({
 		...orpc.resume.analysis.getById.queryOptions({ input: { id: resumeId } }),
 		enabled: !!resume,
 	});
@@ -64,46 +61,21 @@ export function ResumeAnalysisSectionBuilder() {
 		...orpc.ai.analyzeResume.mutationOptions(),
 		onSuccess: (analysis) => {
 			queryClient.setQueryData(orpc.resume.analysis.getById.queryKey({ input: { id: resumeId } }), analysis);
-			toast.success(t`Resume analysis complete.`);
+			toast.add({ type: "success", description: t`Resume analysis complete.` });
 		},
-		onError: (error) => {
-			toast.error(t`Failed to analyze resume.`, {
-				description: getOrpcErrorMessage(error, {
-					byCode: {
-						BAD_REQUEST: t({
-							comment: "Error description when AI returns invalid resume analysis format",
-							message: "The AI returned an invalid analysis format. Please try again.",
-						}),
-						BAD_GATEWAY: t({
-							comment: "Error description when AI provider cannot be reached during resume analysis",
-							message: "Could not reach the AI provider. Please try again.",
-						}),
-					},
-					fallback: t({
-						comment: "Fallback error description when resume analysis request fails",
-						message: "Something went wrong while analyzing your resume.",
-					}),
-				}),
-			});
+		onError: (_error) => {
+			toast.add({ type: "error", description: t`Failed to analyze resume.` });
 		},
 	});
 
-	const analysis = analysisQuery.data;
 	const score = analysis?.overallScore ?? null;
 	const updatedAt = analysis?.updatedAt ?? null;
-	const [updatedAtLabel, setUpdatedAtLabel] = useState<string | null>(null);
+	// Derived during render (not via state+effect): the analysis comes from a client-fetched query,
+	// so the server render has no date and there's no hydration mismatch to defer around.
+	const updatedAtLabel = updatedAt ? new Date(updatedAt).toLocaleString() : null;
 	const analyzeLabel = isPending ? t`Analyzing…` : t`Analyze Resume`;
-
-	const scoreTone = useMemo(() => {
-		if (score == null) return "bg-muted";
-		if (score >= 80) return "bg-emerald-600";
-		if (score >= 60) return "bg-amber-600";
-		return "bg-rose-600";
-	}, [score]);
-
-	useEffect(() => {
-		setUpdatedAtLabel(updatedAt ? new Date(updatedAt).toLocaleString() : null);
-	}, [updatedAt]);
+	const scoreTone =
+		score == null ? "bg-muted" : score >= 80 ? "bg-emerald-600" : score >= 60 ? "bg-amber-600" : "bg-rose-600";
 
 	const onAnalyze = () => {
 		if (!resume) return;
@@ -168,7 +140,7 @@ export function ResumeAnalysisSectionBuilder() {
 						</div>
 					</div>
 
-					{analysisQuery.isFetched && !analysis && !isPending && (
+					{analysisFetched && !analysis && !isPending && (
 						<div className="rounded-md border border-dashed p-3">
 							<p className="max-w-xs text-muted-foreground text-sm">
 								<Trans>Run your first analysis to get a scorecard, strengths, and prioritized suggestions.</Trans>

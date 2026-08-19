@@ -2,6 +2,13 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup } from "@testing-library/react";
 import { afterEach, vi } from "vitest";
 
+// Several units under test transitively import the validated server env, which throws at import
+// time when a required variable is missing. Tests are expected to run without a .env, so seed the
+// three required variables here — before any test module loads. Real values still win.
+process.env.APP_URL ??= "http://localhost:3000";
+process.env.DATABASE_URL ??= "postgresql://postgres:postgres@localhost:5432/postgres";
+process.env.AUTH_SECRET ??= "test-auth-secret";
+
 // React Testing Library auto-cleanup hooks into afterEach as a global, but Vitest
 // only exposes `afterEach` globally when `test.globals: true` is set. We register
 // the cleanup explicitly so component tests do not leak DOM between runs.

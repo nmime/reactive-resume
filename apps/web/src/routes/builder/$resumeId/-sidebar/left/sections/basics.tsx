@@ -35,6 +35,14 @@ function BasicsSectionForm() {
 	const form = useAppForm({
 		defaultValues: basics,
 		validators: { onChange: formSchema },
+		// Persist on every field change via a form-level listener. Previously each field called
+		// `form.handleSubmit()` on change, which re-validated the whole form AND toggled submit state —
+		// firing the render cascade twice per keystroke. A listener persists once, without the submit churn.
+		listeners: {
+			onChange: ({ formApi }) => {
+				persist(formApi.state.values);
+			},
+		},
 		onSubmit: ({ value }) => {
 			persist(value);
 		},
@@ -64,7 +72,6 @@ function BasicsSectionForm() {
 									onBlur={field.handleBlur}
 									onChange={(e) => {
 										field.handleChange(e.target.value);
-										void form.handleSubmit();
 									}}
 								/>
 							}
@@ -88,7 +95,6 @@ function BasicsSectionForm() {
 									onBlur={field.handleBlur}
 									onChange={(e) => {
 										field.handleChange(e.target.value);
-										void form.handleSubmit();
 									}}
 								/>
 							}
@@ -113,7 +119,6 @@ function BasicsSectionForm() {
 									onBlur={field.handleBlur}
 									onChange={(e) => {
 										field.handleChange(e.target.value);
-										void form.handleSubmit();
 									}}
 								/>
 							}
@@ -137,7 +142,6 @@ function BasicsSectionForm() {
 									onBlur={field.handleBlur}
 									onChange={(e) => {
 										field.handleChange(e.target.value);
-										void form.handleSubmit();
 									}}
 								/>
 							}
@@ -161,7 +165,6 @@ function BasicsSectionForm() {
 									onBlur={field.handleBlur}
 									onChange={(e) => {
 										field.handleChange(e.target.value);
-										void form.handleSubmit();
 									}}
 								/>
 							}
@@ -182,7 +185,6 @@ function BasicsSectionForm() {
 							value={field.state.value}
 							onChange={(value) => {
 								field.handleChange(value);
-								void form.handleSubmit();
 							}}
 						/>
 						<FormMessage errors={field.state.meta.errors} />

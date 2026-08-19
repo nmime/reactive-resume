@@ -1,9 +1,9 @@
 ---
 title: "Using the MCP Server"
-description: "Connect Reactive Resume to AI tools like Claude Desktop, Cursor, and Codex using the Model Context Protocol"
+description: "Connect Reactive Resume to AI tools like Claude Desktop, Cursor, and Codex through the Model Context Protocol to edit and manage resumes via chat."
 ---
 
-The Reactive Resume MCP server lets you manage and modify your resumes through any MCP-compatible AI tool — Claude Desktop, Cursor, Codex, and more. It connects to the Reactive Resume API and exposes tools for listing, reading, and patching resumes using natural language.
+The Reactive Resume MCP server lets you manage and modify your resumes and job applications through any MCP-compatible AI tool - Claude Desktop, Cursor, Codex, and more. It connects to the Reactive Resume API and exposes tools for resume editing, Application Tracker workflows, and AI-assisted job application tasks using natural language.
 
 ## What is MCP?
 
@@ -215,6 +215,7 @@ Tool names use canonical unprefixed `snake_case` names.
 | `list_resume_tags`      | List every distinct tag in use across your resumes (sorted)                                                                        |
 | `read_resume`           | Get the full data of a specific resume by ID                                                                                       |
 | `get_resume_analysis`   | Get the latest saved AI analysis for a resume (from the web app), if any                                                           |
+| `download_resume_pdf`   | Create a 10-minute authenticated PDF download URL. Defaults to the resume; set `target: "cover-letter"` for its visible cover letter |
 | `create_resume`         | Create a new, empty resume with a name and slug. Optionally pre-fill with sample data                                              |
 | `import_resume`         | Create a resume from a full ResumeData JSON export (random name/slug). Large files may exceed client limits                        |
 | `duplicate_resume`      | Create a copy of an existing resume with a new name and slug                                                                       |
@@ -224,6 +225,23 @@ Tool names use canonical unprefixed `snake_case` names.
 | `lock_resume`           | Lock a resume to prevent edits, patches, and deletion                                                                              |
 | `unlock_resume`         | Unlock a previously locked resume to re-enable editing                                                                             |
 | `get_resume_statistics` | Get view and download statistics for a resume                                                                                      |
+| `list_applications`     | List tracked job applications. Supports stage, tag, and archived filters                                                           |
+| `read_application`      | Read one full application record with contacts, follow-up details, documents, and timeline                                         |
+| `list_application_tags` | List every distinct tag used across applications                                                                                    |
+| `get_application_stats` | Get aggregate application counts by stage and source                                                                               |
+| `create_application`    | Create a tracked job application                                                                                                   |
+| `update_application`    | Update fields, move stage, archive/unarchive, edit contacts/follow-ups/tags, or link a resume                                     |
+| `add_application_note`  | Append a note to an application's activity timeline                                                                                |
+| `delete_application`    | Permanently delete one application and its owned uploaded documents                                                                |
+| `bulk_update_applications` | Move, archive/unarchive, or add tags to multiple applications                                                                   |
+| `bulk_delete_applications` | Permanently delete multiple applications                                                                                        |
+| `import_applications`   | Bulk-create parsed application rows, up to 500 items                                                                               |
+| `attach_application_document` | Attach a sent resume or cover-letter PDF from base64-encoded PDF bytes                                                       |
+| `remove_application_document` | Remove a sent resume or cover-letter PDF                                                                                     |
+| `autofill_application_from_job` | Use AI to extract job details from a URL or pasted job description                                                         |
+| `score_application_match` | Score the linked resume against the application job description                                                                  |
+| `tailor_resume_for_application` | Create and link a tailored resume copy for an application                                                                  |
+| `draft_application_message` | Draft a cover letter or recruiter follow-up from application and resume context                                                |
 
 ### Breaking change (tool names)
 
@@ -273,6 +291,18 @@ Once your MCP client is connected, you can use natural language to interact with
 - "What skills are listed on my resume?"
 - "Show me the stats for my resume"
 
+### Tracking Applications
+
+- "Create an application for Senior Frontend Engineer at Acme, stage saved, source LinkedIn."
+- "List my archived applications tagged remote."
+- "Move my Acme application to interview and add a note that the technical screen is next Tuesday."
+- "Attach this resume PDF to the Acme application."
+- "Score the resume linked to this application against the job description."
+- "Create a tailored resume copy for this application."
+- "Draft a follow-up message for the recruiter."
+
+For a complete workflow and prompt library, see [Managing applications with MCP](/guides/managing-applications-with-mcp).
+
 ### Creating & Managing
 
 - "Create a new resume called 'Frontend Engineer 2026'"
@@ -282,6 +312,8 @@ Once your MCP client is connected, you can use natural language to interact with
 - "Make my resume public and give me the share link"
 - "Lock my finalized resume so it can't be accidentally edited"
 - "Delete my old draft resume"
+- "Download a PDF of my Software Engineer resume"
+- "Download the visible cover letter from my Software Engineer resume as a PDF"
 
 ### Editing
 
@@ -320,3 +352,4 @@ Once your MCP client is connected, you can use natural language to interact with
 | "API error (403)"                                             | The resume is locked. Unlock it in the Reactive Resume dashboard                                                               |
 | Connection refused                                            | Check that the URL is correct and the instance is running                                                                      |
 | "ReferenceError: File is not defined" when using `mcp-remote` | You're running Node.js 18. `mcp-remote` requires **Node.js 20 or later** — upgrade with `nvm use 20` or `nvm alias default 20` |
+| "Application documents must be PDF files"                     | `attach_application_document` only accepts `contentType: "application/pdf"` and base64-encoded PDF bytes                       |

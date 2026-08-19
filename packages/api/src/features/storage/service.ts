@@ -55,20 +55,21 @@ const DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
 const IMAGE_MIME_TYPES = ["image/gif", "image/png", "image/jpeg", "image/webp"];
 
-// Key builders for different upload types
-function buildPictureKey(userId: string): string {
-	const timestamp = Date.now();
-	return `uploads/${userId}/pictures/${timestamp}.jpeg`;
-}
+const EXTENSION_BY_CONTENT_TYPE: Record<string, string> = {
+	"image/jpeg": "jpeg",
+	"image/png": "png",
+	"image/webp": "webp",
+	"image/gif": "gif",
+	"application/pdf": "pdf",
+};
 
-function buildScreenshotKey(userId: string, resumeId: string): string {
-	const timestamp = Date.now();
-	return `uploads/${userId}/screenshots/${resumeId}/${timestamp}.jpeg`;
-}
-
-function buildPdfKey(userId: string, resumeId: string): string {
-	const timestamp = Date.now();
-	return `uploads/${userId}/pdfs/${resumeId}/${timestamp}.pdf`;
+// Derive the stored key's extension from the content type so the static handler serves each
+// file correctly instead of mislabeling it. Images normally arrive as JPEG (sharp), but with
+// FLAG_DISABLE_IMAGE_PROCESSING they keep their original type — hence all image types are
+// mapped, not just JPEG. Non-image uploads (e.g. a cover-letter PDF) get their real extension.
+function buildFileKey(userId: string, contentType: string): string {
+	const extension = EXTENSION_BY_CONTENT_TYPE[contentType] ?? "bin";
+	return `uploads/${userId}/pictures/${Date.now()}.${extension}`;
 }
 
 function buildPublicUrl(path: string): string {
@@ -224,10 +225,7 @@ class LocalStorageService implements StorageService {
 
 class S3StorageService implements StorageService {
 	private readonly bucket: string;
-	private readonly accessKeyId: string;
-	private readonly secretAccessKey: string;
-	private readonly endpoint: string | undefined;
-	private readonly clientPromise: Promise<S3Client>;
+	private readonly client: S3Client;
 
 	constructor() {
 		if (!env.S3_ACCESS_KEY_ID || !env.S3_SECRET_ACCESS_KEY || !env.S3_BUCKET) {
@@ -235,38 +233,25 @@ class S3StorageService implements StorageService {
 		}
 
 		this.bucket = env.S3_BUCKET;
-		this.accessKeyId = env.S3_ACCESS_KEY_ID;
-		this.secretAccessKey = env.S3_SECRET_ACCESS_KEY;
-		this.endpoint = env.S3_ENDPOINT;
-		this.clientPromise = this.createClient();
-	}
-
-	private async createClient(): Promise<S3Client> {
-		return new S3Client({
+		this.client = new S3Client({
 			region: env.S3_REGION,
 			forcePathStyle: env.S3_FORCE_PATH_STYLE,
-			...(this.endpoint ? { endpoint: this.endpoint } : {}),
+			...(env.S3_ENDPOINT ? { endpoint: env.S3_ENDPOINT } : {}),
 			credentials: {
-				accessKeyId: this.accessKeyId,
-				secretAccessKey: this.secretAccessKey,
+				accessKeyId: env.S3_ACCESS_KEY_ID,
+				secretAccessKey: env.S3_SECRET_ACCESS_KEY,
 			},
 		});
 	}
 
-	private async getClient(): Promise<S3Client> {
-		return this.clientPromise;
-	}
-
 	async list(prefix: string): Promise<string[]> {
-		const client = await this.getClient();
 		const command = new ListObjectsV2Command({ Bucket: this.bucket, Prefix: prefix });
-		const response = await client.send(command);
+		const response = await this.client.send(command);
 		if (!response.Contents) return [];
 		return response.Contents.map((object) => object.Key ?? "");
 	}
 
 	async write({ key, data, contentType, private: isPrivate }: StorageWriteInput): Promise<void> {
-		const client = await this.getClient();
 		const command = new PutObjectCommand({
 			Bucket: this.bucket,
 			Key: key,
@@ -275,14 +260,13 @@ class S3StorageService implements StorageService {
 			ContentType: contentType,
 		});
 
-		await client.send(command);
+		await this.client.send(command);
 	}
 
 	async read(key: string): Promise<StorageReadResult | null> {
 		try {
-			const client = await this.getClient();
 			const command = new GetObjectCommand({ Bucket: this.bucket, Key: key });
-			const response = await client.send(command);
+			const response = await this.client.send(command);
 			if (!response.Body) return null;
 
 			const arrayBuffer = await response.Body.transformToByteArray();
@@ -301,13 +285,13 @@ class S3StorageService implements StorageService {
 
 	async delete(keyOrPrefix: string): Promise<boolean> {
 		// Use list to find all matching keys (handles both single file and folder/prefix)
-		const [client, keys] = await Promise.all([this.getClient(), this.list(keyOrPrefix)]);
+		const keys = await this.list(keyOrPrefix);
 
 		if (keys.length === 0) return false;
 
 		// Delete all matching keys using Promise.allSettled
 		const deleteCommands = keys.map((k) => new DeleteObjectCommand({ Bucket: this.bucket, Key: k }));
-		const results = await Promise.allSettled(deleteCommands.map((c) => client.send(c)));
+		const results = await Promise.allSettled(deleteCommands.map((c) => this.client.send(c)));
 
 		// Return true if at least one deletion succeeded
 		return results.some((r) => r.status === "fulfilled");
@@ -315,12 +299,11 @@ class S3StorageService implements StorageService {
 
 	async healthcheck(): Promise<StorageHealthResult> {
 		try {
-			const client = await this.getClient();
 			const putCommand = new PutObjectCommand({ Bucket: this.bucket, Key: "healthcheck", Body: "OK" });
-			await client.send(putCommand);
+			await this.client.send(putCommand);
 
 			const deleteCommand = new DeleteObjectCommand({ Bucket: this.bucket, Key: "healthcheck" });
-			await client.send(deleteCommand);
+			await this.client.send(deleteCommand);
 
 			return {
 				type: "s3",
@@ -338,32 +321,20 @@ class S3StorageService implements StorageService {
 	}
 }
 
-function createStorageService(): StorageService {
-	if (env.S3_ACCESS_KEY_ID && env.S3_SECRET_ACCESS_KEY && env.S3_BUCKET) {
-		return new S3StorageService();
-	}
-
-	return new LocalStorageService();
-}
-
 let cachedService: StorageService | null = null;
 
 export function getStorageService(): StorageService {
-	if (cachedService) return cachedService;
-
-	cachedService = createStorageService();
+	cachedService ??=
+		env.S3_ACCESS_KEY_ID && env.S3_SECRET_ACCESS_KEY && env.S3_BUCKET
+			? new S3StorageService()
+			: new LocalStorageService();
 	return cachedService;
 }
-
-// High-level upload types
-type UploadType = "picture" | "screenshot" | "pdf";
 
 interface UploadFileInput {
 	userId: string;
 	data: Uint8Array;
 	contentType: string;
-	type: UploadType;
-	resumeId?: string;
 }
 
 interface UploadFileResult {
@@ -372,32 +343,7 @@ interface UploadFileResult {
 }
 
 export async function uploadFile(input: UploadFileInput): Promise<UploadFileResult> {
-	const storageService = getStorageService();
-
-	let key: string;
-
-	switch (input.type) {
-		case "picture":
-			key = buildPictureKey(input.userId);
-			break;
-		case "screenshot":
-			if (!input.resumeId) throw new Error("resumeId is required for screenshot uploads");
-			key = buildScreenshotKey(input.userId, input.resumeId);
-			break;
-		case "pdf":
-			if (!input.resumeId) throw new Error("resumeId is required for pdf uploads");
-			key = buildPdfKey(input.userId, input.resumeId);
-			break;
-	}
-
-	await storageService.write({
-		key,
-		data: input.data,
-		contentType: input.contentType,
-	});
-
-	return {
-		key,
-		url: buildPublicUrl(key),
-	};
+	const key = buildFileKey(input.userId, input.contentType);
+	await getStorageService().write({ key, data: input.data, contentType: input.contentType });
+	return { key, url: buildPublicUrl(key) };
 }

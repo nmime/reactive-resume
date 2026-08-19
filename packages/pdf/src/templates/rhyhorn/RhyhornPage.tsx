@@ -4,15 +4,32 @@ import type { TemplatePageProps } from "../../document";
 import type { TemplateColorRoles, TemplateStyleContext, TemplateStyleSlots } from "../shared/types";
 import { useMemo } from "react";
 import { rgbaStringToHex } from "@reactive-resume/utils/color";
+import { Page, StyleSheet, View } from "#react-pdf-renderer";
 import { useRender } from "../../context";
-import { Image, Page, StyleSheet, View } from "../../renderer";
-import { CustomFieldContactItem, WebsiteContactItem } from "../shared/contact-item";
-import { TemplateProvider } from "../shared/context";
+import { resolvedPdfFlowProps } from "../../semantic/adapter";
+import { useRenderedSectionIds, useResolvedNode, useSemanticNodeVisible } from "../../semantic/context";
+import { semanticNodeKeys } from "../../semantic/node-keys";
+import { createBaseTemplateStyles } from "../shared/base-template-styles";
+import {
+	CustomFieldContactItem,
+	EmailContactItem,
+	LocationContactItem,
+	PhoneContactItem,
+	WebsiteContactItem,
+} from "../shared/contact-item";
+import { TemplateProvider, useTemplatePageNodeKey } from "../shared/context";
 import { filterSections } from "../shared/filtering";
 import { getTemplateMetrics } from "../shared/metrics";
-import { getTemplatePageMinHeightStyle, getTemplatePageSize } from "../shared/page-size";
 import { hasTemplatePicture } from "../shared/picture";
-import { Heading, Icon, Link, Text } from "../shared/primitives";
+import {
+	Heading,
+	SemanticContactListView,
+	SemanticHeaderPicture,
+	SemanticHeaderView,
+	SemanticRegionView,
+	semanticTemplatePartNodeKey,
+	Text,
+} from "../shared/primitives";
 import { createRtlStyleHelpers } from "../shared/rtl";
 import { Section } from "../shared/sections";
 import { composeStyles, headerNameLineHeight } from "../shared/styles";
@@ -40,34 +57,62 @@ type RhyhornHeaderProps = {
 	styles: RhyhornStyles;
 };
 
-export const RhyhornPage = ({ page, pageIndex }: TemplatePageProps) => {
+type RhyhornContactItemProps = {
+	nodeKey: string | undefined;
+	last: boolean;
+	styles: RhyhornStyles;
+	children: ReactNode;
+};
+
+const RhyhornContactItem = ({ nodeKey, last, styles, children }: RhyhornContactItemProps) => {
+	const resolved = useResolvedNode(nodeKey);
+	const visible = useSemanticNodeVisible(nodeKey);
+	if (!visible) return null;
+
+	return (
+		<View
+			{...resolvedPdfFlowProps(resolved)}
+			style={composeStyles(styles.contactItem, last ? styles.contactItemLast : undefined, resolved.style)}
+		>
+			{children}
+		</View>
+	);
+};
+
+export const RhyhornPage = ({ page, pageSize, pageMinHeightStyle, showHeader, pageNumber }: TemplatePageProps) => {
 	const data = useRender();
+	const pageNodeKey = semanticNodeKeys.page(pageNumber);
+	const { style: semanticPageStyle, size: semanticPageSize, ...semanticPageProps } = useResolvedNode(pageNodeKey);
 	const { metadata } = data;
 	const { colors, styles } = useRhyhornTemplate();
 	const metrics = getTemplateMetrics(metadata.page);
-	const pageSize = getTemplatePageSize(metadata.page.format);
-	const pageMinHeightStyle = getTemplatePageMinHeightStyle(metadata.page.format);
-	const showHeader = pageIndex === 0;
-	const mainSections = filterSections(page.main, data);
-	const sidebarSections = filterSections(page.sidebar, data);
+	const mainSections = useRenderedSectionIds(pageNodeKey, filterSections(page.main, data));
+	const sidebarSections = useRenderedSectionIds(pageNodeKey, filterSections(page.sidebar, data));
 
 	return (
-		<Page size={pageSize} style={composeStyles(styles.page, pageMinHeightStyle)}>
-			<TemplateProvider styles={styles} colors={colors}>
+		<Page
+			{...semanticPageProps}
+			size={semanticPageSize ?? pageSize}
+			style={composeStyles(styles.page, pageMinHeightStyle, semanticPageStyle)}
+		>
+			<TemplateProvider pageNodeKey={pageNodeKey} styles={styles} colors={colors}>
 				{showHeader && <Header styles={styles} />}
 
-				<View style={composeStyles(styles.sectionGroup, { rowGap: metrics.sectionGap })}>
+				<SemanticRegionView region="main" style={composeStyles(styles.sectionGroup, { rowGap: metrics.sectionGap })}>
 					{mainSections.map((section) => (
 						<Section key={section} section={section} placement="main" />
 					))}
-				</View>
+				</SemanticRegionView>
 
 				{!page.fullWidth && (
-					<View style={composeStyles(styles.sectionGroup, { rowGap: metrics.sectionGap })}>
+					<SemanticRegionView
+						region="sidebar"
+						style={composeStyles(styles.sectionGroup, { rowGap: metrics.sectionGap })}
+					>
 						{sidebarSections.map((section) => (
 							<Section key={section} section={section} placement="sidebar" />
 						))}
-					</View>
+					</SemanticRegionView>
 				)}
 			</TemplateProvider>
 		</Page>
@@ -77,43 +122,55 @@ export const RhyhornPage = ({ page, pageIndex }: TemplatePageProps) => {
 const Header = ({ styles }: RhyhornHeaderProps) => {
 	const { basics, picture } = useRender();
 	const hasPicture = hasTemplatePicture(picture);
+	const pageNodeKey = useTemplatePageNodeKey();
+	const headerNodeKey = semanticNodeKeys.header(semanticNodeKeys.region(pageNodeKey, "header"));
+	const contactListNodeKey = headerNodeKey ? semanticNodeKeys.contactList(headerNodeKey) : undefined;
+	const contactNodeKey = (name: string, id?: string) =>
+		contactListNodeKey ? semanticNodeKeys.contactItem(contactListNodeKey, name, id) : undefined;
+	const contentNodeKey = (name: string, id?: string) =>
+		semanticTemplatePartNodeKey(contactNodeKey(name, id), "contact-item-content");
 	const contactItems: {
 		id: string;
+		nodeKey: string | undefined;
 		content: ReactNode;
 	}[] = [];
 
 	if (basics.email) {
 		contactItems.push({
 			id: "email",
+			nodeKey: contactNodeKey("email"),
 			content: (
-				<Link src={`mailto:${basics.email}`} style={styles.contactItemContent}>
-					<Icon name="envelope" />
-					<Text>{basics.email}</Text>
-				</Link>
+				<EmailContactItem
+					email={basics.email}
+					primitiveNodeKey={contentNodeKey("email")}
+					style={styles.contactItemContent}
+				/>
 			),
 		});
 	}
-
 	if (basics.phone) {
 		contactItems.push({
 			id: "phone",
+			nodeKey: contactNodeKey("phone"),
 			content: (
-				<Link src={`tel:${basics.phone}`} style={styles.contactItemContent}>
-					<Icon name="phone" />
-					<Text>{basics.phone}</Text>
-				</Link>
+				<PhoneContactItem
+					phone={basics.phone}
+					primitiveNodeKey={contentNodeKey("phone")}
+					style={styles.contactItemContent}
+				/>
 			),
 		});
 	}
-
 	if (basics.location) {
 		contactItems.push({
 			id: "location",
+			nodeKey: contactNodeKey("location"),
 			content: (
-				<View style={styles.contactItemContent}>
-					<Icon name="map-pin" />
-					<Text>{basics.location}</Text>
-				</View>
+				<LocationContactItem
+					location={basics.location}
+					primitiveNodeKey={contentNodeKey("location")}
+					style={styles.contactItemContent}
+				/>
 			),
 		});
 	}
@@ -121,42 +178,55 @@ const Header = ({ styles }: RhyhornHeaderProps) => {
 	if (basics.website.url) {
 		contactItems.push({
 			id: "website",
-			content: <WebsiteContactItem website={basics.website} style={styles.contactItemContent} />,
+			nodeKey: contactNodeKey("website"),
+			content: (
+				<WebsiteContactItem
+					website={basics.website}
+					primitiveNodeKey={contentNodeKey("website")}
+					style={styles.contactItemContent}
+				/>
+			),
 		});
 	}
 
 	contactItems.push(
 		...basics.customFields.map((field) => ({
 			id: `custom-${field.id}`,
-			content: <CustomFieldContactItem field={field} style={styles.contactItemContent} />,
+			nodeKey: contactNodeKey("custom", field.id),
+			content: (
+				<CustomFieldContactItem
+					field={field}
+					primitiveNodeKey={contentNodeKey("custom", field.id)}
+					style={styles.contactItemContent}
+				/>
+			),
 		})),
 	);
 
 	return (
-		<View style={styles.header}>
+		<SemanticHeaderView style={styles.header}>
 			<View style={styles.headerTitle}>
 				<View style={styles.headerIdentity}>
 					<Heading style={styles.headerName}>{basics.name}</Heading>
 					<Text>{basics.headline}</Text>
 				</View>
 
-				<View style={styles.contactList}>
+				<SemanticContactListView style={styles.contactList}>
 					{contactItems.map((item, index) => (
-						<View
+						<RhyhornContactItem
 							key={item.id}
-							style={composeStyles(
-								styles.contactItem,
-								index === contactItems.length - 1 ? styles.contactItemLast : undefined,
-							)}
+							nodeKey={item.nodeKey}
+							last={index === contactItems.length - 1}
+							styles={styles}
 						>
 							{item.content}
-						</View>
+						</RhyhornContactItem>
 					))}
-				</View>
+				</SemanticContactListView>
 			</View>
 
-			{hasPicture && <Image src={picture.url} style={styles.picture} />}
-		</View>
+			{hasPicture && <SemanticHeaderPicture src={picture.url} style={styles.picture} />}
+		</SemanticHeaderView>
 	);
 };
 
@@ -172,84 +242,15 @@ const useRhyhornTemplate = (): RhyhornTemplate => {
 		const metrics = getTemplateMetrics(metadata.page);
 		const contactGap = metrics.gapX(0.5);
 
-		const bodyText = {
-			fontFamily: metadata.typography.body.fontFamily,
-			fontSize: metadata.typography.body.fontSize,
-			fontWeight: metadata.typography.body.fontWeights[0] ?? "400",
-			lineHeight: metadata.typography.body.lineHeight,
-			color: foreground,
-			...r.text,
-		} satisfies Style;
+		const base = createBaseTemplateStyles({ metadata, foreground, background, r, metrics, picture });
 
 		const baseStyles = StyleSheet.create({
+			...base,
 			page: {
-				color: foreground,
-				backgroundColor: background,
+				...base.page,
 				paddingHorizontal: metrics.page.paddingHorizontal,
 				paddingVertical: metrics.page.paddingVertical,
 				rowGap: metrics.sectionGap,
-				fontFamily: metadata.typography.body.fontFamily,
-				fontSize: metadata.typography.body.fontSize,
-				lineHeight: metadata.typography.body.lineHeight,
-				direction: r.pageDirection,
-			},
-			text: bodyText,
-			heading: {
-				fontFamily: metadata.typography.heading.fontFamily,
-				fontSize: metadata.typography.heading.fontSize,
-				fontWeight: metadata.typography.heading.fontWeights.at(-1) ?? "600",
-				lineHeight: metadata.typography.heading.lineHeight,
-				color: foreground,
-				...r.text,
-			},
-			div: {
-				rowGap: metrics.gapY(0.125),
-				columnGap: metrics.gapX(1 / 3),
-			},
-			inline: {
-				flexDirection: r.row,
-				alignItems: "center",
-				columnGap: metrics.gapX(1 / 3),
-			},
-			link: {
-				textDecoration: "none",
-				color: foreground,
-			},
-			small: {
-				fontSize: metadata.typography.body.fontSize * 0.875,
-			},
-			bold: {
-				fontWeight: metadata.typography.body.fontWeights.at(-1) ?? "600",
-			},
-			richParagraph: {
-				margin: 0,
-				...bodyText,
-			},
-			richListItemRow: {
-				// Stays `row` for both LTR and RTL; the <li> renderer swaps DOM order for RTL.
-				flexDirection: "row",
-				columnGap: metrics.gapX(1 / 3),
-				alignItems: "flex-start",
-			},
-			richListItemMarker: {
-				// bodyText spread first so `textAlign` below isn't clobbered by bodyText.textAlign.
-				...bodyText,
-				width: metadata.typography.body.fontSize,
-				textAlign: r.listMarkerTextAlign,
-			},
-			richListItemContent: {
-				...bodyText,
-				flex: 1,
-			},
-			splitRow: {
-				flexDirection: r.row,
-				flexWrap: "wrap",
-				alignItems: "flex-start",
-				justifyContent: "space-between",
-				columnGap: metrics.gapX(2 / 3),
-			},
-			alignEnd: {
-				...r.alignEnd,
 			},
 			section: {
 				flexDirection: "column",
@@ -306,18 +307,6 @@ const useRhyhornTemplate = (): RhyhornTemplate => {
 				columnGap: metrics.gapX(1 / 6),
 			},
 			contactItemLast: r.contactSeparatorClear,
-			picture: {
-				width: picture.size,
-				height: picture.size,
-				objectFit: "cover",
-				aspectRatio: picture.aspectRatio,
-				borderRadius: picture.borderRadius,
-				borderColor: rgbaStringToHex(picture.borderColor),
-				borderWidth: picture.borderWidth,
-				shadowColor: rgbaStringToHex(picture.shadowColor),
-				shadowWidth: picture.shadowWidth,
-				transform: `rotate(${picture.rotation}deg)`,
-			},
 			sectionGroup: {},
 		});
 

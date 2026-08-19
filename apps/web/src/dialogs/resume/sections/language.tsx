@@ -5,14 +5,6 @@ import { Trans } from "@lingui/react/macro";
 import { PencilSimpleLineIcon, PlusIcon } from "@phosphor-icons/react";
 import { useStore } from "@tanstack/react-form";
 import { languageItemSchema } from "@reactive-resume/schema/resume/data";
-import { Button } from "@reactive-resume/ui/components/button";
-import {
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from "@reactive-resume/ui/components/dialog";
 import { FormControl, FormDescription, FormItem, FormLabel, FormMessage } from "@reactive-resume/ui/components/form";
 import { Slider } from "@reactive-resume/ui/components/slider";
 import { useDialogStore } from "@/dialogs/store";
@@ -21,6 +13,7 @@ import { useFormBlocker } from "@/hooks/use-form-blocker";
 import { makeSectionItem } from "@/libs/resume/make-section-item";
 import { createSectionItem, updateSectionItem } from "@/libs/resume/section-actions";
 import { useAppForm, withForm } from "@/libs/tanstack-form";
+import { SectionItemDialog } from "./section-item-dialog";
 
 const formSchema = languageItemSchema;
 
@@ -41,7 +34,7 @@ export function CreateLanguageDialog({ data }: DialogProps<"resume.sections.lang
 	const form = useAppForm({
 		defaultValues: makeSectionItem(defaultValues, data?.item),
 		validators: { onSubmit: formSchema },
-		onSubmit: async ({ value }) => {
+		onSubmit: ({ value }) => {
 			updateResumeData((draft) => {
 				createSectionItem(draft, "languages", value, data?.customSectionId);
 			});
@@ -53,36 +46,16 @@ export function CreateLanguageDialog({ data }: DialogProps<"resume.sections.lang
 	const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
 
 	return (
-		<DialogContent>
-			<DialogHeader>
-				<DialogTitle className="flex items-center gap-x-2">
-					<PlusIcon />
-					<Trans>Create a new language</Trans>
-				</DialogTitle>
-				<DialogDescription />
-			</DialogHeader>
-
-			<form
-				className="grid gap-4 sm:grid-cols-2"
-				onSubmit={(event) => {
-					event.preventDefault();
-					event.stopPropagation();
-					void form.handleSubmit();
-				}}
-			>
-				<LanguageForm form={form} />
-
-				<DialogFooter className="sm:col-span-full">
-					<Button variant="ghost" onClick={requestClose}>
-						<Trans>Cancel</Trans>
-					</Button>
-
-					<Button type="submit" disabled={isSubmitting}>
-						<Trans>Create</Trans>
-					</Button>
-				</DialogFooter>
-			</form>
-		</DialogContent>
+		<SectionItemDialog
+			title={<Trans>Create a new language</Trans>}
+			icon={<PlusIcon />}
+			onSubmit={() => void form.handleSubmit()}
+			onCancel={requestClose}
+			isSubmitting={isSubmitting}
+			submitLabel={<Trans>Create</Trans>}
+		>
+			<LanguageForm form={form} />
+		</SectionItemDialog>
 	);
 }
 
@@ -93,7 +66,7 @@ export function UpdateLanguageDialog({ data }: DialogProps<"resume.sections.lang
 	const form = useAppForm({
 		defaultValues: data.item,
 		validators: { onSubmit: formSchema },
-		onSubmit: async ({ value }) => {
+		onSubmit: ({ value }) => {
 			updateResumeData((draft) => {
 				updateSectionItem(draft, "languages", value, data?.customSectionId);
 			});
@@ -105,36 +78,16 @@ export function UpdateLanguageDialog({ data }: DialogProps<"resume.sections.lang
 	const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
 
 	return (
-		<DialogContent>
-			<DialogHeader>
-				<DialogTitle className="flex items-center gap-x-2">
-					<PencilSimpleLineIcon />
-					<Trans>Update an existing language</Trans>
-				</DialogTitle>
-				<DialogDescription />
-			</DialogHeader>
-
-			<form
-				className="grid gap-4 sm:grid-cols-2"
-				onSubmit={(event) => {
-					event.preventDefault();
-					event.stopPropagation();
-					void form.handleSubmit();
-				}}
-			>
-				<LanguageForm form={form} />
-
-				<DialogFooter className="sm:col-span-full">
-					<Button variant="ghost" onClick={requestClose}>
-						<Trans>Cancel</Trans>
-					</Button>
-
-					<Button type="submit" disabled={isSubmitting}>
-						<Trans>Save Changes</Trans>
-					</Button>
-				</DialogFooter>
-			</form>
-		</DialogContent>
+		<SectionItemDialog
+			title={<Trans>Update an existing language</Trans>}
+			icon={<PencilSimpleLineIcon />}
+			onSubmit={() => void form.handleSubmit()}
+			onCancel={requestClose}
+			isSubmitting={isSubmitting}
+			submitLabel={<Trans>Save Changes</Trans>}
+		>
+			<LanguageForm form={form} />
+		</SectionItemDialog>
 	);
 }
 

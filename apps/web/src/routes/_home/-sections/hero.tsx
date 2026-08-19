@@ -17,20 +17,27 @@ export function Hero() {
 			<Spotlight />
 
 			<m.div
-				className="will-change-[transform,opacity]"
+				className="w-full will-change-[transform,opacity]"
 				initial={{ opacity: 0, y: 100 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 1.1, ease: "easeOut" }}
 			>
-				<CometCard glareOpacity={0} className="relative -mb-12 3xl:max-w-7xl max-w-4xl px-8 md:-mb-24 md:px-12 lg:px-0">
+				<CometCard
+					glareOpacity={0}
+					className="relative mx-auto -mb-12 3xl:max-w-7xl max-w-4xl px-8 md:-mb-24 md:px-12 lg:px-0"
+				>
 					<video
 						loop
 						muted
-						autoPlay
+						controls
 						playsInline
-						src="/videos/timelapse.mp4"
+						preload="none"
+						width={1146}
+						height={720}
+						poster="/videos/timelapse-v1.webp"
+						src="/videos/timelapse-v1.mp4"
 						aria-label={t`Timelapse demonstration of building a resume with Reactive Resume`}
-						className="pointer-events-none size-full rounded-md border object-cover"
+						className="aspect-[1146/720] w-full rounded-md border object-cover"
 					/>
 
 					<div

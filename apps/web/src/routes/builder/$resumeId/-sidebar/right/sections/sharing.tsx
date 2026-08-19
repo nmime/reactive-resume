@@ -3,13 +3,13 @@ import { Trans } from "@lingui/react/macro";
 import { ORPCError } from "@orpc/client";
 import { ClipboardIcon, LockSimpleIcon, LockSimpleOpenIcon } from "@phosphor-icons/react";
 import { useMutation } from "@tanstack/react-query";
-import { useCallback, useMemo } from "react";
-import { toast } from "sonner";
+import { useCallback } from "react";
 import { useCopyToClipboard } from "usehooks-ts";
 import { Button } from "@reactive-resume/ui/components/button";
 import { Input } from "@reactive-resume/ui/components/input";
 import { Label } from "@reactive-resume/ui/components/label";
 import { Switch } from "@reactive-resume/ui/components/switch";
+import { toast } from "@reactive-resume/ui/components/toast";
 import { useCurrentResume, usePatchResume } from "@/features/resume/builder/draft";
 import { useConfirm } from "@/hooks/use-confirm";
 import { usePrompt } from "@/hooks/use-prompt";
@@ -29,14 +29,11 @@ export function SharingSectionBuilder() {
 	const { mutateAsync: setPassword } = useMutation(orpc.resume.setPassword.mutationOptions());
 	const { mutateAsync: removePassword } = useMutation(orpc.resume.removePassword.mutationOptions());
 
-	const publicUrl = useMemo(() => {
-		if (!session) return "";
-		return `${window.location.origin}/${session.user.username}/${resume.slug}`;
-	}, [session, resume]);
+	const publicUrl = session ? `${window.location.origin}/${session.user.username}/${resume.slug}` : "";
 
 	const onCopyUrl = useCallback(async () => {
 		await copyToClipboard(publicUrl);
-		toast.success(t`A link to your resume has been copied to clipboard.`);
+		toast.add({ type: "success", description: t`A link to your resume has been copied to clipboard.` });
 	}, [publicUrl, copyToClipboard]);
 
 	const onTogglePublic = useCallback(
@@ -48,7 +45,7 @@ export function SharingSectionBuilder() {
 				});
 			} catch (error) {
 				const message = error instanceof ORPCError ? error.message : t`Something went wrong. Please try again.`;
-				toast.error(message);
+				toast.add({ type: "error", description: message });
 			}
 		},
 		[patchResume, resume.id, updateResume],
@@ -67,19 +64,19 @@ export function SharingSectionBuilder() {
 		if (!value) return;
 
 		const password = value.trim();
-		if (!password) return toast.error(t`Password cannot be empty.`);
+		if (!password) return toast.add({ type: "error", description: t`Password cannot be empty.` });
 
-		const toastId = toast.loading(t`Enabling password protection...`);
+		const toastId = toast.add({ type: "loading", description: t`Enabling password protection...` });
 
 		try {
 			await setPassword({ id: resume.id, password });
 			patchResume((draft) => {
 				draft.hasPassword = true;
 			});
-			toast.success(t`Password protection has been enabled.`, { id: toastId });
+			toast.add({ type: "success", description: t`Password protection has been enabled.`, id: toastId });
 		} catch (error) {
 			const message = error instanceof ORPCError ? error.message : t`Something went wrong. Please try again.`;
-			toast.error(message, { id: toastId });
+			toast.add({ type: "error", description: message, id: toastId });
 		}
 	}, [patchResume, prompt, resume.id, setPassword]);
 
@@ -93,17 +90,17 @@ export function SharingSectionBuilder() {
 		});
 		if (!confirmation) return;
 
-		const toastId = toast.loading(t`Removing password protection...`);
+		const toastId = toast.add({ type: "loading", description: t`Removing password protection...` });
 
 		try {
 			await removePassword({ id: resume.id });
 			patchResume((draft) => {
 				draft.hasPassword = false;
 			});
-			toast.success(t`Password protection has been disabled.`, { id: toastId });
+			toast.add({ type: "success", description: t`Password protection has been disabled.`, id: toastId });
 		} catch (error) {
 			const message = error instanceof ORPCError ? error.message : t`Something went wrong. Please try again.`;
-			toast.error(message, { id: toastId });
+			toast.add({ type: "error", description: message, id: toastId });
 		}
 	}, [confirm, patchResume, removePassword, resume.hasPassword, resume.id]);
 
@@ -139,7 +136,7 @@ export function SharingSectionBuilder() {
 						<div className="flex items-center gap-x-2">
 							<Input readOnly id="sharing-url" value={publicUrl} />
 
-							<Button size="icon" variant="ghost" onClick={onCopyUrl}>
+							<Button size="icon" variant="ghost" aria-label={t`Copy URL`} onClick={onCopyUrl}>
 								<ClipboardIcon />
 							</Button>
 						</div>

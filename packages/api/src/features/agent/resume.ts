@@ -1,3 +1,4 @@
+import type { JsonPatchOperation } from "@reactive-resume/resume/patch";
 import { slugify } from "@reactive-resume/utils/string";
 
 const AI_DRAFT_SUFFIX = " - AI Draft";
@@ -22,4 +23,32 @@ export function buildUniqueAgentDraftSlug(sourceName: string, existingSlugs: Set
 	}
 
 	return candidate;
+}
+
+function decodeJsonPointerSegment(segment: string) {
+	return segment.replace(/~1/g, "/").replace(/~0/g, "~");
+}
+
+function normalizeSectionShortcutPath(data: { sections: Record<string, unknown> }, path: string) {
+	if (!path.startsWith("/") || path.startsWith("/sections/")) return path;
+
+	const sectionId = decodeJsonPointerSegment(path.slice(1).split("/")[0] ?? "");
+	if (!Object.hasOwn(data.sections, sectionId)) return path;
+
+	return `/sections${path}`;
+}
+
+export function normalizeAgentResumePatchOperations(
+	data: { sections: Record<string, unknown> },
+	operations: JsonPatchOperation[],
+): JsonPatchOperation[] {
+	return operations.map((operation) => {
+		const path = normalizeSectionShortcutPath(data, operation.path);
+		const normalized = path === operation.path ? operation : { ...operation, path };
+
+		if (!("from" in normalized)) return normalized;
+
+		const from = normalizeSectionShortcutPath(data, normalized.from);
+		return from === normalized.from ? normalized : { ...normalized, from };
+	});
 }

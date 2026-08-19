@@ -3,10 +3,11 @@
 	"tags": ["-lintignore"],
 	"workspaces": {
 		".": {
-			"ignoreFiles": [".ncurc.cjs"]
+			"ignoreFiles": [".ncurc.cjs", ".design-sync/**"]
 		},
 		"apps/web": {
 			"entry": ["lingui.config.ts", "vite.config.ts", "vitest.config.ts"],
+			"ignoreDependencies": ["buffer"],
 			"vite": {
 				"config": []
 			},
@@ -17,14 +18,24 @@
 		"apps/server": {
 			"ignoreDependencies": [
 				"@ai-sdk/anthropic",
+				"@ai-sdk/cerebras",
+				"@ai-sdk/cohere",
+				"@ai-sdk/deepseek",
+				"@ai-sdk/fireworks",
 				"@ai-sdk/google",
+				"@ai-sdk/groq",
+				"@ai-sdk/mistral",
 				"@ai-sdk/openai",
 				"@ai-sdk/openai-compatible",
+				"@ai-sdk/perplexity",
+				"@ai-sdk/togetherai",
+				"@ai-sdk/xai",
 				"@aws-sdk/client-s3",
 				"@better-auth/api-key",
 				"@better-auth/drizzle-adapter",
 				"@better-auth/infra",
 				"@better-auth/passkey",
+				"@bramus/specificity",
 				"@orpc/experimental-ratelimit",
 				"@sindresorhus/slugify",
 				"@t3-oss/env-core",
@@ -32,11 +43,9 @@
 				"ai",
 				"bcrypt",
 				"cjk-regex",
+				"css-tree",
 				"deepmerge-ts",
-				"dompurify",
-				"dotenv",
 				"drizzle-zod",
-				"es-toolkit",
 				"fast-json-patch",
 				"jsonrepair",
 				"node-html-parser",
@@ -52,9 +61,12 @@
 				"uuid"
 			]
 		},
+		"tooling": {
+			"entry": ["issue-labels.mjs"]
+		},
 		"packages/api": {
 			"ignoreDependencies": ["ioredis"]
 		}
 	},
-	"ignoreDependencies": ["@reactive-resume/config", "npm-check-updates"]
+	"ignoreDependencies": ["@reactive-resume/config"]
 }

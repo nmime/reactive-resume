@@ -1,13 +1,18 @@
+import type { CustomSectionType } from "./data";
 import { describe, expect, it } from "vitest";
 import {
 	baseSectionSchema,
 	basicsSchema,
 	customFieldSchema,
+	customSectionItemDefinitionByType,
+	customSectionSchema,
 	experienceItemSchema,
 	layoutSchema,
 	pageSchema,
+	parseResumeData,
 	pictureSchema,
 	resumeDataSchema,
+	sectionTypeSchema,
 	skillItemSchema,
 	styleRuleSchema,
 	styleRulesSchema,
@@ -15,6 +20,86 @@ import {
 	websiteSchema,
 } from "./data";
 import { defaultResumeData } from "./default";
+
+const representativeCustomSectionItemByType = {
+	summary: { id: "summary-item", hidden: false, content: "<p>Summary</p>" },
+	profiles: { id: "profile-item", hidden: false, icon: "", network: "GitHub", username: "ada" },
+	experience: {
+		id: "experience-item",
+		hidden: false,
+		company: "Analytical Engines",
+		position: "Programmer",
+		location: "London",
+		period: "1842–1843",
+		description: "<p>Wrote the first algorithm.</p>",
+	},
+	education: {
+		id: "education-item",
+		hidden: false,
+		school: "University of London",
+		degree: "Mathematics",
+		area: "Mathematics",
+		grade: "",
+		location: "London",
+		period: "1830",
+		description: "",
+	},
+	projects: { id: "project-item", hidden: false, name: "Bernoulli Notes", period: "1843", description: "" },
+	skills: { id: "skill-item", hidden: false, icon: "", name: "Mathematics", proficiency: "Expert" },
+	languages: { id: "language-item", hidden: false, language: "English", fluency: "Native" },
+	interests: { id: "interest-item", hidden: false, icon: "", name: "Poetry" },
+	awards: { id: "award-item", hidden: false, title: "Medal", awarder: "Society", date: "1843", description: "" },
+	certifications: {
+		id: "certification-item",
+		hidden: false,
+		title: "Certificate",
+		issuer: "Society",
+		date: "1843",
+		description: "",
+	},
+	publications: {
+		id: "publication-item",
+		hidden: false,
+		title: "Notes",
+		publisher: "Scientific Memoirs",
+		date: "1843",
+		description: "",
+	},
+	volunteer: {
+		id: "volunteer-item",
+		hidden: false,
+		organization: "Society",
+		location: "London",
+		period: "1843",
+		description: "",
+	},
+	references: {
+		id: "reference-item",
+		hidden: false,
+		name: "Charles Babbage",
+		position: "Inventor",
+		phone: "",
+		description: "",
+	},
+	"cover-letter": {
+		id: "cover-letter-item",
+		hidden: false,
+		recipient: "<p>Charles Babbage</p>",
+		content: "<p>Dear Charles,</p>",
+	},
+} as const satisfies Record<CustomSectionType, Record<string, unknown>>;
+
+const customSectionFixture = (type: CustomSectionType, item: Record<string, unknown>) => ({
+	id: `custom-${type}`,
+	type,
+	title: "Custom section",
+	icon: "",
+	columns: 1,
+	hidden: false,
+	keepTogether: false,
+	startOnNewPage: false,
+	items: [item],
+});
 
 describe("resumeDataSchema", () => {
 	it("validates the default resume", () => {
@@ -28,6 +113,107 @@ describe("resumeDataSchema", () => {
 	it("rejects missing top-level keys", () => {
 		const partial = { ...defaultResumeData, basics: undefined };
 		expect(resumeDataSchema.safeParse(partial).success).toBe(false);
+	});
+
+	it("preserves cover-letter fields when parsing the overlapping content shape", () => {
+		const result = customSectionSchema.parse({
+			id: "cover-letter",
+			type: "cover-letter",
+			title: "Cover Letter",
+			icon: "",
+			columns: 1,
+			hidden: false,
+			keepTogether: false,
+			startOnNewPage: false,
+			items: [{ id: "item", hidden: false, recipient: "Ada Lovelace", content: "<p>Hello</p>" }],
+		});
+
+		expect(result.items[0]).toMatchObject({ recipient: "Ada Lovelace", content: "<p>Hello</p>" });
+	});
+
+	it("accepts overlapping item fields when the selected renderer requirements are satisfied", () => {
+		const section = customSectionFixture("experience", {
+			...representativeCustomSectionItemByType.experience,
+			content: "<p>Also valid summary content</p>",
+		});
+
+		expect(customSectionSchema.parse(section).items[0]).toMatchObject({
+			content: "<p>Also valid summary content</p>",
+			roles: [],
+			website: { url: "", label: "", inlineLink: false },
+		});
+	});
+
+	it("rejects a renderer-unsafe custom section before PDF or DOCX dispatch", () => {
+		const rendererUnsafeSection = customSectionFixture("experience", representativeCustomSectionItemByType.summary);
+
+		expect(customSectionSchema.safeParse(rendererUnsafeSection).success).toBe(false);
+		expect(
+			resumeDataSchema.safeParse({
+				...defaultResumeData,
+				customSections: [rendererUnsafeSection],
+			}).success,
+		).toBe(false);
+	});
+
+	it("returns renderer-safe normalized data without losing compatible overlapping fields", () => {
+		const data = {
+			...structuredClone(defaultResumeData),
+			customSections: [
+				customSectionFixture("experience", {
+					...representativeCustomSectionItemByType.experience,
+					content: "<p>Preserve this overlapping field</p>",
+				}),
+			],
+		};
+		const parsed = parseResumeData(data);
+
+		expect(parsed.customSections[0]?.items[0]).toMatchObject({
+			content: "<p>Preserve this overlapping field</p>",
+			roles: [],
+			website: { url: "", label: "", inlineLink: false },
+		});
+	});
+});
+
+describe("customSectionItemDefinitionByType", () => {
+	it("maps every custom section type to its named item schema", () => {
+		expect(
+			Object.fromEntries(
+				sectionTypeSchema.options.map((type) => [type, customSectionItemDefinitionByType[type].schemaName]),
+			),
+		).toEqual({
+			summary: "summaryItemSchema",
+			profiles: "profileItemSchema",
+			experience: "experienceItemSchema",
+			education: "educationItemSchema",
+			projects: "projectItemSchema",
+			skills: "skillItemSchema",
+			languages: "languageItemSchema",
+			interests: "interestItemSchema",
+			awards: "awardItemSchema",
+			certifications: "certificationItemSchema",
+			publications: "publicationItemSchema",
+			volunteer: "volunteerItemSchema",
+			references: "referenceItemSchema",
+			"cover-letter": "coverLetterItemSchema",
+		});
+	});
+
+	it.each(sectionTypeSchema.options)("accepts the representative %s item shape", (type) => {
+		const section = customSectionFixture(type, representativeCustomSectionItemByType[type]);
+
+		expect(customSectionSchema.safeParse(section).success).toBe(true);
+	});
+
+	it.each(sectionTypeSchema.options)("rejects an item shape that does not match %s", (type) => {
+		const mismatchedItem =
+			type === "summary"
+				? representativeCustomSectionItemByType.experience
+				: representativeCustomSectionItemByType.summary;
+		const section = customSectionFixture(type, mismatchedItem);
+
+		expect(customSectionSchema.safeParse(section).success).toBe(false);
 	});
 });
 
@@ -260,6 +446,19 @@ describe("pageSchema", () => {
 		expect(pageSchema.safeParse(invalid).success).toBe(false);
 	});
 
+	it("falls back to default margins when out of range via .catch", () => {
+		const result = pageSchema.safeParse({
+			...defaultResumeData.metadata.page,
+			marginX: 1224,
+			marginY: 999,
+		});
+		expect(result.success).toBe(true);
+		if (result.success) {
+			expect(result.data.marginX).toBe(14);
+			expect(result.data.marginY).toBe(12);
+		}
+	});
+
 	it("falls back to 'a4' for unknown format via .catch", () => {
 		const invalid = { ...defaultResumeData.metadata.page, format: "huge" };
 		const result = pageSchema.safeParse(invalid);
@@ -318,9 +517,73 @@ describe("summarySchema", () => {
 });
 
 describe("styleRulesSchema", () => {
+	const educationHeadingRule = {
+		id: "education-heading",
+		label: "Education heading",
+		enabled: true,
+		target: { scope: "sectionType", sectionType: "education" },
+		slots: { heading: { fontSize: 20 } },
+	};
+
 	it("defaults to an empty rule list on default resume metadata", () => {
 		expect(defaultResumeData.metadata.styleRules).toEqual([]);
 		expect(styleRulesSchema.safeParse(defaultResumeData.metadata.styleRules).success).toBe(true);
+	});
+
+	it("preserves valid rules when another rule has an invalid style intent", () => {
+		expect(
+			styleRulesSchema.parse([
+				educationHeadingRule,
+				{
+					id: "experience-heading",
+					label: "Experience heading",
+					enabled: true,
+					target: { scope: "sectionType", sectionType: "experience" },
+					slots: { heading: { fontSize: -1 } },
+				},
+			]),
+		).toEqual([educationHeadingRule]);
+	});
+
+	it("drops invalid style fields without dropping the whole rule", () => {
+		expect(
+			styleRulesSchema.parse([
+				{
+					id: "partial-heading",
+					label: "Partial heading",
+					enabled: true,
+					target: { scope: "global" },
+					slots: { heading: { color: "rgba(0, 0, 0, 1)", fontSize: -1 } },
+				},
+			]),
+		).toEqual([
+			{
+				id: "partial-heading",
+				label: "Partial heading",
+				enabled: true,
+				target: { scope: "global" },
+				slots: { heading: { color: "rgba(0, 0, 0, 1)" } },
+			},
+		]);
+	});
+
+	it("falls back to an empty rule list for non-array persisted values", () => {
+		expect(styleRulesSchema.parse({})).toEqual([]);
+	});
+
+	it("drops rules with unknown slot keys", () => {
+		expect(
+			styleRulesSchema.parse([
+				{
+					id: "unknown-slot",
+					label: "Unknown slot",
+					enabled: true,
+					target: { scope: "global" },
+					slots: { richListItemMarker: { color: "rgba(0, 0, 0, 1)" } },
+				},
+				educationHeadingRule,
+			]),
+		).toEqual([educationHeadingRule]);
 	});
 
 	it("accepts global, section-type, and section-id targets", () => {
