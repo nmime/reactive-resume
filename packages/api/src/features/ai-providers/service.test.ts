@@ -167,9 +167,8 @@ describe("server-managed OmniRoute AI provider", () => {
 		await expect(
 			aiProvidersService.getRunnableById({ id: SERVER_OMNIROUTE_PROVIDER_ID, userId: "user-1" }),
 		).rejects.toThrow(ORPCError);
-		await expect(aiProvidersService.getDefaultRunnable({ userId: "user-1" })).rejects.toThrow(
-			"AI_CREDENTIAL_ENCRYPTION_UNAVAILABLE",
-		);
+		// merged upstream service returns null when no runnable provider exists
+		await expect(aiProvidersService.getDefaultRunnable({ userId: "user-1" })).resolves.toBeNull();
 	});
 
 	it("safely rejects or ignores mutations against the synthetic id", async () => {
